@@ -189,10 +189,16 @@ function App() {
   if (screen === 'result') {
     const percentage = Math.round((score / quiz.length) * 100)
     const passed = percentage >= 70
+    const congratsImg = passed
+      ? `/congratulations/congrats${Math.floor(Math.random() * 11) + 1}.jpg`
+      : null
     return (
       <div className="app">
         <div className="center-screen">
           <h2 className="result-title">{passed ? 'Congratulations!' : 'Quiz Complete!'}</h2>
+          {congratsImg && (
+            <img src={congratsImg} alt="Congratulations" className="congrats-image" />
+          )}
           <div className={`score-circle ${passed ? 'pass' : ''}`}>
             <span className="score-percent">{percentage}%</span>
           </div>
@@ -202,10 +208,10 @@ function App() {
           {passed && <p className="score-message pass">Excellent work!</p>}
           {!passed && <p className="score-message">Keep trying, you'll get there!</p>}
           <div className="result-actions">
-            <button className="start-btn" onClick={handleRetry}>
+            <button className="result-btn primary" onClick={handleRetry}>
               Retry
             </button>
-            <button className="home-btn" onClick={() => setScreen('home')}>
+            <button className="result-btn secondary" onClick={() => setScreen('home')}>
               Home
             </button>
           </div>

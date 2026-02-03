@@ -405,26 +405,54 @@
   color: #22c55e;
 }
 
+.congrats-image {
+  max-width: 80%;
+  max-height: 200px;
+  object-fit: contain;
+  border-radius: 12px;
+  margin: 0.5rem 0;
+}
+
 .result-actions {
   display: flex;
   gap: 0.75rem;
   margin-top: 1.5rem;
 }
 
-.home-btn {
-  padding: 0.85em 2.5em;
+.result-btn {
+  width: 130px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   font-size: 1em;
   font-weight: 700;
   font-family: inherit;
-  background: transparent;
-  color: #646cff;
-  border: 2px solid #646cff;
   border-radius: 28px;
   cursor: pointer;
   transition: all 0.2s;
 }
 
-.home-btn:hover {
+.result-btn.primary {
+  background: #646cff;
+  color: #fff;
+  border: 2px solid #646cff;
+}
+
+.result-btn.primary:hover {
+  background: #535bf2;
+  border-color: #535bf2;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 20px rgba(100, 108, 255, 0.3);
+}
+
+.result-btn.secondary {
+  background: transparent;
+  color: #646cff;
+  border: 2px solid #646cff;
+}
+
+.result-btn.secondary:hover {
   background: #646cff;
   color: #fff;
 }
