@@ -30,6 +30,15 @@ function playSound(type) {
   }
 }
 
+function shuffle(arr) {
+  const a = [...arr]
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]]
+  }
+  return a
+}
+
 function App() {
   const [allQuiz, setAllQuiz] = useState([])
   const [quiz, setQuiz] = useState([])
@@ -38,11 +47,11 @@ function App() {
   const [score, setScore] = useState(0)
   const [selected, setSelected] = useState(null)
   const [answered, setAnswered] = useState(false)
-  const [loading, setLoading] = useState(true)
   const [categories, setCategories] = useState([])
   const [selectedCategories, setSelectedCategories] = useState([])
   const [questionCount, setQuestionCount] = useState(10)
   const [imgError, setImgError] = useState(false)
+  const [ready, setReady] = useState(false)
   const topRef = useRef(null)
 
   useEffect(() => {
@@ -53,9 +62,16 @@ function App() {
         const cats = [...new Set(data.map((q) => q.category))]
         setCategories(cats)
         setSelectedCategories(cats)
-        setLoading(false)
+        setReady(true)
       })
   }, [])
+
+  const buildQuiz = useCallback(() => {
+    let filtered = allQuiz.filter((q) => selectedCategories.includes(q.category))
+    filtered = shuffle(filtered).slice(0, questionCount)
+    setQuiz(filtered)
+    return filtered
+  }, [allQuiz, selectedCategories, questionCount])
 
   const scrollToTop = useCallback(() => {
     topRef.current?.scrollIntoView({ behavior: 'smooth' })
@@ -68,11 +84,8 @@ function App() {
   }
 
   const startQuiz = () => {
-    let filtered = allQuiz.filter((q) => selectedCategories.includes(q.category))
-    filtered = filtered.sort(() => Math.random() - 0.5)
-    filtered = filtered.slice(0, questionCount)
-    if (filtered.length === 0) return
-    setQuiz(filtered)
+    const built = buildQuiz()
+    if (built.length === 0) return
     setScreen('quiz')
     setCurrentIndex(0)
     setScore(0)
@@ -106,6 +119,17 @@ function App() {
     }
   }
 
+  const handleRetry = () => {
+    const built = buildQuiz()
+    if (built.length === 0) return
+    setScreen('quiz')
+    setCurrentIndex(0)
+    setScore(0)
+    setSelected(null)
+    setAnswered(false)
+    setImgError(false)
+  }
+
   const getOptionClass = (index) => {
     if (!answered) return 'option-btn'
     if (index === quiz[currentIndex].answer) return 'option-btn correct'
@@ -113,34 +137,20 @@ function App() {
     return 'option-btn disabled'
   }
 
-  if (loading) {
-    return (
-      <div className="app">
-        <div className="home-screen">
-          <div className="loader" />
-        </div>
-      </div>
-    )
-  }
-
   if (screen === 'home') {
-    const availableCount = allQuiz.filter((q) =>
-      selectedCategories.includes(q.category)
-    ).length
-    const actualCount = Math.min(questionCount, availableCount)
     return (
       <div className="app">
-        <div className="home-screen">
+        <div className="center-screen">
           <h1 className="title">K-Quiz</h1>
           <p className="subtitle">Korean Culture Quiz</p>
 
           <div className="home-section">
             <p className="section-label">Category</p>
-            <div className="category-list">
+            <div className="chip-list">
               {categories.map((cat) => (
                 <button
                   key={cat}
-                  className={`category-btn ${selectedCategories.includes(cat) ? 'active' : ''}`}
+                  className={`chip ${selectedCategories.includes(cat) ? 'active' : ''}`}
                   onClick={() => toggleCategory(cat)}
                 >
                   {cat}
@@ -151,11 +161,11 @@ function App() {
 
           <div className="home-section">
             <p className="section-label">Questions</p>
-            <div className="count-list">
+            <div className="chip-list">
               {[5, 10, 20, 30].map((n) => (
                 <button
                   key={n}
-                  className={`count-btn ${questionCount === n ? 'active' : ''}`}
+                  className={`chip ${questionCount === n ? 'active' : ''}`}
                   onClick={() => setQuestionCount(n)}
                 >
                   {n}
@@ -164,14 +174,10 @@ function App() {
             </div>
           </div>
 
-          <p className="home-info">
-            {actualCount} of {availableCount} questions
-          </p>
-
           <button
             className="start-btn"
             onClick={startQuiz}
-            disabled={selectedCategories.length === 0 || availableCount === 0}
+            disabled={selectedCategories.length === 0 || !ready}
           >
             Start
           </button>
@@ -185,7 +191,7 @@ function App() {
     const passed = percentage >= 70
     return (
       <div className="app">
-        <div className="result-screen">
+        <div className="center-screen">
           <h2 className="result-title">{passed ? 'Congratulations!' : 'Quiz Complete!'}</h2>
           <div className={`score-circle ${passed ? 'pass' : ''}`}>
             <span className="score-percent">{percentage}%</span>
@@ -196,7 +202,7 @@ function App() {
           {passed && <p className="score-message pass">Excellent work!</p>}
           {!passed && <p className="score-message">Keep trying, you'll get there!</p>}
           <div className="result-actions">
-            <button className="start-btn" onClick={startQuiz}>
+            <button className="start-btn" onClick={handleRetry}>
               Retry
             </button>
             <button className="home-btn" onClick={() => setScreen('home')}>
@@ -231,18 +237,20 @@ function App() {
           />
         </div>
 
-        <h2 className="question-text">{q.question}</h2>
+        <div className="quiz-body">
+          <h2 className="question-text">{q.question}</h2>
 
-        {showImage && (
-          <div className="question-image-wrapper">
-            <img
-              src={q.image}
-              alt="quiz"
-              className="question-image"
-              onError={() => setImgError(true)}
-            />
-          </div>
-        )}
+          {showImage && (
+            <div className="question-image-wrapper">
+              <img
+                src={q.image}
+                alt="quiz"
+                className="question-image"
+                onError={() => setImgError(true)}
+              />
+            </div>
+          )}
+        </div>
 
         <div className="options">
           {q.options.map((option, index) => (

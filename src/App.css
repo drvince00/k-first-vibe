@@ -1,11 +1,25 @@
 /* ===== Global ===== */
 .app {
-  max-width: 520px;
+  max-width: 640px;
   width: 100%;
   min-height: 100vh;
+  min-height: 100dvh;
   display: flex;
   flex-direction: column;
   margin: 0 auto;
+  padding: 0 1.25rem;
+  box-sizing: border-box;
+}
+
+/* ===== Centered Screen (home, result, loading) ===== */
+.center-screen {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 2rem 0;
 }
 
 /* ===== Loader ===== */
@@ -23,18 +37,8 @@
 }
 
 /* ===== Home Screen ===== */
-.home-screen {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 0.75rem;
-  padding: 2rem 1.5rem;
-}
-
 .title {
-  font-size: 3.2rem;
+  font-size: clamp(2.2rem, 6vw, 3rem);
   font-weight: 800;
   color: #646cff;
   margin: 0;
@@ -42,16 +46,15 @@
 }
 
 .subtitle {
-  font-size: 1rem;
+  font-size: clamp(0.95rem, 2.5vw, 1.1rem);
   color: #888;
   margin: 0 0 0.5rem;
 }
 
-/* Home Sections */
 .home-section {
   width: 100%;
-  max-width: 360px;
-  margin-top: 1rem;
+  max-width: 400px;
+  margin-top: 1.5rem;
 }
 
 .section-label {
@@ -61,20 +64,19 @@
   margin: 0 0 0.5rem;
   text-transform: uppercase;
   letter-spacing: 1px;
+  text-align: center;
 }
 
-.category-list,
-.count-list {
+.chip-list {
   display: flex;
   gap: 0.5rem;
   flex-wrap: wrap;
   justify-content: center;
 }
 
-.category-btn,
-.count-btn {
+.chip {
   padding: 0.5em 1.3em;
-  font-size: 0.9em;
+  font-size: 0.95em;
   font-weight: 600;
   font-family: inherit;
   background: #1a1a2e;
@@ -85,27 +87,19 @@
   transition: all 0.2s;
 }
 
-.category-btn.active,
-.count-btn.active {
+.chip.active {
   border-color: #646cff;
   color: #fff;
   background: rgba(100, 108, 255, 0.15);
 }
 
-.category-btn:hover,
-.count-btn:hover {
+.chip:hover {
   border-color: #646cff;
 }
 
-.home-info {
-  margin-top: 0.5rem;
-  color: #666;
-  font-size: 0.9rem;
-}
-
 .start-btn {
-  margin-top: 1.5rem;
-  padding: 0.85em 3.5em;
+  margin-top: 2rem;
+  padding: 0.9em 3.5em;
   font-size: 1.1em;
   font-weight: 700;
   font-family: inherit;
@@ -137,7 +131,8 @@
   flex: 1;
   display: flex;
   flex-direction: column;
-  padding: 1.25rem 1.5rem 2rem;
+  padding: 1.5rem 0 2rem;
+  min-height: 0;
 }
 
 .quiz-header {
@@ -145,10 +140,11 @@
   justify-content: space-between;
   align-items: center;
   margin-bottom: 0.75rem;
+  flex-shrink: 0;
 }
 
 .quiz-progress {
-  font-size: 0.9rem;
+  font-size: 0.95rem;
   font-weight: 700;
   color: #646cff;
 }
@@ -191,6 +187,7 @@
   border-radius: 2px;
   margin-bottom: 1.5rem;
   overflow: hidden;
+  flex-shrink: 0;
 }
 
 .progress-fill {
@@ -200,26 +197,45 @@
   transition: width 0.4s ease;
 }
 
+/* Quiz Body (question + image, fills remaining space) */
+.quiz-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 0;
+  overflow: hidden;
+}
+
 /* Question */
 .question-text {
-  font-size: 1.15rem;
+  font-size: clamp(1rem, 2.8vw, 1.2rem);
   font-weight: 600;
   line-height: 1.7;
-  margin: 0 0 1.25rem 0;
+  margin: 0 0 1rem 0;
   text-align: center;
   word-break: keep-all;
+  flex-shrink: 0;
 }
 
 /* Question Image */
 .question-image-wrapper {
   display: flex;
   justify-content: center;
-  margin-bottom: 1.25rem;
+  align-items: center;
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+  margin-bottom: 1rem;
+  overflow: hidden;
 }
 
 .question-image {
   max-width: 100%;
-  max-height: 220px;
+  max-height: 100%;
+  width: auto;
+  height: auto;
   object-fit: contain;
   border-radius: 12px;
   border: 1px solid #2a2a3e;
@@ -229,22 +245,22 @@
 .options {
   display: flex;
   flex-direction: column;
-  gap: 0.55rem;
-  margin-top: auto;
+  gap: 0.5rem;
+  flex-shrink: 0;
 }
 
 .option-btn {
   display: flex;
   align-items: center;
-  gap: 0.8rem;
+  gap: 0.75rem;
   width: 100%;
-  padding: 0.85rem 1rem;
+  padding: 0.75rem 1rem;
   font-size: 0.95rem;
   font-family: inherit;
   background: #13132a;
   color: #ccc;
   border: 2px solid #1e1e3a;
-  border-radius: 14px;
+  border-radius: 12px;
   cursor: pointer;
   transition: all 0.15s;
   text-align: left;
@@ -317,7 +333,7 @@
 
 /* Next Button */
 .next-btn {
-  margin-top: 1rem;
+  margin-top: 0.75rem;
   padding: 0.85em 0;
   width: 100%;
   font-size: 1em;
@@ -326,10 +342,11 @@
   background: linear-gradient(135deg, #646cff, #8b5cf6);
   color: #fff;
   border: none;
-  border-radius: 14px;
+  border-radius: 12px;
   cursor: pointer;
   transition: all 0.2s;
   letter-spacing: 0.5px;
+  flex-shrink: 0;
 }
 
 .next-btn:hover {
@@ -338,25 +355,15 @@
 }
 
 /* ===== Result Screen ===== */
-.result-screen {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 0.75rem;
-  padding: 2rem 1.5rem;
-}
-
 .result-title {
-  font-size: 1.8rem;
+  font-size: clamp(1.4rem, 4vw, 1.8rem);
   font-weight: 800;
   margin: 0;
 }
 
 .score-circle {
-  width: 140px;
-  height: 140px;
+  width: 130px;
+  height: 130px;
   border-radius: 50%;
   border: 5px solid #333;
   display: flex;
@@ -372,7 +379,7 @@
 }
 
 .score-percent {
-  font-size: 2.4rem;
+  font-size: 2.2rem;
   font-weight: 800;
   color: #646cff;
 }
@@ -382,13 +389,13 @@
 }
 
 .score-detail {
-  font-size: 1rem;
+  font-size: 1.05rem;
   color: #888;
   margin: 0;
 }
 
 .score-message {
-  font-size: 1.1rem;
+  font-size: 1.05rem;
   font-weight: 600;
   color: #888;
   margin: 0.25rem 0 0;
@@ -401,7 +408,7 @@
 .result-actions {
   display: flex;
   gap: 0.75rem;
-  margin-top: 2rem;
+  margin-top: 1.5rem;
 }
 
 .home-btn {
@@ -420,6 +427,60 @@
 .home-btn:hover {
   background: #646cff;
   color: #fff;
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 480px) {
+  .app {
+    padding: 0 0.75rem;
+  }
+
+  .title {
+    font-size: 2.2rem;
+  }
+
+  .question-text {
+    font-size: 0.95rem;
+  }
+
+  .option-btn {
+    padding: 0.65rem 0.8rem;
+    font-size: 0.88rem;
+    gap: 0.6rem;
+  }
+
+  .option-number {
+    width: 22px;
+    height: 22px;
+    font-size: 0.72rem;
+  }
+
+  .chip {
+    padding: 0.45em 1em;
+    font-size: 0.85em;
+  }
+
+  .start-btn {
+    padding: 0.8em 3em;
+    font-size: 1em;
+  }
+
+  .score-circle {
+    width: 110px;
+    height: 110px;
+  }
+
+  .score-percent {
+    font-size: 1.8rem;
+  }
+
+  .result-title {
+    font-size: 1.4rem;
+  }
+
+  .quiz-screen {
+    padding: 1rem 0 1.5rem;
+  }
 }
 
 /* ===== Light Mode ===== */
@@ -448,8 +509,7 @@
     border-color: #ddd;
   }
 
-  .category-btn,
-  .count-btn {
+  .chip {
     background: #f0f0f8;
     border-color: #ddd;
     color: #666;
