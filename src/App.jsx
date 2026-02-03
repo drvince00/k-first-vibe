@@ -1,73 +1,106 @@
-import { useState } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import './App.css'
 
-const SAMPLE_QUIZ = [
-  {
-    id: 1,
-    question: '이 음식의 이름은 무엇일까요?',
-    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/44/Dolsot-bibimbap.jpg/500px-Dolsot-bibimbap.jpg',
-    options: ['김치찌개', '비빔밥', '불고기', '떡볶이'],
-    answer: 1,
-  },
-  {
-    id: 2,
-    question: '이 한국 전통 의상의 이름은?',
-    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/71/Korean.clothing-Hanbok-01.jpg/400px-Korean.clothing-Hanbok-01.jpg',
-    options: ['기모노', '한복', '치파오', '아오자이'],
-    answer: 1,
-  },
-  {
-    id: 3,
-    question: '이 건축물은 어디에 있을까요?',
-    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/1d/Gyeongbokgung-GessanjeongBackView.jpg/500px-Gyeongbokgung-GeunjeongmunFront.jpg',
-    options: ['창덕궁', '덕수궁', '경복궁', '경희궁'],
-    answer: 2,
-  },
-  {
-    id: 4,
-    question: '"감사합니다"의 의미는?',
-    image: null,
-    options: ['Hello', 'Thank you', 'Goodbye', 'Sorry'],
-    answer: 1,
-  },
-  {
-    id: 5,
-    question: '한국의 수도는 어디일까요?',
-    image: null,
-    options: ['부산', '인천', '대구', '서울'],
-    answer: 3,
-  },
-]
+function playSound(type) {
+  const ctx = new (window.AudioContext || window.webkitAudioContext)()
+  if (type === 'correct') {
+    const notes = [523.25, 659.25, 783.99]
+    notes.forEach((freq, i) => {
+      const osc = ctx.createOscillator()
+      const gain = ctx.createGain()
+      osc.type = 'sine'
+      osc.frequency.value = freq
+      gain.gain.setValueAtTime(0.3, ctx.currentTime + i * 0.1)
+      gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + i * 0.1 + 0.3)
+      osc.connect(gain).connect(ctx.destination)
+      osc.start(ctx.currentTime + i * 0.1)
+      osc.stop(ctx.currentTime + i * 0.1 + 0.3)
+    })
+  } else {
+    const osc = ctx.createOscillator()
+    const gain = ctx.createGain()
+    osc.type = 'square'
+    osc.frequency.setValueAtTime(300, ctx.currentTime)
+    osc.frequency.exponentialRampToValueAtTime(150, ctx.currentTime + 0.3)
+    gain.gain.setValueAtTime(0.2, ctx.currentTime)
+    gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.3)
+    osc.connect(gain).connect(ctx.destination)
+    osc.start()
+    osc.stop(ctx.currentTime + 0.3)
+  }
+}
 
 function App() {
+  const [allQuiz, setAllQuiz] = useState([])
+  const [quiz, setQuiz] = useState([])
   const [screen, setScreen] = useState('home')
   const [currentIndex, setCurrentIndex] = useState(0)
   const [score, setScore] = useState(0)
   const [selected, setSelected] = useState(null)
   const [answered, setAnswered] = useState(false)
+  const [loading, setLoading] = useState(true)
+  const [categories, setCategories] = useState([])
+  const [selectedCategories, setSelectedCategories] = useState([])
+  const [questionCount, setQuestionCount] = useState(10)
+  const [imgError, setImgError] = useState(false)
+  const topRef = useRef(null)
+
+  useEffect(() => {
+    fetch('/quizData.json')
+      .then((res) => res.json())
+      .then((data) => {
+        setAllQuiz(data)
+        const cats = [...new Set(data.map((q) => q.category))]
+        setCategories(cats)
+        setSelectedCategories(cats)
+        setLoading(false)
+      })
+  }, [])
+
+  const scrollToTop = useCallback(() => {
+    topRef.current?.scrollIntoView({ behavior: 'smooth' })
+  }, [])
+
+  const toggleCategory = (cat) => {
+    setSelectedCategories((prev) =>
+      prev.includes(cat) ? prev.filter((c) => c !== cat) : [...prev, cat]
+    )
+  }
 
   const startQuiz = () => {
+    let filtered = allQuiz.filter((q) => selectedCategories.includes(q.category))
+    filtered = filtered.sort(() => Math.random() - 0.5)
+    filtered = filtered.slice(0, questionCount)
+    if (filtered.length === 0) return
+    setQuiz(filtered)
     setScreen('quiz')
     setCurrentIndex(0)
     setScore(0)
     setSelected(null)
     setAnswered(false)
+    setImgError(false)
   }
 
   const handleSelect = (index) => {
     if (answered) return
     setSelected(index)
     setAnswered(true)
-    if (index === SAMPLE_QUIZ[currentIndex].answer) {
+    const isCorrect = index === quiz[currentIndex].answer
+    if (isCorrect) {
       setScore((prev) => prev + 1)
+      playSound('correct')
+    } else {
+      playSound('wrong')
     }
   }
 
   const handleNext = () => {
-    if (currentIndex + 1 < SAMPLE_QUIZ.length) {
+    if (currentIndex + 1 < quiz.length) {
       setCurrentIndex((prev) => prev + 1)
       setSelected(null)
       setAnswered(false)
+      setImgError(false)
+      scrollToTop()
     } else {
       setScreen('result')
     }
@@ -75,22 +108,72 @@ function App() {
 
   const getOptionClass = (index) => {
     if (!answered) return 'option-btn'
-    if (index === SAMPLE_QUIZ[currentIndex].answer) return 'option-btn correct'
+    if (index === quiz[currentIndex].answer) return 'option-btn correct'
     if (index === selected) return 'option-btn wrong'
     return 'option-btn disabled'
   }
 
+  if (loading) {
+    return (
+      <div className="app">
+        <div className="home-screen">
+          <div className="loader" />
+        </div>
+      </div>
+    )
+  }
+
   if (screen === 'home') {
+    const availableCount = allQuiz.filter((q) =>
+      selectedCategories.includes(q.category)
+    ).length
+    const actualCount = Math.min(questionCount, availableCount)
     return (
       <div className="app">
         <div className="home-screen">
           <h1 className="title">K-Quiz</h1>
-          <p className="subtitle">한국 문화 퀴즈</p>
-          <div className="home-info">
-            <span>{SAMPLE_QUIZ.length}문제</span>
+          <p className="subtitle">Korean Culture Quiz</p>
+
+          <div className="home-section">
+            <p className="section-label">Category</p>
+            <div className="category-list">
+              {categories.map((cat) => (
+                <button
+                  key={cat}
+                  className={`category-btn ${selectedCategories.includes(cat) ? 'active' : ''}`}
+                  onClick={() => toggleCategory(cat)}
+                >
+                  {cat}
+                </button>
+              ))}
+            </div>
           </div>
-          <button className="start-btn" onClick={startQuiz}>
-            시작하기
+
+          <div className="home-section">
+            <p className="section-label">Questions</p>
+            <div className="count-list">
+              {[5, 10, 20, 30].map((n) => (
+                <button
+                  key={n}
+                  className={`count-btn ${questionCount === n ? 'active' : ''}`}
+                  onClick={() => setQuestionCount(n)}
+                >
+                  {n}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <p className="home-info">
+            {actualCount} of {availableCount} questions
+          </p>
+
+          <button
+            className="start-btn"
+            onClick={startQuiz}
+            disabled={selectedCategories.length === 0 || availableCount === 0}
+          >
+            Start
           </button>
         </div>
       </div>
@@ -98,25 +181,26 @@ function App() {
   }
 
   if (screen === 'result') {
-    const percentage = Math.round((score / SAMPLE_QUIZ.length) * 100)
+    const percentage = Math.round((score / quiz.length) * 100)
+    const passed = percentage >= 70
     return (
       <div className="app">
         <div className="result-screen">
-          <h2 className="result-title">퀴즈 완료!</h2>
-          <div className="score-circle">
+          <h2 className="result-title">{passed ? 'Congratulations!' : 'Quiz Complete!'}</h2>
+          <div className={`score-circle ${passed ? 'pass' : ''}`}>
             <span className="score-percent">{percentage}%</span>
           </div>
           <p className="score-detail">
-            {SAMPLE_QUIZ.length}문제 중 {score}문제 정답
+            {score} / {quiz.length} correct
           </p>
-          {percentage >= 70 && <p className="score-message">🎉 훌륭합니다!</p>}
-          {percentage < 70 && <p className="score-message">다음에 다시 도전해보세요!</p>}
+          {passed && <p className="score-message pass">Excellent work!</p>}
+          {!passed && <p className="score-message">Keep trying, you'll get there!</p>}
           <div className="result-actions">
             <button className="start-btn" onClick={startQuiz}>
-              다시하기
+              Retry
             </button>
             <button className="home-btn" onClick={() => setScreen('home')}>
-              홈으로
+              Home
             </button>
           </div>
         </div>
@@ -124,37 +208,44 @@ function App() {
     )
   }
 
-  const quiz = SAMPLE_QUIZ[currentIndex]
+  const q = quiz[currentIndex]
+  const showImage = q.type === 'PIC' && q.image && !imgError
 
   return (
-    <div className="app">
+    <div className="app" ref={topRef}>
       <div className="quiz-screen">
         <div className="quiz-header">
           <span className="quiz-progress">
-            {currentIndex + 1} / {SAMPLE_QUIZ.length}
+            {currentIndex + 1} / {quiz.length}
           </span>
+          <span className="quiz-category">{q.category}</span>
           <button className="quit-btn" onClick={() => setScreen('home')}>
-            그만하기
+            Quit
           </button>
         </div>
 
         <div className="progress-bar">
           <div
             className="progress-fill"
-            style={{ width: `${((currentIndex + 1) / SAMPLE_QUIZ.length) * 100}%` }}
+            style={{ width: `${((currentIndex + 1) / quiz.length) * 100}%` }}
           />
         </div>
 
-        <h2 className="question-text">{quiz.question}</h2>
+        <h2 className="question-text">{q.question}</h2>
 
-        {quiz.image && (
+        {showImage && (
           <div className="question-image-wrapper">
-            <img src={quiz.image} alt="quiz" className="question-image" />
+            <img
+              src={q.image}
+              alt="quiz"
+              className="question-image"
+              onError={() => setImgError(true)}
+            />
           </div>
         )}
 
         <div className="options">
-          {quiz.options.map((option, index) => (
+          {q.options.map((option, index) => (
             <button
               key={index}
               className={getOptionClass(index)}
@@ -168,7 +259,7 @@ function App() {
 
         {answered && (
           <button className="next-btn" onClick={handleNext}>
-            {currentIndex + 1 < SAMPLE_QUIZ.length ? '다음 문제' : '결과 보기'}
+            {currentIndex + 1 < quiz.length ? 'Next' : 'See Results'}
           </button>
         )}
       </div>
