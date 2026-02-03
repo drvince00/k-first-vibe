@@ -52,6 +52,7 @@ function App() {
   const [questionCount, setQuestionCount] = useState(10)
   const [imgError, setImgError] = useState(false)
   const [ready, setReady] = useState(false)
+  const [soundOn, setSoundOn] = useState(() => !/Mobi|Android|iPhone|iPad/i.test(navigator.userAgent))
   const topRef = useRef(null)
 
   useEffect(() => {
@@ -101,9 +102,9 @@ function App() {
     const isCorrect = index === quiz[currentIndex].answer
     if (isCorrect) {
       setScore((prev) => prev + 1)
-      playSound('correct')
+      if (soundOn) playSound('correct')
     } else {
-      playSound('wrong')
+      if (soundOn) playSound('wrong')
     }
   }
 
@@ -231,9 +232,14 @@ function App() {
             {currentIndex + 1} / {quiz.length}
           </span>
           <span className="quiz-category">{q.category}</span>
-          <button className="quit-btn" onClick={() => setScreen('home')}>
-            Quit
-          </button>
+          <div className="quiz-header-right">
+            <button className="sound-toggle" onClick={() => setSoundOn((v) => !v)}>
+              {soundOn ? '🔊' : '🔇'}
+            </button>
+            <button className="quit-btn" onClick={() => setScreen('home')}>
+              Quit
+            </button>
+          </div>
         </div>
 
         <div className="progress-bar">

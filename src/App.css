@@ -160,6 +160,27 @@
   letter-spacing: 0.5px;
 }
 
+.quiz-header-right {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.sound-toggle {
+  padding: 0.3em 0.5em;
+  font-size: 1.1em;
+  background: transparent;
+  border: 1.5px solid #2a2a3e;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+  line-height: 1;
+}
+
+.sound-toggle:hover {
+  border-color: #646cff;
+}
+
 .quit-btn {
   padding: 0.35em 0.9em;
   font-size: 0.8em;
