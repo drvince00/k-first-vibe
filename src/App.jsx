@@ -47,8 +47,8 @@ function App() {
   const [score, setScore] = useState(0)
   const [selected, setSelected] = useState(null)
   const [answered, setAnswered] = useState(false)
-  const [categories, setCategories] = useState([])
-  const [selectedCategories, setSelectedCategories] = useState([])
+  const [categories, setCategories] = useState(['TOPIK', 'FOOD', 'CULTURE'])
+  const [selectedCategories, setSelectedCategories] = useState(['TOPIK', 'FOOD', 'CULTURE'])
   const [questionCount, setQuestionCount] = useState(10)
   const [imgError, setImgError] = useState(false)
   const [ready, setReady] = useState(false)
@@ -179,7 +179,7 @@ function App() {
             onClick={startQuiz}
             disabled={selectedCategories.length === 0 || !ready}
           >
-            Start
+            {!ready ? 'Loading...' : 'Start'}
           </button>
         </div>
       </div>
