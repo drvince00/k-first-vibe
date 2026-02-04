@@ -233,7 +233,7 @@ function App() {
             </div>
           </div>
           <div className="hero-image">
-            <img src="/quiz/rim-sunny-1196278665-23833464.jpg" alt="갈비 먹는 모습" />
+            <img src="/quiz/gyeongbok-palace-2929520_640.jpg" alt="Gyeongbokgung Palace" />
           </div>
         </section>
 
@@ -273,7 +273,7 @@ function App() {
 
         <section className="featured">
           <div className="featured-image">
-            <img src="/quiz/korean-barbecue-8579180_640.jpg" alt="Korean BBQ" />
+            <img src="/quiz/rim-sunny-1196278665-23833464.jpg" alt="Korean BBQ" />
           </div>
           <div className="featured-content">
             <span className="section-tag">
