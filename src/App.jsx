@@ -55,7 +55,6 @@ function App() {
   const [soundOn, setSoundOn] = useState(() => !/Mobi|Android|iPhone|iPad/i.test(navigator.userAgent))
   const [contactEmail, setContactEmail] = useState('')
   const [contactMessage, setContactMessage] = useState('')
-  const [contactFile, setContactFile] = useState(null)
   const [contactStatus, setContactStatus] = useState(null)
   const topRef = useRef(null)
 
@@ -138,21 +137,16 @@ function App() {
   const handleContactSubmit = async (e) => {
     e.preventDefault()
     setContactStatus('sending')
-    const formData = new FormData()
-    formData.append('email', contactEmail)
-    formData.append('message', contactMessage)
-    if (contactFile) formData.append('attachment', contactFile)
     try {
       const res = await fetch('https://formspree.io/f/mgozgrjk', {
         method: 'POST',
-        body: formData,
-        headers: { Accept: 'application/json' },
+        body: JSON.stringify({ email: contactEmail, message: contactMessage }),
+        headers: { Accept: 'application/json', 'Content-Type': 'application/json' },
       })
       if (res.ok) {
         setContactStatus('success')
         setContactEmail('')
         setContactMessage('')
-        setContactFile(null)
       } else {
         setContactStatus('error')
       }
@@ -225,15 +219,6 @@ function App() {
                   onChange={(e) => setContactEmail(e.target.value)}
                   placeholder="your@email.com"
                   required
-                />
-              </label>
-              <label className="contact-label">
-                사진
-                <input
-                  type="file"
-                  className="contact-file"
-                  accept="image/*"
-                  onChange={(e) => setContactFile(e.target.files[0] || null)}
                 />
               </label>
               <label className="contact-label">
