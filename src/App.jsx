@@ -233,7 +233,7 @@ function App() {
             </div>
           </div>
           <div className="hero-image">
-            <img src="/quiz/gyeongbok-palace-2929520_640.jpg" alt="Gyeongbokgung Palace" />
+            <img src="/quiz/rim-sunny-1196278665-23833464.jpg" alt="갈비 먹는 모습" />
           </div>
         </section>
 
