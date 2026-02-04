@@ -126,6 +126,131 @@
   box-shadow: none;
 }
 
+/* ===== Contact Form ===== */
+.contact-section {
+  width: 100%;
+  max-width: 400px;
+  margin-top: 3rem;
+  padding-top: 2rem;
+  border-top: 1px solid #2a2a3e;
+}
+
+.contact-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #646cff;
+  margin: 0 0 1rem;
+  text-align: center;
+}
+
+.contact-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.contact-label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #888;
+}
+
+.contact-input,
+.contact-textarea {
+  padding: 0.7em 0.9em;
+  font-size: 0.95rem;
+  font-family: inherit;
+  background: #13132a;
+  color: #ddd;
+  border: 2px solid #1e1e3a;
+  border-radius: 10px;
+  outline: none;
+  transition: border-color 0.2s;
+  resize: vertical;
+}
+
+.contact-input:focus,
+.contact-textarea:focus {
+  border-color: #646cff;
+}
+
+.contact-input::placeholder,
+.contact-textarea::placeholder {
+  color: #555;
+}
+
+.contact-file {
+  padding: 0.5em 0;
+  font-size: 0.85rem;
+  font-family: inherit;
+  color: #888;
+}
+
+.contact-file::file-selector-button {
+  padding: 0.4em 1em;
+  font-size: 0.85rem;
+  font-family: inherit;
+  font-weight: 600;
+  background: #1a1a2e;
+  color: #aaa;
+  border: 1.5px solid #2a2a3e;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-right: 0.75rem;
+  transition: all 0.2s;
+}
+
+.contact-file::file-selector-button:hover {
+  border-color: #646cff;
+  color: #fff;
+}
+
+.contact-submit {
+  margin-top: 0.5rem;
+  padding: 0.75em 0;
+  font-size: 1em;
+  font-weight: 700;
+  font-family: inherit;
+  background: #646cff;
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.contact-submit:hover {
+  background: #535bf2;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 16px rgba(100, 108, 255, 0.3);
+}
+
+.contact-submit:disabled {
+  background: #333;
+  color: #666;
+  cursor: default;
+  transform: none;
+  box-shadow: none;
+}
+
+.contact-msg {
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-align: center;
+  margin: 0.25rem 0 0;
+}
+
+.contact-msg.success {
+  color: #22c55e;
+}
+
+.contact-msg.error {
+  color: #ef4444;
+}
+
 /* ===== Quiz Screen ===== */
 .quiz-screen {
   flex: 1;
@@ -571,5 +696,27 @@
   .loader {
     border-color: #ddd;
     border-top-color: #646cff;
+  }
+
+  .contact-section {
+    border-top-color: #e0e0e8;
+  }
+
+  .contact-input,
+  .contact-textarea {
+    background: #f8f8fc;
+    border-color: #e0e0e8;
+    color: #333;
+  }
+
+  .contact-input::placeholder,
+  .contact-textarea::placeholder {
+    color: #aaa;
+  }
+
+  .contact-file::file-selector-button {
+    background: #f0f0f8;
+    border-color: #ddd;
+    color: #666;
   }
 }

@@ -53,6 +53,10 @@ function App() {
   const [imgError, setImgError] = useState(false)
   const [ready, setReady] = useState(false)
   const [soundOn, setSoundOn] = useState(() => !/Mobi|Android|iPhone|iPad/i.test(navigator.userAgent))
+  const [contactEmail, setContactEmail] = useState('')
+  const [contactMessage, setContactMessage] = useState('')
+  const [contactFile, setContactFile] = useState(null)
+  const [contactStatus, setContactStatus] = useState(null)
   const topRef = useRef(null)
 
   useEffect(() => {
@@ -131,6 +135,32 @@ function App() {
     setImgError(false)
   }
 
+  const handleContactSubmit = async (e) => {
+    e.preventDefault()
+    setContactStatus('sending')
+    const formData = new FormData()
+    formData.append('email', contactEmail)
+    formData.append('message', contactMessage)
+    if (contactFile) formData.append('attachment', contactFile)
+    try {
+      const res = await fetch('https://formspree.io/f/mgozgrjk', {
+        method: 'POST',
+        body: formData,
+        headers: { Accept: 'application/json' },
+      })
+      if (res.ok) {
+        setContactStatus('success')
+        setContactEmail('')
+        setContactMessage('')
+        setContactFile(null)
+      } else {
+        setContactStatus('error')
+      }
+    } catch {
+      setContactStatus('error')
+    }
+  }
+
   const getOptionClass = (index) => {
     if (!answered) return 'option-btn'
     if (index === quiz[currentIndex].answer) return 'option-btn correct'
@@ -182,6 +212,56 @@ function App() {
           >
             {!ready ? 'Loading...' : 'Start'}
           </button>
+
+          <div className="contact-section">
+            <h3 className="contact-title">관리자에게 문의</h3>
+            <form className="contact-form" onSubmit={handleContactSubmit}>
+              <label className="contact-label">
+                이메일
+                <input
+                  type="email"
+                  className="contact-input"
+                  value={contactEmail}
+                  onChange={(e) => setContactEmail(e.target.value)}
+                  placeholder="your@email.com"
+                  required
+                />
+              </label>
+              <label className="contact-label">
+                사진
+                <input
+                  type="file"
+                  className="contact-file"
+                  accept="image/*"
+                  onChange={(e) => setContactFile(e.target.files[0] || null)}
+                />
+              </label>
+              <label className="contact-label">
+                내용
+                <textarea
+                  className="contact-textarea"
+                  value={contactMessage}
+                  onChange={(e) => setContactMessage(e.target.value)}
+                  placeholder="문의 내용을 입력하세요"
+                  rows={4}
+                  required
+                />
+              </label>
+              <button
+                type="submit"
+                className="contact-submit"
+                disabled={contactStatus === 'sending'}
+              >
+                {contactStatus === 'sending' ? '전송 중...' : '보내기'}
+              </button>
+              {contactStatus === 'success' && (
+                <p className="contact-msg success">문의가 전송되었습니다!</p>
+              )}
+              {contactStatus === 'error' && (
+                <p className="contact-msg error">전송에 실패했습니다. 다시 시도해주세요.</p>
+              )}
+            </form>
+          </div>
         </div>
       </div>
     )
