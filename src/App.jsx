@@ -40,6 +40,12 @@ function shuffle(arr) {
   return a
 }
 
+const CATEGORY_IMAGES = {
+  TOPIK: '/quiz/seoul-3804293_640.jpg',
+  FOOD: '/quiz/bibimbap-1738580_640.jpg',
+  CULTURE: '/quiz/samulnori-7846037_640.jpg',
+}
+
 const CATEGORY_DESC = {
   TOPIK: { en: 'Korean Language', ko: '한국어 능력' },
   FOOD: { en: 'Korean Cuisine', ko: '한국 음식' },
@@ -817,17 +823,6 @@ function App() {
               ? 'Your gateway to Korean culture — from language and food to fashion, traditions, and everyday life in Korea.'
               : '한국어, 음식, 패션, 전통 그리고 일상까지 — 한국 문화를 향한 당신의 관문입니다.'}
           </p>
-          <div className="hero-actions">
-            <button
-              className="btn-primary"
-              onClick={() => {
-                const el = document.getElementById('quiz-section')
-                el?.scrollIntoView({ behavior: 'smooth' })
-              }}
-            >
-              {lang === 'en' ? 'EXPLORE NOW' : '탐험하기'}
-            </button>
-          </div>
         </div>
         <div className="hero-image">
           <img src="/quiz/gyeongbok-palace-2929520_640.jpg" alt="Gyeongbokgung Palace in Seoul, Korea" loading="lazy" />
@@ -853,23 +848,30 @@ function App() {
               : '카테고리와 문제 수를 선택하고 여행을 시작하세요.'}
           </p>
 
-          <div className="category-checkboxes">
+          <div className="category-mini-cards">
             {categories.map((cat) => (
-              <label
+              <div
                 key={cat}
-                className={`category-check ${selectedCategories.includes(cat) ? 'checked' : ''}`}
+                className={`category-mini-card ${selectedCategories.includes(cat) ? 'selected' : ''}`}
                 onClick={() => toggleCategory(cat)}
               >
-                <span className="check-circle">
-                  {selectedCategories.includes(cat) && (
+                {selectedCategories.includes(cat) && (
+                  <span className="mini-card-check">
                     <svg viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
                       <polyline points="20 6 9 17 4 12" />
                     </svg>
-                  )}
-                </span>
-                <span className="check-label">{cat}</span>
-                <span className="check-desc">{CATEGORY_DESC[cat]?.[lang]}</span>
-              </label>
+                  </span>
+                )}
+                <img
+                  src={CATEGORY_IMAGES[cat]}
+                  alt={`${cat} - ${CATEGORY_DESC[cat]?.en}`}
+                  loading="lazy"
+                />
+                <div className="mini-card-info">
+                  <h3>{cat}</h3>
+                  <p>{CATEGORY_DESC[cat]?.[lang]}</p>
+                </div>
+              </div>
             ))}
           </div>
 

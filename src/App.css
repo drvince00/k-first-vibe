@@ -192,69 +192,78 @@
   margin: 0 auto 2.5rem;
 }
 
-/* ===== Category Checkboxes (compact) ===== */
-.category-checkboxes {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
+/* ===== Category Mini Cards ===== */
+.category-mini-cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.6rem;
   margin: 0.25rem 0;
 }
 
-.category-check {
-  display: flex;
-  align-items: center;
-  gap: 0.6rem;
-  padding: 0.5rem 0.75rem;
-  background: #F0EBE3;
-  border: 1.5px solid #E8E0D8;
-  border-radius: 10px;
+.category-mini-card {
+  position: relative;
+  border-radius: 8px;
+  overflow: hidden;
   cursor: pointer;
-  transition: all 0.2s;
-  user-select: none;
+  transition: all 0.25s;
+  background: #FAF7F3;
+  border: 2px solid transparent;
 }
 
-.category-check:hover {
+.category-mini-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.category-mini-card.selected {
   border-color: #A67C52;
+  box-shadow: 0 2px 10px rgba(166, 124, 82, 0.2);
 }
 
-.category-check.checked {
-  background: #FBF8F4;
-  border-color: #A67C52;
+.category-mini-card img {
+  width: 100%;
+  height: 55px;
+  object-fit: cover;
+  display: block;
 }
 
-.check-circle {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 22px;
-  height: 22px;
-  border-radius: 50%;
-  border: 2px solid #C4B5A6;
-  flex-shrink: 0;
-  transition: all 0.2s;
+.mini-card-info {
+  padding: 0.35rem 0.4rem;
+  text-align: left;
 }
 
-.category-check.checked .check-circle {
-  background: #D9534F;
-  border-color: #D9534F;
-}
-
-.check-circle svg {
-  width: 14px;
-  height: 14px;
-}
-
-.check-label {
-  font-size: 0.88rem;
+.mini-card-info h3 {
+  font-size: 0.65rem;
   font-weight: 700;
   color: #2C2421;
+  margin: 0;
   letter-spacing: 0.5px;
 }
 
-.check-desc {
-  font-size: 0.78rem;
+.mini-card-info p {
+  font-size: 0.55rem;
   color: #9E8E7E;
-  margin-left: auto;
+  margin: 0;
+  line-height: 1.3;
+}
+
+.mini-card-check {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 18px;
+  height: 18px;
+  background: #D9534F;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
+}
+
+.mini-card-check svg {
+  width: 12px;
+  height: 12px;
 }
 
 /* ===== Featured Section ===== */
@@ -940,10 +949,10 @@
     height: 280px;
   }
 
-  .hero-actions {
-    justify-content: center;
+  .category-mini-cards {
+    max-width: 320px;
+    margin: 0.25rem auto;
   }
-
 
   .featured {
     grid-template-columns: 1fr;
