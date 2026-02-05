@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  <url>
+    <loc>https://kculturecat.cc/</loc>
+    <lastmod>2026-02-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://kculturecat.cc/" />
+    <xhtml:link rel="alternate" hreflang="ko" href="https://kculturecat.cc/" />
+  </url>
+  <url>
+    <loc>https://kculturecat.cc/about</loc>
+    <lastmod>2026-02-05</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://kculturecat.cc/about" />
+    <xhtml:link rel="alternate" hreflang="ko" href="https://kculturecat.cc/about" />
+  </url>
+  <url>
+    <loc>https://kculturecat.cc/privacy</loc>
+    <lastmod>2026-02-05</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.5</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://kculturecat.cc/privacy" />
+    <xhtml:link rel="alternate" hreflang="ko" href="https://kculturecat.cc/privacy" />
+  </url>
+  <url>
+    <loc>https://kculturecat.cc/terms</loc>
+    <lastmod>2026-02-05</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.5</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://kculturecat.cc/terms" />
+    <xhtml:link rel="alternate" hreflang="ko" href="https://kculturecat.cc/terms" />
+  </url>
+</urlset>

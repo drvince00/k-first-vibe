@@ -26,7 +26,8 @@
   font-weight: 700;
   color: #2C2421;
   letter-spacing: 2px;
-  cursor: default;
+  cursor: pointer;
+  text-decoration: none;
 }
 
 .logo-italic {
@@ -53,6 +54,7 @@
   padding: 0.4em 0;
   transition: color 0.2s;
   letter-spacing: 0.5px;
+  text-decoration: none;
 }
 
 .nav-link:hover {
@@ -403,8 +405,115 @@
   border-top: 1px solid #E8E0D8;
 }
 
-.footer p {
+.footer-links {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.footer-link {
+  background: none;
+  border: none;
+  font-size: 0.85rem;
+  font-family: inherit;
+  color: #9E8E7E;
+  cursor: pointer;
+  padding: 0.2em 0.4em;
+  transition: color 0.2s;
+  text-decoration: none;
+}
+
+.footer-link:hover {
+  color: #A67C52;
+}
+
+.footer-divider {
+  color: #E8E0D8;
+  user-select: none;
+}
+
+.footer-copy {
   margin: 0;
+}
+
+/* ===== Page Content (About, Privacy, Terms) ===== */
+.page-content {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 3rem 2rem 4rem;
+}
+
+.page-title {
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: clamp(1.5rem, 3vw, 2.2rem);
+  font-weight: 700;
+  color: #2C2421;
+  margin: 0 0 0.5rem;
+  line-height: 1.3;
+}
+
+.page-updated {
+  font-size: 0.85rem;
+  color: #9E8E7E;
+  margin: 0 0 2rem;
+}
+
+.page-section {
+  margin-bottom: 2rem;
+}
+
+.page-section h2 {
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #2C2421;
+  margin: 0 0 0.75rem;
+}
+
+.page-section p {
+  font-size: 0.95rem;
+  line-height: 1.7;
+  color: #5C4F44;
+  margin: 0 0 0.75rem;
+}
+
+.page-section ul {
+  margin: 0.5rem 0 1rem;
+  padding-left: 1.5rem;
+}
+
+.page-section li {
+  font-size: 0.95rem;
+  line-height: 1.7;
+  color: #5C4F44;
+  margin-bottom: 0.5rem;
+}
+
+.page-section a {
+  color: #A67C52;
+  text-decoration: underline;
+}
+
+.page-section a:hover {
+  color: #8B6641;
+}
+
+.inline-link {
+  background: none;
+  border: none;
+  font-size: inherit;
+  font-family: inherit;
+  color: #A67C52;
+  text-decoration: underline;
+  cursor: pointer;
+  padding: 0;
+}
+
+.inline-link:hover {
+  color: #8B6641;
 }
 
 /* ========================================
@@ -514,6 +623,7 @@
   border-radius: 8px;
   cursor: pointer;
   transition: all 0.2s;
+  text-decoration: none;
 }
 
 .quit-btn:hover {
@@ -777,6 +887,7 @@
   border-radius: 28px;
   cursor: pointer;
   transition: all 0.2s;
+  text-decoration: none;
 }
 
 .result-btn.primary {
@@ -905,6 +1016,10 @@
 
   .contact-section-home {
     padding: 2rem 1rem;
+  }
+
+  .page-content {
+    padding: 2rem 1rem 3rem;
   }
 
   /* Quiz screen mobile */
