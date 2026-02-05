@@ -107,6 +107,44 @@ function App() {
     document.documentElement.lang = lang === 'ko' ? 'ko' : 'en'
   }, [lang])
 
+  // Per-page SEO: update title and meta description based on route
+  useEffect(() => {
+    const seo = {
+      '/': {
+        en: { title: 'K-Culture Cat - Korean Culture Quiz | 522+ Questions', desc: 'Discover Korean culture through 522+ interactive quizzes about TOPIK, Korean food, and traditions. Test your knowledge of Korean language, cuisine, and heritage.' },
+        ko: { title: 'K-Culture Cat - 한국 문화 퀴즈 | 522개 이상의 문제', desc: '한국어 TOPIK, 한국 음식, 전통 문화에 대한 522개 이상의 인터랙티브 퀴즈로 한국 문화를 발견하세요.' }
+      },
+      '/about': {
+        en: { title: 'About K-Culture Cat - Our Mission & Team', desc: 'Learn about K-Culture Cat, an independent educational platform helping people worldwide discover Korean culture through interactive quizzes and content.' },
+        ko: { title: 'K-Culture Cat 소개 - 미션 및 팀', desc: '인터랙티브 퀴즈와 콘텐츠를 통해 전 세계인이 한국 문화를 발견할 수 있도록 돕는 독립 교육 플랫폼 K-Culture Cat을 소개합니다.' }
+      },
+      '/privacy': {
+        en: { title: 'Privacy Policy - K-Culture Cat', desc: 'Read K-Culture Cat\'s privacy policy. Learn how we collect, use, and protect your personal information on our Korean culture quiz platform.' },
+        ko: { title: '개인정보처리방침 - K-Culture Cat', desc: 'K-Culture Cat의 개인정보처리방침을 확인하세요. 한국 문화 퀴즈 플랫폼에서 개인정보를 어떻게 수집, 사용, 보호하는지 안내합니다.' }
+      },
+      '/terms': {
+        en: { title: 'Terms of Service - K-Culture Cat', desc: 'Review K-Culture Cat\'s terms of service for using our Korean culture quiz platform, including usage guidelines and content policies.' },
+        ko: { title: '이용약관 - K-Culture Cat', desc: '한국 문화 퀴즈 플랫폼 K-Culture Cat의 이용약관을 확인하세요.' }
+      },
+      '/quiz': {
+        en: { title: 'Quiz - K-Culture Cat', desc: 'Take the Korean culture quiz now! Test your knowledge of TOPIK, Korean food, and traditions.' },
+        ko: { title: '퀴즈 - K-Culture Cat', desc: '지금 한국 문화 퀴즈에 도전하세요! TOPIK, 한국 음식, 전통에 대한 지식을 테스트하세요.' }
+      },
+      '/result': {
+        en: { title: 'Quiz Result - K-Culture Cat', desc: 'View your Korean culture quiz results. See your score and try again to improve!' },
+        ko: { title: '퀴즈 결과 - K-Culture Cat', desc: '한국 문화 퀴즈 결과를 확인하세요. 점수를 확인하고 다시 도전하세요!' }
+      }
+    }
+    const page = seo[location.pathname] || seo['/']
+    const l = lang === 'ko' ? 'ko' : 'en'
+    document.title = page[l].title
+    document.querySelector('meta[name="description"]')?.setAttribute('content', page[l].desc)
+    document.querySelector('link[rel="canonical"]')?.setAttribute('href', 'https://kculturecat.cc' + (location.pathname === '/' ? '/' : location.pathname))
+    document.querySelector('meta[property="og:title"]')?.setAttribute('content', page[l].title)
+    document.querySelector('meta[property="og:description"]')?.setAttribute('content', page[l].desc)
+    document.querySelector('meta[property="og:url"]')?.setAttribute('content', 'https://kculturecat.cc' + (location.pathname === '/' ? '/' : location.pathname))
+  }, [location.pathname, lang])
+
   useEffect(() => {
     fetch('/quizData.json')
       .then((res) => res.json())
@@ -825,7 +863,7 @@ function App() {
           </p>
         </div>
         <div className="hero-image">
-          <img src="/quiz/gyeongbok-palace-2929520_640.jpg" alt="Gyeongbokgung Palace in Seoul, Korea" loading="lazy" />
+          <img src="/quiz/gyeongbok-palace-2929520_640.jpg" alt="Gyeongbokgung Palace in Seoul, Korea" />
         </div>
       </header>
 

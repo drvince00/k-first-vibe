@@ -10,7 +10,6 @@
     <title>K-Culture Cat - Korean Culture Hub | 한국 문화 허브</title>
     <meta name="description" content="Discover Korean culture through 522+ interactive quizzes about TOPIK, Korean food, and traditions. Test your knowledge of Korean language, cuisine, and heritage." />
     <link rel="canonical" href="https://kculturecat.cc/" />
-    <meta name="keywords" content="Korean culture quiz, TOPIK quiz, Korean food quiz, Korean language, Korean traditions, Korean heritage, learn Korean, 한국 문화 퀴즈, 한국어 퀴즈" />
     <meta name="author" content="K-Culture Cat" />
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
     <meta name="theme-color" content="#1a1511" />
@@ -62,7 +61,12 @@
       "alternateName": "K-Culture Cat Korean Culture Hub",
       "url": "https://kculturecat.cc/",
       "description": "Discover Korean culture through 522+ interactive quizzes about TOPIK, Korean food, and traditions",
-      "inLanguage": ["en", "ko"]
+      "inLanguage": ["en", "ko"],
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": "https://kculturecat.cc/?q={search_term_string}",
+        "query-input": "required name=search_term_string"
+      }
     }
     </script>
 
@@ -135,6 +139,48 @@
         { "@type": "ListItem", "position": 2, "name": "About", "item": "https://kculturecat.cc/about" },
         { "@type": "ListItem", "position": 3, "name": "Privacy Policy", "item": "https://kculturecat.cc/privacy" },
         { "@type": "ListItem", "position": 4, "name": "Terms of Service", "item": "https://kculturecat.cc/terms" }
+      ]
+    }
+    </script>
+
+    <!-- Structured Data: FAQPage -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "What is K-Culture Cat?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "K-Culture Cat is a free interactive quiz platform with 522+ questions about Korean culture, covering TOPIK Korean language, Korean food, and traditions & heritage."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How many quiz categories are available?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "There are 3 categories: TOPIK (Korean Language), Korean Cuisine (Food), and Traditions & Heritage (Culture). You can select one or more categories per quiz session."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Is K-Culture Cat free to use?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes, K-Culture Cat is completely free. No account registration is required. Simply choose your categories, pick the number of questions, and start quizzing."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What score do I need to pass the quiz?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "You need to score 70% or higher to pass. Each quiz session draws from a randomized pool of 522+ questions, so every experience is unique."
+          }
+        }
       ]
     }
     </script>
