@@ -30,13 +30,6 @@
   text-decoration: none;
 }
 
-.logo-italic {
-  font-style: italic;
-  font-weight: 400;
-  font-family: Georgia, 'Times New Roman', serif;
-  letter-spacing: 0;
-  margin-right: 3px;
-}
 
 .nav-menu {
   display: flex;
@@ -105,9 +98,9 @@
 }
 
 .hero-title {
-  font-family: Georgia, 'Times New Roman', serif;
+  font-family: 'Nunito', sans-serif;
   font-size: clamp(2rem, 4vw, 3.2rem);
-  font-weight: 700;
+  font-weight: 900;
   line-height: 1.15;
   color: #2C2421;
   margin: 0;
@@ -199,64 +192,69 @@
   margin: 0 auto 2.5rem;
 }
 
-/* ===== Category Section ===== */
-.category-section {
-  background: #FFFFFF;
-  padding: 4rem 2rem;
-  text-align: center;
+/* ===== Category Checkboxes (compact) ===== */
+.category-checkboxes {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin: 0.25rem 0;
 }
 
-.category-cards {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 1.5rem;
-  max-width: 900px;
-  margin: 0 auto;
-}
-
-.category-card {
-  border-radius: 12px;
-  overflow: hidden;
+.category-check {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.5rem 0.75rem;
+  background: #F0EBE3;
+  border: 1.5px solid #E8E0D8;
+  border-radius: 10px;
   cursor: pointer;
-  transition: all 0.3s;
-  background: #FAF7F3;
-  border: 2px solid transparent;
+  transition: all 0.2s;
+  user-select: none;
 }
 
-.category-card.selected {
+.category-check:hover {
   border-color: #A67C52;
-  box-shadow: 0 4px 20px rgba(166, 124, 82, 0.2);
 }
 
-.category-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+.category-check.checked {
+  background: #FBF8F4;
+  border-color: #A67C52;
 }
 
-.category-card img {
-  width: 100%;
-  height: 180px;
-  object-fit: cover;
-  display: block;
+.check-circle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 2px solid #C4B5A6;
+  flex-shrink: 0;
+  transition: all 0.2s;
 }
 
-.card-info {
-  padding: 1rem;
-  text-align: left;
+.category-check.checked .check-circle {
+  background: #D9534F;
+  border-color: #D9534F;
 }
 
-.card-info h3 {
-  font-size: 1rem;
+.check-circle svg {
+  width: 14px;
+  height: 14px;
+}
+
+.check-label {
+  font-size: 0.88rem;
   font-weight: 700;
   color: #2C2421;
-  margin: 0 0 0.25rem;
-  letter-spacing: 1px;
+  letter-spacing: 0.5px;
 }
 
-.card-info p {
-  font-size: 0.85rem;
+.check-desc {
+  font-size: 0.78rem;
   color: #9E8E7E;
-  margin: 0;
+  margin-left: auto;
 }
 
 /* ===== Featured Section ===== */
@@ -663,7 +661,7 @@
 
 /* Question */
 .question-text {
-  font-size: clamp(1rem, 2.8vw, 1.2rem);
+  font-size: clamp(1.15rem, 3.2vw, 1.45rem);
   font-weight: 600;
   line-height: 1.7;
   margin: 0 0 1rem 0;
@@ -946,11 +944,6 @@
     justify-content: center;
   }
 
-  .category-cards {
-    grid-template-columns: 1fr;
-    max-width: 400px;
-    margin: 0 auto;
-  }
 
   .featured {
     grid-template-columns: 1fr;
@@ -1002,9 +995,6 @@
     height: 220px;
   }
 
-  .category-section {
-    padding: 2.5rem 1rem;
-  }
 
   .featured {
     padding: 2rem 1rem;
@@ -1028,7 +1018,7 @@
   }
 
   .question-text {
-    font-size: 0.95rem;
+    font-size: 1.05rem;
   }
 
   .option-btn {

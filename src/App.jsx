@@ -40,12 +40,6 @@ function shuffle(arr) {
   return a
 }
 
-const CATEGORY_IMAGES = {
-  TOPIK: '/quiz/seoul-3804293_640.jpg',
-  FOOD: '/quiz/bibimbap-1738580_640.jpg',
-  CULTURE: '/quiz/samulnori-7846037_640.jpg',
-}
-
 const CATEGORY_DESC = {
   TOPIK: { en: 'Korean Language', ko: '한국어 능력' },
   FOOD: { en: 'Korean Cuisine', ko: '한국 음식' },
@@ -56,20 +50,13 @@ function Footer({ lang }) {
   return (
     <footer className="footer">
       <div className="footer-links">
-        <Link to="/about" className="footer-link">
-          {lang === 'en' ? 'About' : '소개'}
-        </Link>
+        <Link to="/about" className="footer-link">About</Link>
         <span className="footer-divider">|</span>
-        <Link to="/#contact-section" className="footer-link" onClick={(e) => {
+        <Link to="/about#contact-section" className="footer-link" onClick={(e) => {
           e.preventDefault()
-          const el = document.getElementById('contact-section')
-          if (el) {
-            el.scrollIntoView({ behavior: 'smooth' })
-          } else {
-            window.location.href = '/#contact-section'
-          }
+          window.location.href = '/about#contact-section'
         }}>
-          {lang === 'en' ? 'Contact' : '문의'}
+          Contact
         </Link>
         <span className="footer-divider">|</span>
         <Link to="/privacy" className="footer-link">
@@ -80,7 +67,7 @@ function Footer({ lang }) {
           {lang === 'en' ? 'Terms of Service' : '이용약관'}
         </Link>
       </div>
-      <p className="footer-copy">&copy; 2026 K-First Vibe</p>
+      <p className="footer-copy">&copy; 2026 K-Culture Cat</p>
     </footer>
   )
 }
@@ -127,8 +114,15 @@ function App() {
   }, [])
 
   useEffect(() => {
-    window.scrollTo(0, 0)
-  }, [location.pathname])
+    if (location.hash === '#contact-section') {
+      setTimeout(() => {
+        const el = document.getElementById('contact-section')
+        el?.scrollIntoView({ behavior: 'smooth' })
+      }, 100)
+    } else {
+      window.scrollTo(0, 0)
+    }
+  }, [location.pathname, location.hash])
 
   const buildQuiz = useCallback(() => {
     let filtered = allQuiz.filter((q) => selectedCategories.includes(q.category))
@@ -222,8 +216,6 @@ function App() {
     return 'option-btn disabled'
   }
 
-  const totalQuestions = allQuiz.length
-
   const langToggle = (
     <button
       className="lang-toggle"
@@ -233,24 +225,72 @@ function App() {
     </button>
   )
 
-  // ===== ABOUT PAGE =====
+  // Shared contact form JSX
+  const contactForm = (
+    <section className="contact-section-home" id="contact-section">
+      <h3 className="contact-title">
+        {lang === 'en' ? 'Contact Us' : '관리자에게 문의'}
+      </h3>
+      <form className="contact-form" onSubmit={handleContactSubmit}>
+        <label className="contact-label">
+          {lang === 'en' ? 'Email' : '이메일'}
+          <input
+            type="email"
+            className="contact-input"
+            value={contactEmail}
+            onChange={(e) => setContactEmail(e.target.value)}
+            placeholder="your@email.com"
+            required
+          />
+        </label>
+        <label className="contact-label">
+          {lang === 'en' ? 'Message' : '내용'}
+          <textarea
+            className="contact-textarea"
+            value={contactMessage}
+            onChange={(e) => setContactMessage(e.target.value)}
+            placeholder={lang === 'en' ? 'Write your message here' : '문의 내용을 입력하세요'}
+            rows={4}
+            required
+          />
+        </label>
+        <button
+          type="submit"
+          className="btn-primary contact-submit-btn"
+          disabled={contactStatus === 'sending'}
+        >
+          {contactStatus === 'sending'
+            ? lang === 'en' ? 'Sending...' : '전송 중...'
+            : lang === 'en' ? 'SEND MESSAGE' : '보내기'}
+        </button>
+        {contactStatus === 'success' && (
+          <p className="contact-msg success">
+            {lang === 'en' ? 'Message sent successfully!' : '문의가 전송되었습니다!'}
+          </p>
+        )}
+        {contactStatus === 'error' && (
+          <p className="contact-msg error">
+            {lang === 'en' ? 'Failed to send. Please try again.' : '전송에 실패했습니다. 다시 시도해주세요.'}
+          </p>
+        )}
+      </form>
+    </section>
+  )
+
+  // ===== ABOUT PAGE (now includes Contact Us) =====
   const AboutPage = () => (
     <div className="home-page">
       <nav className="navbar">
-        <Link to="/" className="nav-logo">
-          <span className="logo-italic">the</span> K-VIBE
-        </Link>
+        <Link to="/" className="nav-logo">K-Culture Cat</Link>
         <div className="nav-menu">
-          <Link to="/" className="nav-link">
-            {lang === 'en' ? 'Home' : '홈'}
-          </Link>
+          <Link to="/" className="nav-link">Home</Link>
           {langToggle}
         </div>
       </nav>
 
       <main className="page-content">
         <h1 className="page-title">
-          {lang === 'en' ? 'About K-First Vibe' : 'K-First Vibe 소개'}
+          {lang === 'en' ? 'About K-Culture Cat' : 'K-Culture Cat 소개'}
         </h1>
 
         {lang === 'en' ? (
@@ -258,8 +298,8 @@ function App() {
             <section className="page-section">
               <h2>Our Mission</h2>
               <p>
-                K-First Vibe is dedicated to helping people around the world discover and appreciate
-                Korean culture through fun, interactive quizzes. We believe that learning about another
+                K-Culture Cat is dedicated to helping people around the world discover and appreciate
+                Korean culture through fun, interactive content. We believe that learning about another
                 culture should be engaging, accessible, and enjoyable.
               </p>
             </section>
@@ -267,8 +307,8 @@ function App() {
             <section className="page-section">
               <h2>What We Offer</h2>
               <p>
-                Our platform features <strong>{totalQuestions || '522'}+ original quiz questions</strong> across
-                three carefully curated categories:
+                Our platform features interactive quizzes, cultural guides, and curated content across
+                multiple categories:
               </p>
               <ul>
                 <li><strong>TOPIK (Korean Language)</strong> — Test your Korean language skills with vocabulary, grammar, and reading comprehension questions inspired by the official TOPIK exam.</li>
@@ -289,8 +329,8 @@ function App() {
             <section className="page-section">
               <h2>Who We Are</h2>
               <p>
-                K-First Vibe is an independent educational platform created by Korean culture enthusiasts.
-                All quiz content is originally written and carefully reviewed for accuracy. Our goal is to
+                K-Culture Cat is an independent educational platform created by Korean culture enthusiasts.
+                All content is originally written and carefully reviewed for accuracy. Our goal is to
                 be the most engaging way to learn about Korea online.
               </p>
             </section>
@@ -300,7 +340,7 @@ function App() {
             <section className="page-section">
               <h2>미션</h2>
               <p>
-                K-First Vibe는 재미있고 인터랙티브한 퀴즈를 통해 전 세계 사람들이 한국 문화를
+                K-Culture Cat은 재미있고 인터랙티브한 콘텐츠를 통해 전 세계 사람들이 한국 문화를
                 발견하고 감상할 수 있도록 돕는 데 전념하고 있습니다. 다른 문화에 대해 배우는 것은
                 흥미롭고, 접근하기 쉽고, 즐거워야 한다고 믿습니다.
               </p>
@@ -309,8 +349,7 @@ function App() {
             <section className="page-section">
               <h2>제공 내용</h2>
               <p>
-                본 플랫폼은 세 가지 카테고리에 걸쳐 <strong>{totalQuestions || '522'}개 이상의 독창적인 퀴즈 문제</strong>를
-                제공합니다:
+                본 플랫폼은 인터랙티브 퀴즈, 문화 가이드 등 다양한 카테고리의 콘텐츠를 제공합니다:
               </p>
               <ul>
                 <li><strong>TOPIK (한국어 능력)</strong> — 공식 TOPIK 시험을 참고한 어휘, 문법, 독해 문제로 한국어 실력을 테스트하세요.</li>
@@ -331,14 +370,16 @@ function App() {
             <section className="page-section">
               <h2>소개</h2>
               <p>
-                K-First Vibe는 한국 문화 애호가들이 만든 독립적인 교육 플랫폼입니다.
-                모든 퀴즈 콘텐츠는 독창적으로 작성되었으며 정확성을 위해 신중하게 검토됩니다.
+                K-Culture Cat은 한국 문화 애호가들이 만든 독립적인 교육 플랫폼입니다.
+                모든 콘텐츠는 독창적으로 작성되었으며 정확성을 위해 신중하게 검토됩니다.
                 온라인에서 한국에 대해 배울 수 있는 가장 매력적인 방법이 되는 것이 목표입니다.
               </p>
             </section>
           </article>
         )}
       </main>
+
+      {contactForm}
 
       <Footer lang={lang} />
     </div>
@@ -348,13 +389,9 @@ function App() {
   const PrivacyPage = () => (
     <div className="home-page">
       <nav className="navbar">
-        <Link to="/" className="nav-logo">
-          <span className="logo-italic">the</span> K-VIBE
-        </Link>
+        <Link to="/" className="nav-logo">K-Culture Cat</Link>
         <div className="nav-menu">
-          <Link to="/" className="nav-link">
-            {lang === 'en' ? 'Home' : '홈'}
-          </Link>
+          <Link to="/" className="nav-link">Home</Link>
           {langToggle}
         </div>
       </nav>
@@ -372,9 +409,9 @@ function App() {
             <section className="page-section">
               <h2>Information We Collect</h2>
               <p>
-                K-First Vibe collects minimal personal information. When you use our contact form,
+                K-Culture Cat collects minimal personal information. When you use our contact form,
                 we collect your email address and the message you send. We do not require account
-                registration to use our quiz service.
+                registration to use our service.
               </p>
             </section>
 
@@ -383,7 +420,7 @@ function App() {
               <p>We use the information we collect to:</p>
               <ul>
                 <li>Respond to your inquiries and feedback submitted through our contact form</li>
-                <li>Improve and maintain our quiz platform</li>
+                <li>Improve and maintain our platform</li>
                 <li>Analyze usage patterns to enhance user experience</li>
               </ul>
             </section>
@@ -442,16 +479,7 @@ function App() {
               <h2>Contact Us</h2>
               <p>
                 If you have any questions about this Privacy Policy, please contact us through our{' '}
-                <Link to="/#contact-section" className="inline-link" onClick={(e) => {
-                  e.preventDefault()
-                  navigate('/')
-                  setTimeout(() => {
-                    const el = document.getElementById('contact-section')
-                    el?.scrollIntoView({ behavior: 'smooth' })
-                  }, 100)
-                }}>
-                  contact form
-                </Link>.
+                <Link to="/about#contact-section" className="inline-link">contact form</Link>.
               </p>
             </section>
           </article>
@@ -460,8 +488,8 @@ function App() {
             <section className="page-section">
               <h2>수집하는 정보</h2>
               <p>
-                K-First Vibe는 최소한의 개인정보만 수집합니다. 문의 양식을 사용할 때
-                이메일 주소와 보내신 메시지를 수집합니다. 퀴즈 서비스를 이용하기 위해
+                K-Culture Cat은 최소한의 개인정보만 수집합니다. 문의 양식을 사용할 때
+                이메일 주소와 보내신 메시지를 수집합니다. 서비스를 이용하기 위해
                 회원가입이 필요하지 않습니다.
               </p>
             </section>
@@ -471,7 +499,7 @@ function App() {
               <p>수집된 정보는 다음과 같이 사용됩니다:</p>
               <ul>
                 <li>문의 양식을 통해 제출된 문의 및 피드백에 대한 응답</li>
-                <li>퀴즈 플랫폼 개선 및 유지</li>
+                <li>플랫폼 개선 및 유지</li>
                 <li>사용자 경험 향상을 위한 사용 패턴 분석</li>
               </ul>
             </section>
@@ -529,16 +557,7 @@ function App() {
               <h2>문의</h2>
               <p>
                 본 개인정보처리방침에 대한 질문이 있으시면{' '}
-                <Link to="/#contact-section" className="inline-link" onClick={(e) => {
-                  e.preventDefault()
-                  navigate('/')
-                  setTimeout(() => {
-                    const el = document.getElementById('contact-section')
-                    el?.scrollIntoView({ behavior: 'smooth' })
-                  }, 100)
-                }}>
-                  문의 양식
-                </Link>을 통해 연락해 주세요.
+                <Link to="/about#contact-section" className="inline-link">문의 양식</Link>을 통해 연락해 주세요.
               </p>
             </section>
           </article>
@@ -553,13 +572,9 @@ function App() {
   const TermsPage = () => (
     <div className="home-page">
       <nav className="navbar">
-        <Link to="/" className="nav-logo">
-          <span className="logo-italic">the</span> K-VIBE
-        </Link>
+        <Link to="/" className="nav-logo">K-Culture Cat</Link>
         <div className="nav-menu">
-          <Link to="/" className="nav-link">
-            {lang === 'en' ? 'Home' : '홈'}
-          </Link>
+          <Link to="/" className="nav-link">Home</Link>
           {langToggle}
         </div>
       </nav>
@@ -577,7 +592,7 @@ function App() {
             <section className="page-section">
               <h2>Acceptance of Terms</h2>
               <p>
-                By accessing and using K-First Vibe, you accept and agree to be bound by these Terms of
+                By accessing and using K-Culture Cat, you accept and agree to be bound by these Terms of
                 Service. If you do not agree to these terms, please do not use our service.
               </p>
             </section>
@@ -585,7 +600,7 @@ function App() {
             <section className="page-section">
               <h2>Description of Service</h2>
               <p>
-                K-First Vibe provides an interactive quiz platform focused on Korean culture, including
+                K-Culture Cat provides an interactive platform focused on Korean culture, including
                 Korean language (TOPIK), cuisine, and traditions. The service is provided free of charge
                 and supported by advertising.
               </p>
@@ -597,7 +612,7 @@ function App() {
               <ul>
                 <li>Use the service for lawful purposes only</li>
                 <li>Not attempt to disrupt or interfere with the service's functionality</li>
-                <li>Not reproduce, distribute, or create derivative works from our quiz content without permission</li>
+                <li>Not reproduce, distribute, or create derivative works from our content without permission</li>
                 <li>Provide accurate information when using the contact form</li>
               </ul>
             </section>
@@ -605,8 +620,8 @@ function App() {
             <section className="page-section">
               <h2>Intellectual Property</h2>
               <p>
-                All quiz content, including questions, answers, images, and design elements, is the
-                intellectual property of K-First Vibe. Unauthorized reproduction, distribution, or
+                All content, including questions, answers, images, and design elements, is the
+                intellectual property of K-Culture Cat. Unauthorized reproduction, distribution, or
                 modification is prohibited.
               </p>
             </section>
@@ -614,9 +629,9 @@ function App() {
             <section className="page-section">
               <h2>Disclaimer of Warranties</h2>
               <p>
-                K-First Vibe is provided "as is" without any warranties, express or implied. We do not
-                guarantee that the service will be uninterrupted, error-free, or that quiz content is
-                free from inaccuracies. The quiz results are for educational and entertainment purposes
+                K-Culture Cat is provided "as is" without any warranties, express or implied. We do not
+                guarantee that the service will be uninterrupted, error-free, or that content is
+                free from inaccuracies. The results are for educational and entertainment purposes
                 only and do not constitute official certification.
               </p>
             </section>
@@ -624,7 +639,7 @@ function App() {
             <section className="page-section">
               <h2>Limitation of Liability</h2>
               <p>
-                K-First Vibe shall not be liable for any indirect, incidental, special, or consequential
+                K-Culture Cat shall not be liable for any indirect, incidental, special, or consequential
                 damages arising from your use of or inability to use the service.
               </p>
             </section>
@@ -650,16 +665,7 @@ function App() {
               <h2>Contact</h2>
               <p>
                 For questions about these Terms of Service, please use our{' '}
-                <Link to="/#contact-section" className="inline-link" onClick={(e) => {
-                  e.preventDefault()
-                  navigate('/')
-                  setTimeout(() => {
-                    const el = document.getElementById('contact-section')
-                    el?.scrollIntoView({ behavior: 'smooth' })
-                  }, 100)
-                }}>
-                  contact form
-                </Link>.
+                <Link to="/about#contact-section" className="inline-link">contact form</Link>.
               </p>
             </section>
           </article>
@@ -668,7 +674,7 @@ function App() {
             <section className="page-section">
               <h2>약관 동의</h2>
               <p>
-                K-First Vibe에 접속하고 사용함으로써 본 이용약관에 동의하는 것으로 간주합니다.
+                K-Culture Cat에 접속하고 사용함으로써 본 이용약관에 동의하는 것으로 간주합니다.
                 본 약관에 동의하지 않으시면 서비스를 이용하지 마시기 바랍니다.
               </p>
             </section>
@@ -676,8 +682,8 @@ function App() {
             <section className="page-section">
               <h2>서비스 설명</h2>
               <p>
-                K-First Vibe는 한국어(TOPIK), 음식, 전통 등 한국 문화에 초점을 맞춘 인터랙티브
-                퀴즈 플랫폼을 제공합니다. 서비스는 무료로 제공되며 광고로 운영됩니다.
+                K-Culture Cat은 한국어(TOPIK), 음식, 전통 등 한국 문화에 초점을 맞춘 인터랙티브
+                플랫폼을 제공합니다. 서비스는 무료로 제공되며 광고로 운영됩니다.
               </p>
             </section>
 
@@ -687,7 +693,7 @@ function App() {
               <ul>
                 <li>합법적인 목적으로만 서비스를 사용</li>
                 <li>서비스 기능을 방해하거나 간섭하지 않음</li>
-                <li>허가 없이 퀴즈 콘텐츠를 복제, 배포 또는 2차 저작물을 만들지 않음</li>
+                <li>허가 없이 콘텐츠를 복제, 배포 또는 2차 저작물을 만들지 않음</li>
                 <li>문의 양식 사용 시 정확한 정보 제공</li>
               </ul>
             </section>
@@ -695,7 +701,7 @@ function App() {
             <section className="page-section">
               <h2>지적재산권</h2>
               <p>
-                문제, 답변, 이미지 및 디자인 요소를 포함한 모든 퀴즈 콘텐츠는 K-First Vibe의
+                문제, 답변, 이미지 및 디자인 요소를 포함한 모든 콘텐츠는 K-Culture Cat의
                 지적재산입니다. 무단 복제, 배포 또는 수정은 금지되어 있습니다.
               </p>
             </section>
@@ -703,16 +709,16 @@ function App() {
             <section className="page-section">
               <h2>보증의 부인</h2>
               <p>
-                K-First Vibe는 명시적이든 묵시적이든 어떠한 보증 없이 "있는 그대로" 제공됩니다.
-                서비스가 중단 없이, 오류 없이 제공되거나 퀴즈 내용에 부정확성이 없음을 보장하지
-                않습니다. 퀴즈 결과는 교육 및 오락 목적이며 공식 인증을 구성하지 않습니다.
+                K-Culture Cat은 명시적이든 묵시적이든 어떠한 보증 없이 "있는 그대로" 제공됩니다.
+                서비스가 중단 없이, 오류 없이 제공되거나 콘텐츠에 부정확성이 없음을 보장하지
+                않습니다. 결과는 교육 및 오락 목적이며 공식 인증을 구성하지 않습니다.
               </p>
             </section>
 
             <section className="page-section">
               <h2>책임의 제한</h2>
               <p>
-                K-First Vibe는 서비스 사용 또는 사용 불능으로 인한 간접적, 부수적, 특별 또는
+                K-Culture Cat은 서비스 사용 또는 사용 불능으로 인한 간접적, 부수적, 특별 또는
                 결과적 손해에 대해 책임지지 않습니다.
               </p>
             </section>
@@ -737,16 +743,7 @@ function App() {
               <h2>문의</h2>
               <p>
                 본 이용약관에 대한 질문이 있으시면{' '}
-                <Link to="/#contact-section" className="inline-link" onClick={(e) => {
-                  e.preventDefault()
-                  navigate('/')
-                  setTimeout(() => {
-                    const el = document.getElementById('contact-section')
-                    el?.scrollIntoView({ behavior: 'smooth' })
-                  }, 100)
-                }}>
-                  문의 양식
-                </Link>을 통해 연락해 주세요.
+                <Link to="/about#contact-section" className="inline-link">문의 양식</Link>을 통해 연락해 주세요.
               </p>
             </section>
           </article>
@@ -761,13 +758,9 @@ function App() {
   const NotFoundPage = () => (
     <div className="home-page">
       <nav className="navbar">
-        <Link to="/" className="nav-logo">
-          <span className="logo-italic">the</span> K-VIBE
-        </Link>
+        <Link to="/" className="nav-logo">K-Culture Cat</Link>
         <div className="nav-menu">
-          <Link to="/" className="nav-link">
-            {lang === 'en' ? 'Home' : '홈'}
-          </Link>
+          <Link to="/" className="nav-link">Home</Link>
           {langToggle}
         </div>
       </nav>
@@ -793,9 +786,7 @@ function App() {
   const HomePage = () => (
     <div className="home-page">
       <nav className="navbar">
-        <Link to="/" className="nav-logo">
-          <span className="logo-italic">the</span> K-VIBE
-        </Link>
+        <Link to="/" className="nav-logo">K-Culture Cat</Link>
         <div className="nav-menu">
           <button
             className="nav-link"
@@ -806,9 +797,7 @@ function App() {
           >
             K-Quiz
           </button>
-          <Link to="/about" className="nav-link">
-            {lang === 'en' ? 'About' : '소개'}
-          </Link>
+          <Link to="/about" className="nav-link">About</Link>
           {langToggle}
         </div>
       </nav>
@@ -818,27 +807,25 @@ function App() {
           <span className="hero-label">KOREAN CULTURE</span>
           <h1 className="hero-title">
             {lang === 'en' ? (
-              <>Welcome to<br />K-First Vibe</>
+              <>Welcome to<br />K-Culture Cat</>
             ) : (
-              <>K-First Vibe에<br />오신 것을 환영합니다</>
+              <>K-Culture Cat에<br />오신 것을 환영합니다</>
             )}
           </h1>
           <p className="hero-desc">
             {lang === 'en'
-              ? `Explore ${totalQuestions || '522'}+ original quiz questions across 3 categories — TOPIK, Korean Food, and Traditions. Test your knowledge and discover Korean culture.`
-              : `3개 카테고리(TOPIK, 한국 음식, 전통)에 걸친 ${totalQuestions || '522'}개 이상의 독창적인 퀴즈로 한국 문화를 탐험하세요.`}
+              ? 'Your gateway to Korean culture — from language and food to fashion, traditions, and everyday life in Korea.'
+              : '한국어, 음식, 패션, 전통 그리고 일상까지 — 한국 문화를 향한 당신의 관문입니다.'}
           </p>
           <div className="hero-actions">
             <button
               className="btn-primary"
-              onClick={startQuiz}
-              disabled={selectedCategories.length === 0 || !ready}
+              onClick={() => {
+                const el = document.getElementById('quiz-section')
+                el?.scrollIntoView({ behavior: 'smooth' })
+              }}
             >
-              {!ready
-                ? 'Loading...'
-                : lang === 'en'
-                  ? 'START QUIZ'
-                  : '퀴즈 시작'}
+              {lang === 'en' ? 'EXPLORE NOW' : '탐험하기'}
             </button>
           </div>
         </div>
@@ -847,61 +834,45 @@ function App() {
         </div>
       </header>
 
-      <section className="category-section" id="quiz-section">
-        <div className="section-header">
-          <span className="section-tag">
-            {lang === 'en' ? 'OUR QUIZ' : '퀴즈'}
-          </span>
-          <h2 className="section-title">
-            {lang === 'en' ? 'Quiz Categories' : '퀴즈 카테고리'}
-          </h2>
-          <p className="section-desc">
-            {lang === 'en'
-              ? 'Select the categories you want to explore'
-              : '탐험하고 싶은 카테고리를 선택하세요'}
-          </p>
-        </div>
-        <div className="category-cards">
-          {categories.map((cat) => (
-            <div
-              key={cat}
-              className={`category-card ${selectedCategories.includes(cat) ? 'selected' : ''}`}
-              onClick={() => toggleCategory(cat)}
-            >
-              <img
-                src={CATEGORY_IMAGES[cat] || '/quiz/seoul-3804293_640.jpg'}
-                alt={`${cat} - ${CATEGORY_DESC[cat]?.en || cat}`}
-                loading="lazy"
-              />
-              <div className="card-info">
-                <h3>{cat}</h3>
-                <p>{CATEGORY_DESC[cat]?.[lang] || cat}</p>
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      <section className="featured">
+      <section className="featured" id="quiz-section">
         <div className="featured-image">
           <img src="/quiz/rim-sunny-1196278665-23833464.jpg" alt="Korean BBQ galbi" loading="lazy" />
         </div>
         <div className="featured-content">
-          <span className="section-tag">
-            {lang === 'en' ? 'GET STARTED' : '시작하기'}
-          </span>
+          <span className="section-tag">K-QUIZ</span>
           <h2 className="section-title">
             {lang === 'en' ? (
-              <>Customize Your<br />Quiz Experience</>
+              <>Test Your Korean<br />Culture Knowledge</>
             ) : (
-              <>나만의 퀴즈<br />경험 만들기</>
+              <>한국 문화 지식을<br />테스트해보세요</>
             )}
           </h2>
           <p className="section-desc">
             {lang === 'en'
-              ? 'Choose the number of questions and begin your Korean culture journey.'
-              : '문제 수를 선택하고 한국 문화 여행을 시작하세요.'}
+              ? 'Choose categories and the number of questions to begin your journey.'
+              : '카테고리와 문제 수를 선택하고 여행을 시작하세요.'}
           </p>
+
+          <div className="category-checkboxes">
+            {categories.map((cat) => (
+              <label
+                key={cat}
+                className={`category-check ${selectedCategories.includes(cat) ? 'checked' : ''}`}
+                onClick={() => toggleCategory(cat)}
+              >
+                <span className="check-circle">
+                  {selectedCategories.includes(cat) && (
+                    <svg viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                      <polyline points="20 6 9 17 4 12" />
+                    </svg>
+                  )}
+                </span>
+                <span className="check-label">{cat}</span>
+                <span className="check-desc">{CATEGORY_DESC[cat]?.[lang]}</span>
+              </label>
+            ))}
+          </div>
+
           <div className="count-options">
             {[5, 10, 20, 30].map((n) => (
               <button
@@ -925,65 +896,6 @@ function App() {
                 : '퀴즈 시작'}
           </button>
         </div>
-      </section>
-
-      <section className="contact-section-home" id="contact-section">
-        <h3 className="contact-title">
-          {lang === 'en' ? 'Contact Us' : '관리자에게 문의'}
-        </h3>
-        <form className="contact-form" onSubmit={handleContactSubmit}>
-          <label className="contact-label">
-            {lang === 'en' ? 'Email' : '이메일'}
-            <input
-              type="email"
-              className="contact-input"
-              value={contactEmail}
-              onChange={(e) => setContactEmail(e.target.value)}
-              placeholder="your@email.com"
-              required
-            />
-          </label>
-          <label className="contact-label">
-            {lang === 'en' ? 'Message' : '내용'}
-            <textarea
-              className="contact-textarea"
-              value={contactMessage}
-              onChange={(e) => setContactMessage(e.target.value)}
-              placeholder={
-                lang === 'en' ? 'Write your message here' : '문의 내용을 입력하세요'
-              }
-              rows={4}
-              required
-            />
-          </label>
-          <button
-            type="submit"
-            className="btn-primary contact-submit-btn"
-            disabled={contactStatus === 'sending'}
-          >
-            {contactStatus === 'sending'
-              ? lang === 'en'
-                ? 'Sending...'
-                : '전송 중...'
-              : lang === 'en'
-                ? 'SEND MESSAGE'
-                : '보내기'}
-          </button>
-          {contactStatus === 'success' && (
-            <p className="contact-msg success">
-              {lang === 'en'
-                ? 'Message sent successfully!'
-                : '문의가 전송되었습니다!'}
-            </p>
-          )}
-          {contactStatus === 'error' && (
-            <p className="contact-msg error">
-              {lang === 'en'
-                ? 'Failed to send. Please try again.'
-                : '전송에 실패했습니다. 다시 시도해주세요.'}
-            </p>
-          )}
-        </form>
       </section>
 
       <Footer lang={lang} />
@@ -1032,7 +944,7 @@ function App() {
     )
   }
 
-  // ===== QUIZ SCREEN =====
+  // ===== QUIZ SCREEN (no category label, bigger question font) =====
   const QuizPage = () => {
     const q = quiz[currentIndex]
 
@@ -1050,7 +962,6 @@ function App() {
             <span className="quiz-progress">
               {currentIndex + 1} / {quiz.length}
             </span>
-            <span className="quiz-category">{q.category}</span>
             <div className="quiz-header-right">
               <button className="sound-toggle" onClick={() => setSoundOn((v) => !v)}>
                 {soundOn ? '🔊' : '🔇'}
