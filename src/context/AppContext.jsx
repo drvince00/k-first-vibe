@@ -1,0 +1,181 @@
+import { createContext, useContext, useState, useEffect, useRef, useCallback } from 'react'
+import { useNavigate, useLocation } from 'react-router-dom'
+import { shuffle } from '../utils/sound'
+import { HERO_IMAGES, SEO_DATA } from '../utils/constants'
+
+const AppContext = createContext()
+
+export function AppProvider({ children }) {
+  const [allQuiz, setAllQuiz] = useState([])
+  const [quiz, setQuiz] = useState([])
+  const [currentIndex, setCurrentIndex] = useState(0)
+  const [score, setScore] = useState(0)
+  const [selected, setSelected] = useState(null)
+  const [answered, setAnswered] = useState(false)
+  const [categories, setCategories] = useState(['TOPIK', 'FOOD', 'CULTURE'])
+  const [selectedCategories, setSelectedCategories] = useState(['TOPIK', 'FOOD', 'CULTURE'])
+  const [questionCount, setQuestionCount] = useState(10)
+  const [imgError, setImgError] = useState(false)
+  const [ready, setReady] = useState(false)
+  const [soundOn, setSoundOn] = useState(() => !/Mobi|Android|iPhone|iPad/i.test(navigator.userAgent))
+  const [contactEmail, setContactEmail] = useState('')
+  const [contactMessage, setContactMessage] = useState('')
+  const [contactStatus, setContactStatus] = useState(null)
+  const [lang, setLang] = useState(() => {
+    const saved = localStorage.getItem('k-vibe-lang')
+    return saved || 'en'
+  })
+  const [slideIndex, setSlideIndex] = useState(0)
+  const slideTimerRef = useRef(null)
+  const topRef = useRef(null)
+  const navigate = useNavigate()
+  const location = useLocation()
+
+  useEffect(() => {
+    localStorage.setItem('k-vibe-lang', lang)
+    document.documentElement.lang = lang === 'ko' ? 'ko' : 'en'
+  }, [lang])
+
+  useEffect(() => {
+    const page = SEO_DATA[location.pathname] || SEO_DATA['/']
+    const l = lang === 'ko' ? 'ko' : 'en'
+    document.title = page[l].title
+    document.querySelector('meta[name="description"]')?.setAttribute('content', page[l].desc)
+    document.querySelector('link[rel="canonical"]')?.setAttribute('href', 'https://kculturecat.cc' + (location.pathname === '/' ? '/' : location.pathname))
+    document.querySelector('meta[property="og:title"]')?.setAttribute('content', page[l].title)
+    document.querySelector('meta[property="og:description"]')?.setAttribute('content', page[l].desc)
+    document.querySelector('meta[property="og:url"]')?.setAttribute('content', 'https://kculturecat.cc' + (location.pathname === '/' ? '/' : location.pathname))
+  }, [location.pathname, lang])
+
+  useEffect(() => {
+    fetch('/quizData.json')
+      .then((res) => res.json())
+      .then((data) => {
+        setAllQuiz(data)
+        const cats = [...new Set(data.map((q) => q.category))]
+        setCategories(cats)
+        setSelectedCategories(cats)
+        setReady(true)
+      })
+  }, [])
+
+  useEffect(() => {
+    if (location.hash === '#contact-section') {
+      setTimeout(() => {
+        const el = document.getElementById('contact-section')
+        el?.scrollIntoView({ behavior: 'smooth' })
+      }, 100)
+    } else {
+      window.scrollTo(0, 0)
+    }
+  }, [location.pathname, location.hash])
+
+  const buildQuiz = useCallback(() => {
+    let filtered = allQuiz.filter((q) => selectedCategories.includes(q.category))
+    filtered = shuffle(filtered).slice(0, questionCount)
+    setQuiz(filtered)
+    return filtered
+  }, [allQuiz, selectedCategories, questionCount])
+
+  useEffect(() => {
+    if (location.pathname !== '/') return
+    slideTimerRef.current = setInterval(() => {
+      setSlideIndex((prev) => (prev + 1) % HERO_IMAGES.length)
+    }, 3000)
+    return () => clearInterval(slideTimerRef.current)
+  }, [location.pathname])
+
+  const goToSlide = (index) => {
+    setSlideIndex(index)
+    clearInterval(slideTimerRef.current)
+    slideTimerRef.current = setInterval(() => {
+      setSlideIndex((prev) => (prev + 1) % HERO_IMAGES.length)
+    }, 3000)
+  }
+
+  const prevSlide = () => goToSlide((slideIndex - 1 + HERO_IMAGES.length) % HERO_IMAGES.length)
+  const nextSlide = () => goToSlide((slideIndex + 1) % HERO_IMAGES.length)
+
+  const scrollToTop = useCallback(() => {
+    topRef.current?.scrollIntoView({ behavior: 'smooth' })
+  }, [])
+
+  const toggleCategory = (cat) => {
+    setSelectedCategories((prev) =>
+      prev.includes(cat) ? prev.filter((c) => c !== cat) : [...prev, cat]
+    )
+  }
+
+  const startQuiz = () => {
+    const built = buildQuiz()
+    if (built.length === 0) return
+    navigate('/quiz')
+    setCurrentIndex(0)
+    setScore(0)
+    setSelected(null)
+    setAnswered(false)
+    setImgError(false)
+  }
+
+  const handleRetry = () => {
+    const built = buildQuiz()
+    if (built.length === 0) return
+    navigate('/quiz')
+    setCurrentIndex(0)
+    setScore(0)
+    setSelected(null)
+    setAnswered(false)
+    setImgError(false)
+  }
+
+  const handleContactSubmit = async (e) => {
+    e.preventDefault()
+    setContactStatus('sending')
+    try {
+      const res = await fetch('https://formspree.io/f/mgozgrjk', {
+        method: 'POST',
+        body: JSON.stringify({ email: contactEmail, message: contactMessage }),
+        headers: { Accept: 'application/json', 'Content-Type': 'application/json' },
+      })
+      if (res.ok) {
+        setContactStatus('success')
+        setContactEmail('')
+        setContactMessage('')
+      } else {
+        setContactStatus('error')
+      }
+    } catch {
+      setContactStatus('error')
+    }
+  }
+
+  const value = {
+    // Language
+    lang, setLang,
+    // Quiz data
+    allQuiz, quiz, setQuiz, currentIndex, setCurrentIndex, score, setScore,
+    selected, setSelected, answered, setAnswered,
+    categories, selectedCategories, toggleCategory,
+    questionCount, setQuestionCount,
+    imgError, setImgError, ready, soundOn, setSoundOn,
+    // Quiz actions
+    buildQuiz, startQuiz, handleRetry,
+    // Contact
+    contactEmail, setContactEmail, contactMessage, setContactMessage,
+    contactStatus, handleContactSubmit,
+    // Slider
+    slideIndex, prevSlide, nextSlide,
+    // Refs
+    topRef,
+    // Navigation
+    navigate,
+  }
+
+  return <AppContext.Provider value={value}>{children}</AppContext.Provider>
+}
+
+export function useApp() {
+  const context = useContext(AppContext)
+  if (!context) throw new Error('useApp must be used within AppProvider')
+  return context
+}
