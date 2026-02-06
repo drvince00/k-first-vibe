@@ -902,13 +902,13 @@ function App() {
               <polyline points="15 18 9 12 15 6" />
             </svg>
           </button>
-          <div className="slider-track">
+          <div className="slider-track" style={{ transform: `translateX(-${slideIndex * 100}%)` }}>
             {HERO_IMAGES.map((src, i) => (
               <img
                 key={src}
                 src={src}
                 alt={`Korean culture ${i + 1}`}
-                className={`slider-img ${i === slideIndex ? 'active' : ''}`}
+                className="slider-img"
               />
             ))}
           </div>
