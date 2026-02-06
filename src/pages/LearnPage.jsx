@@ -8,12 +8,19 @@ export default function LearnPage() {
   const [channels, setChannels] = useState([])
   const [activeChannel, setActiveChannel] = useState(0)
   const [activeVideo, setActiveVideo] = useState(0)
+  const [currentVideoId, setCurrentVideoId] = useState('')
   const playerRef = useRef(null)
 
   useEffect(() => {
     fetch('/learnData.json')
       .then((res) => res.json())
-      .then((data) => setChannels(data.channels || []))
+      .then((data) => {
+        const chs = data.channels || []
+        setChannels(chs)
+        if (chs.length > 0 && chs[0].videos?.length > 0) {
+          setCurrentVideoId(chs[0].videos[0].id)
+        }
+      })
   }, [])
 
   const channel = channels[activeChannel]
@@ -22,10 +29,18 @@ export default function LearnPage() {
   const handleChannelChange = (idx) => {
     setActiveChannel(idx)
     setActiveVideo(0)
+    const newChannel = channels[idx]
+    if (newChannel?.videos?.length > 0) {
+      setCurrentVideoId(newChannel.videos[0].id)
+    }
   }
 
   const handleVideoSelect = (idx) => {
     setActiveVideo(idx)
+    const selectedVideo = channel?.videos?.[idx]
+    if (selectedVideo) {
+      setCurrentVideoId(selectedVideo.id)
+    }
     playerRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' })
   }
 
@@ -107,13 +122,13 @@ export default function LearnPage() {
       )}
 
       {/* Video Player */}
-      {video && (
-        <section className="learn-player-section">
+      {currentVideoId && video && (
+        <section className="learn-player-section" ref={playerRef}>
           <div className="learn-player-inner">
-            <div className="video-player" ref={playerRef}>
+            <div className="video-player">
               <iframe
-                key={video.id}
-                src={`https://www.youtube.com/embed/${video.id}`}
+                key={currentVideoId}
+                src={`https://www.youtube.com/embed/${currentVideoId}`}
                 title={lang === 'ko' ? video.titleKo : video.title}
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                 allowFullScreen
@@ -138,7 +153,7 @@ export default function LearnPage() {
             <div className="video-list">
               {channel.videos.map((v, idx) => (
                 <button
-                  key={v.id}
+                  key={`${channel.id}-${v.id}`}
                   className={`video-card ${activeVideo === idx ? 'active' : ''}`}
                   onClick={() => handleVideoSelect(idx)}
                 >

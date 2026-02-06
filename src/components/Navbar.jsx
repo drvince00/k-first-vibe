@@ -5,10 +5,10 @@ export default function Navbar() {
   const { lang, setLang } = useApp()
   const location = useLocation()
   const navigate = useNavigate()
-  const isHome = location.pathname === '/'
 
-  const handleQuizClick = () => {
-    if (isHome) {
+  const handleQuizClick = (e) => {
+    e.preventDefault()
+    if (location.pathname === '/') {
       const el = document.getElementById('quiz-section')
       el?.scrollIntoView({ behavior: 'smooth' })
     } else {
@@ -16,7 +16,7 @@ export default function Navbar() {
       setTimeout(() => {
         const el = document.getElementById('quiz-section')
         el?.scrollIntoView({ behavior: 'smooth' })
-      }, 300)
+      }, 400)
     }
   }
 
@@ -24,9 +24,9 @@ export default function Navbar() {
     <nav className="navbar">
       <Link to="/" className="nav-logo">K-Culture Cat</Link>
       <div className="nav-menu">
-        <button className="nav-link" onClick={handleQuizClick}>
+        <a href="/#quiz-section" className="nav-link" onClick={handleQuizClick}>
           K-Quiz
-        </button>
+        </a>
         <Link to="/learn" className="nav-link">Learn</Link>
         <Link to="/about" className="nav-link">About</Link>
         <button
