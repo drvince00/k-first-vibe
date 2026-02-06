@@ -189,12 +189,12 @@ function App() {
     return filtered
   }, [allQuiz, selectedCategories, questionCount])
 
-  // Auto-slide hero images every 2 seconds
+  // Auto-slide hero images every 3 seconds
   useEffect(() => {
     if (location.pathname !== '/') return
     slideTimerRef.current = setInterval(() => {
       setSlideIndex((prev) => (prev + 1) % HERO_IMAGES.length)
-    }, 2000)
+    }, 3000)
     return () => clearInterval(slideTimerRef.current)
   }, [location.pathname])
 
@@ -203,7 +203,7 @@ function App() {
     clearInterval(slideTimerRef.current)
     slideTimerRef.current = setInterval(() => {
       setSlideIndex((prev) => (prev + 1) % HERO_IMAGES.length)
-    }, 2000)
+    }, 3000)
   }
 
   const prevSlide = () => goToSlide((slideIndex - 1 + HERO_IMAGES.length) % HERO_IMAGES.length)
