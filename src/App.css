@@ -309,6 +309,10 @@
 }
 
 /* ===== Featured Section ===== */
+.featured-wrapper {
+  background: #ffffff;
+}
+
 .featured {
   display: grid;
   grid-template-columns: 1fr 1fr;

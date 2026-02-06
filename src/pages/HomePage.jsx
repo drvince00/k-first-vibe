@@ -64,6 +64,7 @@ export default function HomePage() {
         </div>
       </header>
 
+      <div className="featured-wrapper">
       <section className="featured" id="quiz-section">
         <div className="featured-image">
           <img src="/quiz/rim-sunny-1196278665-23833464.jpg" alt="Korean BBQ galbi" loading="lazy" />
@@ -134,6 +135,7 @@ export default function HomePage() {
           </button>
         </div>
       </section>
+      </div>
 
       <Footer />
     </div>
