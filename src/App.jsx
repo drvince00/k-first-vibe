@@ -52,6 +52,18 @@ const CATEGORY_DESC = {
   CULTURE: { en: 'Traditions & Heritage', ko: '전통과 유산' },
 }
 
+const HERO_IMAGES = [
+  '/quiz/gyeongbok-palace-2929520_640.jpg',
+  '/quiz/hyangwonjeong-pavilion-5900902_640.jpg',
+  '/quiz/seoul-3804293_640.jpg',
+  '/quiz/trail-7574943_640.jpg',
+  '/quiz/korean-food-4409811_640.jpg',
+  '/quiz/korean-barbecue-8579180_640.jpg',
+  '/quiz/ramen-4987117_640.jpg',
+  '/quiz/jamie-diaz-1129604-2132943.jpg',
+  '/quiz/line-knipst-574109081-20325769.jpg',
+]
+
 function Footer({ lang }) {
   return (
     <footer className="footer">
@@ -98,6 +110,8 @@ function App() {
     const saved = localStorage.getItem('k-vibe-lang')
     return saved || 'en'
   })
+  const [slideIndex, setSlideIndex] = useState(0)
+  const slideTimerRef = useRef(null)
   const topRef = useRef(null)
   const navigate = useNavigate()
   const location = useLocation()
@@ -174,6 +188,26 @@ function App() {
     setQuiz(filtered)
     return filtered
   }, [allQuiz, selectedCategories, questionCount])
+
+  // Auto-slide hero images every 2 seconds
+  useEffect(() => {
+    if (location.pathname !== '/') return
+    slideTimerRef.current = setInterval(() => {
+      setSlideIndex((prev) => (prev + 1) % HERO_IMAGES.length)
+    }, 2000)
+    return () => clearInterval(slideTimerRef.current)
+  }, [location.pathname])
+
+  const goToSlide = (index) => {
+    setSlideIndex(index)
+    clearInterval(slideTimerRef.current)
+    slideTimerRef.current = setInterval(() => {
+      setSlideIndex((prev) => (prev + 1) % HERO_IMAGES.length)
+    }, 2000)
+  }
+
+  const prevSlide = () => goToSlide((slideIndex - 1 + HERO_IMAGES.length) % HERO_IMAGES.length)
+  const nextSlide = () => goToSlide((slideIndex + 1) % HERO_IMAGES.length)
 
   const scrollToTop = useCallback(() => {
     topRef.current?.scrollIntoView({ behavior: 'smooth' })
@@ -862,8 +896,27 @@ function App() {
               : '한국어, 음식, 패션, 전통 그리고 일상까지 — 한국 문화를 향한 당신의 관문입니다.'}
           </p>
         </div>
-        <div className="hero-image">
-          <img src="/quiz/gyeongbok-palace-2929520_640.jpg" alt="Gyeongbokgung Palace in Seoul, Korea" />
+        <div className="hero-slider">
+          <button className="slider-arrow slider-prev" onClick={prevSlide} aria-label="Previous image">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <polyline points="15 18 9 12 15 6" />
+            </svg>
+          </button>
+          <div className="slider-track">
+            {HERO_IMAGES.map((src, i) => (
+              <img
+                key={src}
+                src={src}
+                alt={`Korean culture ${i + 1}`}
+                className={`slider-img ${i === slideIndex ? 'active' : ''}`}
+              />
+            ))}
+          </div>
+          <button className="slider-arrow slider-next" onClick={nextSlide} aria-label="Next image">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <polyline points="9 18 15 12 9 6" />
+            </svg>
+          </button>
         </div>
       </header>
 
