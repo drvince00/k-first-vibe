@@ -8,8 +8,11 @@ export default function HomePage() {
   const {
     lang, categories, selectedCategories, toggleCategory,
     questionCount, setQuestionCount, startQuiz, ready,
-    slideIndex, prevSlide, nextSlide
+    slideIndex, slideTransition, prevSlide, nextSlide
   } = useApp()
+
+  // Add clone of first image at end for seamless loop
+  const sliderImages = [...HERO_IMAGES, HERO_IMAGES[0]]
 
   return (
     <div className="home-page">
@@ -37,12 +40,18 @@ export default function HomePage() {
               <polyline points="15 18 9 12 15 6" />
             </svg>
           </button>
-          <div className="slider-track" style={{ transform: `translateX(-${slideIndex * 100}%)` }}>
-            {HERO_IMAGES.map((src, i) => (
+          <div
+            className="slider-track"
+            style={{
+              transform: `translateX(-${slideIndex * 100}%)`,
+              transition: slideTransition ? 'transform 0.7s ease-in-out' : 'none'
+            }}
+          >
+            {sliderImages.map((src, i) => (
               <img
-                key={src}
+                key={`${src}-${i}`}
                 src={src}
-                alt={`Korean culture ${i + 1}`}
+                alt={`Korean culture ${(i % HERO_IMAGES.length) + 1}`}
                 className="slider-img"
               />
             ))}

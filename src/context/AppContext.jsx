@@ -26,6 +26,7 @@ export function AppProvider({ children }) {
     return saved || 'en'
   })
   const [slideIndex, setSlideIndex] = useState(0)
+  const [slideTransition, setSlideTransition] = useState(true)
   const slideTimerRef = useRef(null)
   const topRef = useRef(null)
   const navigate = useNavigate()
@@ -77,10 +78,23 @@ export function AppProvider({ children }) {
     return filtered
   }, [allQuiz, selectedCategories, questionCount])
 
+  // Reset to first slide when reaching the clone (seamless loop)
+  useEffect(() => {
+    if (slideIndex === HERO_IMAGES.length) {
+      setTimeout(() => {
+        setSlideTransition(false)
+        setSlideIndex(0)
+      }, 700) // Wait for transition to complete
+      setTimeout(() => {
+        setSlideTransition(true)
+      }, 750)
+    }
+  }, [slideIndex])
+
   useEffect(() => {
     if (location.pathname !== '/') return
     slideTimerRef.current = setInterval(() => {
-      setSlideIndex((prev) => (prev + 1) % HERO_IMAGES.length)
+      setSlideIndex((prev) => prev + 1)
     }, 3000)
     return () => clearInterval(slideTimerRef.current)
   }, [location.pathname])
@@ -89,12 +103,23 @@ export function AppProvider({ children }) {
     setSlideIndex(index)
     clearInterval(slideTimerRef.current)
     slideTimerRef.current = setInterval(() => {
-      setSlideIndex((prev) => (prev + 1) % HERO_IMAGES.length)
+      setSlideIndex((prev) => prev + 1)
     }, 3000)
   }
 
-  const prevSlide = () => goToSlide((slideIndex - 1 + HERO_IMAGES.length) % HERO_IMAGES.length)
-  const nextSlide = () => goToSlide((slideIndex + 1) % HERO_IMAGES.length)
+  const prevSlide = () => {
+    if (slideIndex === 0) {
+      setSlideTransition(false)
+      setSlideIndex(HERO_IMAGES.length)
+      setTimeout(() => {
+        setSlideTransition(true)
+        goToSlide(HERO_IMAGES.length - 1)
+      }, 50)
+    } else {
+      goToSlide(slideIndex - 1)
+    }
+  }
+  const nextSlide = () => goToSlide(slideIndex + 1)
 
   const scrollToTop = useCallback(() => {
     topRef.current?.scrollIntoView({ behavior: 'smooth' })
@@ -164,7 +189,7 @@ export function AppProvider({ children }) {
     contactEmail, setContactEmail, contactMessage, setContactMessage,
     contactStatus, handleContactSubmit,
     // Slider
-    slideIndex, prevSlide, nextSlide,
+    slideIndex, slideTransition, prevSlide, nextSlide,
     // Refs
     topRef,
     // Navigation
