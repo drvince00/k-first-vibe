@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import { useApp } from '../context/AppContext'
 import { playSound } from '../utils/sound'
+import { CATEGORY_IMAGES, CATEGORY_DESC } from '../utils/constants'
 import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
 
@@ -8,17 +9,15 @@ export default function QuizPage() {
   const {
     lang, quiz, currentIndex, answered, selected, setSelected, setAnswered,
     score, setScore, soundOn, setSoundOn, imgError, setImgError,
-    setCurrentIndex, navigate, topRef
+    setCurrentIndex, navigate, topRef,
+    categories, selectedCategories, toggleCategory,
+    questionCount, setQuestionCount, startQuiz, ready
   } = useApp()
 
   const q = quiz[currentIndex]
+  const quizActive = !!q
 
-  if (!q) {
-    navigate('/')
-    return null
-  }
-
-  const showImage = q.type === 'PIC' && q.image && !imgError
+  const showImage = quizActive && q.type === 'PIC' && q.image && !imgError
 
   const handleSelect = (index) => {
     if (answered) return
@@ -85,68 +84,138 @@ export default function QuizPage() {
         </div>
       </header>
 
-      {/* Quiz Content */}
-      <section className="quiz-section-wrapper">
-        <div className="quiz-container">
-          <div className="quiz-screen">
-            <div className="quiz-header">
-              <span className="quiz-progress">
-                {currentIndex + 1} / {quiz.length}
-              </span>
-              <div className="quiz-header-right">
-                <button className="sound-toggle" onClick={() => setSoundOn((v) => !v)}>
-                  {soundOn ? '🔊' : '🔇'}
-                </button>
-                <Link to="/" className="quit-btn">
-                  Quit
-                </Link>
-              </div>
-            </div>
+      {/* Quiz Setup (no active quiz) */}
+      {!quizActive && (
+        <section className="quiz-section-wrapper">
+          <div className="quiz-setup">
+            <h2 className="section-title" style={{ textAlign: 'center', marginBottom: '0.5rem' }}>
+              {lang === 'en' ? 'Set Up Your Quiz' : '퀴즈 설정'}
+            </h2>
+            <p className="section-desc" style={{ textAlign: 'center', marginBottom: '1.5rem' }}>
+              {lang === 'en'
+                ? 'Choose categories and the number of questions to begin your journey.'
+                : '카테고리와 문제 수를 선택하고 여행을 시작하세요.'}
+            </p>
 
-            <div className="progress-bar">
-              <div
-                className="progress-fill"
-                style={{ width: `${((currentIndex + 1) / quiz.length) * 100}%` }}
-              />
-            </div>
-
-            <div className="quiz-body">
-              <h2 className="question-text">{q.question}</h2>
-
-              {showImage && (
-                <div className="question-image-wrapper">
-                  <img
-                    src={q.image}
-                    alt={`Quiz question about ${q.category}`}
-                    className="question-image"
-                    loading="lazy"
-                    onError={() => setImgError(true)}
-                  />
-                </div>
-              )}
-            </div>
-
-            <div className="options">
-              {q.options.map((option, index) => (
-                <button
-                  key={index}
-                  className={getOptionClass(index)}
-                  onClick={() => handleSelect(index)}
+            <div className="category-mini-cards" style={{ maxWidth: '400px', margin: '0 auto 1rem' }}>
+              {categories.map((cat) => (
+                <div
+                  key={cat}
+                  className={`category-mini-card ${selectedCategories.includes(cat) ? 'selected' : ''}`}
+                  onClick={() => toggleCategory(cat)}
                 >
-                  <span className="option-number">{index + 1}</span>
-                  <span className="option-text">{option}</span>
-                </button>
+                  {selectedCategories.includes(cat) && (
+                    <span className="mini-card-check">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                        <polyline points="20 6 9 17 4 12" />
+                      </svg>
+                    </span>
+                  )}
+                  <img
+                    src={CATEGORY_IMAGES[cat]}
+                    alt={`${cat} - ${CATEGORY_DESC[cat]?.en}`}
+                    loading="lazy"
+                  />
+                  <div className="mini-card-info">
+                    <h3>{cat}</h3>
+                    <p>{CATEGORY_DESC[cat]?.[lang]}</p>
+                  </div>
+                </div>
               ))}
             </div>
 
-            {answered && (
-              <button className="next-btn" onClick={handleNext}>
-                {currentIndex + 1 < quiz.length ? 'Next' : 'See Results'}
+            <div className="count-options" style={{ justifyContent: 'center', marginBottom: '1rem' }}>
+              {[5, 10, 20, 30].map((n) => (
+                <button
+                  key={n}
+                  className={`count-chip ${questionCount === n ? 'active' : ''}`}
+                  onClick={() => setQuestionCount(n)}
+                >
+                  {n}
+                </button>
+              ))}
+            </div>
+            <div style={{ textAlign: 'center' }}>
+              <button
+                className="btn-primary"
+                onClick={startQuiz}
+                disabled={selectedCategories.length === 0 || !ready}
+              >
+                {!ready
+                  ? 'Loading...'
+                  : lang === 'en'
+                    ? 'START QUIZ'
+                    : '퀴즈 시작'}
               </button>
-            )}
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
+
+      {/* Active Quiz */}
+      {quizActive && (
+        <section className="quiz-section-wrapper">
+          <div className="quiz-container">
+            <div className="quiz-screen">
+              <div className="quiz-header">
+                <span className="quiz-progress">
+                  {currentIndex + 1} / {quiz.length}
+                </span>
+                <div className="quiz-header-right">
+                  <button className="sound-toggle" onClick={() => setSoundOn((v) => !v)}>
+                    {soundOn ? '🔊' : '🔇'}
+                  </button>
+                  <Link to="/" className="quit-btn">
+                    Quit
+                  </Link>
+                </div>
+              </div>
+
+              <div className="progress-bar">
+                <div
+                  className="progress-fill"
+                  style={{ width: `${((currentIndex + 1) / quiz.length) * 100}%` }}
+                />
+              </div>
+
+              <div className="quiz-body">
+                <h2 className="question-text">{q.question}</h2>
+
+                {showImage && (
+                  <div className="question-image-wrapper">
+                    <img
+                      src={q.image}
+                      alt={`Quiz question about ${q.category}`}
+                      className="question-image"
+                      loading="lazy"
+                      onError={() => setImgError(true)}
+                    />
+                  </div>
+                )}
+              </div>
+
+              <div className="options">
+                {q.options.map((option, index) => (
+                  <button
+                    key={index}
+                    className={getOptionClass(index)}
+                    onClick={() => handleSelect(index)}
+                  >
+                    <span className="option-number">{index + 1}</span>
+                    <span className="option-text">{option}</span>
+                  </button>
+                ))}
+              </div>
+
+              {answered && (
+                <button className="next-btn" onClick={handleNext}>
+                  {currentIndex + 1 < quiz.length ? 'Next' : 'See Results'}
+                </button>
+              )}
+            </div>
+          </div>
+        </section>
+      )}
 
       <Footer />
     </div>

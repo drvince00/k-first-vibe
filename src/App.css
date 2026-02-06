@@ -969,11 +969,16 @@
 
 /* ===== Quiz Section (full-width page) ===== */
 .quiz-section-wrapper {
-  background: #FFFFFF;
+  background: #FAF7F3;
   padding: 3rem 4rem;
 }
 
 .quiz-container {
+  max-width: 640px;
+  margin: 0 auto;
+}
+
+.quiz-setup {
   max-width: 640px;
   margin: 0 auto;
 }
