@@ -20,6 +20,7 @@ export default function Navbar({ showQuizLink = false }) {
           </button>
         )}
         {!showQuizLink && <Link to="/" className="nav-link">Home</Link>}
+        <Link to="/learn" className="nav-link">Learn</Link>
         {showQuizLink && <Link to="/about" className="nav-link">About</Link>}
         <button
           className="lang-toggle"

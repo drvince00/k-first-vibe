@@ -39,6 +39,10 @@ export const SEO_DATA = {
     en: { title: 'Terms of Service - K-Culture Cat', desc: 'Review K-Culture Cat\'s terms of service for using our Korean culture quiz platform, including usage guidelines and content policies.' },
     ko: { title: '이용약관 - K-Culture Cat', desc: '한국 문화 퀴즈 플랫폼 K-Culture Cat의 이용약관을 확인하세요.' }
   },
+  '/learn': {
+    en: { title: 'Learn Korean - K-Culture Cat | YouTube Language Training', desc: 'Learn Korean with the best YouTube teachers! Watch curated lessons from Talk To Me In Korean, Korean with Miss Vicky, and more.' },
+    ko: { title: '한국어 배우기 - K-Culture Cat | 유튜브 언어 학습', desc: '최고의 유튜브 선생님들과 한국어를 배우세요! Talk To Me In Korean, Korean with Miss Vicky 등의 엄선된 강의를 시청하세요.' }
+  },
   '/quiz': {
     en: { title: 'Quiz - K-Culture Cat', desc: 'Take the Korean culture quiz now! Test your knowledge of TOPIK, Korean food, and traditions.' },
     ko: { title: '퀴즈 - K-Culture Cat', desc: '지금 한국 문화 퀴즈에 도전하세요! TOPIK, 한국 음식, 전통에 대한 지식을 테스트하세요.' }

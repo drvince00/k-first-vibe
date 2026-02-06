@@ -6,6 +6,7 @@ import PrivacyPage from './pages/PrivacyPage'
 import TermsPage from './pages/TermsPage'
 import QuizPage from './pages/QuizPage'
 import ResultPage from './pages/ResultPage'
+import LearnPage from './pages/LearnPage'
 import NotFoundPage from './pages/NotFoundPage'
 import './App.css'
 
@@ -16,6 +17,7 @@ function AppRoutes() {
       <Route path="/about" element={<AboutPage />} />
       <Route path="/privacy" element={<PrivacyPage />} />
       <Route path="/terms" element={<TermsPage />} />
+      <Route path="/learn" element={<LearnPage />} />
       <Route path="/quiz" element={<QuizPage />} />
       <Route path="/result" element={<ResultPage />} />
       <Route path="*" element={<NotFoundPage />} />

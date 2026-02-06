@@ -1,0 +1,90 @@
+{
+  "channels": [
+    {
+      "id": "ttmik",
+      "name": "Talk To Me In Korean",
+      "handle": "@talktomeinkorean",
+      "thumbnail": "https://yt3.googleusercontent.com/ytc/AIdro_kSEA9kQP9l_DVPfpHrBGDE2aLEOEiH-k8-bfWYpNxVnw=s176-c-k-c0x00ffffff-no-rj",
+      "description": {
+        "en": "One of the most popular Korean learning channels with structured lessons from beginner to advanced. TTMIK offers grammar, vocabulary, and real conversation practice.",
+        "ko": "초급부터 고급까지 체계적인 레슨을 제공하는 가장 인기 있는 한국어 학습 채널 중 하나입니다. 문법, 어휘, 실전 회화를 연습할 수 있습니다."
+      },
+      "level": ["Beginner", "Intermediate", "Advanced"],
+      "videos": [
+        {
+          "id": "0u2FMM3JmWQ",
+          "title": "Korean Alphabet - Learn to Read Hangul",
+          "titleKo": "한글 배우기 - 한국어 알파벳"
+        },
+        {
+          "id": "Ewwg9TLKQPI",
+          "title": "Korean Grammar - Basic Sentence Structure",
+          "titleKo": "한국어 문법 - 기본 문장 구조"
+        },
+        {
+          "id": "7H2qWH4Hz-I",
+          "title": "Essential Korean Phrases for Beginners",
+          "titleKo": "초보자를 위한 필수 한국어 표현"
+        },
+        {
+          "id": "Ql3PuJAXePQ",
+          "title": "Korean Numbers and Counting",
+          "titleKo": "한국어 숫자와 세기"
+        },
+        {
+          "id": "P9sPEzN0_Ws",
+          "title": "Korean Vocabulary - Daily Life Words",
+          "titleKo": "한국어 어휘 - 일상생활 단어"
+        },
+        {
+          "id": "OvB_XfMDnMw",
+          "title": "Korean Listening Practice for Beginners",
+          "titleKo": "초보자를 위한 한국어 듣기 연습"
+        }
+      ]
+    },
+    {
+      "id": "missvicky",
+      "name": "Korean with Miss Vicky",
+      "handle": "@koreanwithmissvicky",
+      "thumbnail": "https://yt3.googleusercontent.com/ytc/AIdro_nR0B5OLINL0vJ-7L-MwF3CZQzHyB_aMwLh7zVrI4I3qg=s176-c-k-c0x00ffffff-no-rj",
+      "description": {
+        "en": "Fun and engaging Korean lessons with clear explanations. Miss Vicky makes Korean learning approachable with practical expressions and cultural insights.",
+        "ko": "명확한 설명과 함께하는 재미있고 흥미로운 한국어 수업. Miss Vicky가 실용적인 표현과 문화적 인사이트로 한국어 학습을 쉽게 만들어 줍니다."
+      },
+      "level": ["Beginner", "Intermediate"],
+      "videos": [
+        {
+          "id": "RECxV9Mfhjg",
+          "title": "Learn Korean in 30 Minutes - Beginner Lesson",
+          "titleKo": "30분 만에 한국어 배우기 - 초급 수업"
+        },
+        {
+          "id": "GGuc7MK5gos",
+          "title": "Korean Self Introduction - Introduce Yourself",
+          "titleKo": "한국어 자기소개 하기"
+        },
+        {
+          "id": "iGkv2cXhdQk",
+          "title": "Korean Greetings and Polite Expressions",
+          "titleKo": "한국어 인사와 예의 표현"
+        },
+        {
+          "id": "VCQv6GnN0dg",
+          "title": "Ordering Food in Korean - Restaurant Korean",
+          "titleKo": "한국어로 음식 주문하기 - 식당 한국어"
+        },
+        {
+          "id": "W1z6eSfmqXw",
+          "title": "Korean Pronunciation Tips",
+          "titleKo": "한국어 발음 꿀팁"
+        },
+        {
+          "id": "6E-sLBkKHiI",
+          "title": "Shopping in Korean - Useful Phrases",
+          "titleKo": "한국어로 쇼핑하기 - 유용한 표현"
+        }
+      ]
+    }
+  ]
+}
