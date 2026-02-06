@@ -23,7 +23,10 @@ export function AppProvider({ children }) {
   const [contactStatus, setContactStatus] = useState(null)
   const [lang, setLang] = useState(() => {
     const saved = localStorage.getItem('k-vibe-lang')
-    return saved || 'en'
+    if (saved) return saved
+    // Auto-detect language from browser/system settings
+    const browserLang = navigator.language || navigator.userLanguage || ''
+    return browserLang.startsWith('ko') ? 'ko' : 'en'
   })
   const [slideIndex, setSlideIndex] = useState(0)
   const [slideTransition, setSlideTransition] = useState(true)
