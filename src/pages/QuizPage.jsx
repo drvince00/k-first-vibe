@@ -53,6 +53,12 @@ export default function QuizPage() {
 
   return (
     <div className="app" ref={topRef}>
+      <div className="quiz-mascot">
+        <img src="/images/catatsuwon.jpg" alt="Cat mascot" className="quiz-mascot-img" />
+        <div className="quiz-mascot-bubble">
+          {lang === 'en' ? 'You got this! 💪' : '화이팅! 💪'}
+        </div>
+      </div>
       <div className="quiz-screen">
         <div className="quiz-header">
           <span className="quiz-progress">

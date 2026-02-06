@@ -112,6 +112,7 @@ export default function LearnPage() {
           <div className="learn-player-inner">
             <div className="video-player" ref={playerRef}>
               <iframe
+                key={video.id}
                 src={`https://www.youtube.com/embed/${video.id}`}
                 title={lang === 'ko' ? video.titleKo : video.title}
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"

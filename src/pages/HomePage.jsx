@@ -16,7 +16,7 @@ export default function HomePage() {
 
   return (
     <div className="home-page">
-      <Navbar showQuizLink />
+      <Navbar />
 
       <header className="hero">
         <div className="hero-content">
@@ -136,6 +136,30 @@ export default function HomePage() {
         </div>
       </section>
       </div>
+
+      <section className="featured" id="learn-section">
+        <div className="featured-content">
+          <span className="section-tag">LANGUAGE TRAINING</span>
+          <h2 className="section-title">
+            {lang === 'en' ? (
+              <>Learn Korean with<br />YouTube Teachers</>
+            ) : (
+              <>유튜브 선생님과<br />한국어를 배우세요</>
+            )}
+          </h2>
+          <p className="section-desc">
+            {lang === 'en'
+              ? 'Watch curated lessons from top Korean language YouTube channels. From hangul basics to advanced grammar — all in one place.'
+              : '최고의 한국어 유튜브 채널에서 엄선된 강의를 시청하세요. 한글 기초부터 고급 문법까지 — 한곳에서 모두.'}
+          </p>
+          <Link to="/learn" className="btn-primary" style={{ textDecoration: 'none', display: 'inline-block', textAlign: 'center' }}>
+            {lang === 'en' ? 'START LEARNING' : '학습 시작'}
+          </Link>
+        </div>
+        <div className="featured-image">
+          <img src="/images/catwithjjajangmyun.jpg" alt="Cat mascot eating jjajangmyun" loading="lazy" />
+        </div>
+      </section>
 
       <Footer />
     </div>
