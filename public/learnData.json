@@ -6,83 +6,123 @@
       "handle": "@talktomeinkorean",
       "thumbnail": "https://yt3.googleusercontent.com/ytc/AIdro_kSEA9kQP9l_DVPfpHrBGDE2aLEOEiH-k8-bfWYpNxVnw=s176-c-k-c0x00ffffff-no-rj",
       "description": {
-        "en": "One of the most popular Korean learning channels with structured lessons from beginner to advanced. TTMIK offers grammar, vocabulary, and real conversation practice.",
-        "ko": "초급부터 고급까지 체계적인 레슨을 제공하는 가장 인기 있는 한국어 학습 채널 중 하나입니다. 문법, 어휘, 실전 회화를 연습할 수 있습니다."
+        "en": "The most systematic Korean learning channel with structured curriculum from beginner to advanced. TTMIK offers grammar, vocabulary, and real conversation practice.",
+        "ko": "가장 체계적인 커리큘럼으로 유명한 TTMIK의 핵심 영상들입니다. 문법, 어휘, 실전 회화를 연습할 수 있습니다."
       },
       "level": ["Beginner", "Intermediate", "Advanced"],
       "videos": [
         {
-          "id": "3lBuIQ5-zF4",
-          "title": "How to Learn Korean in 2026",
-          "titleKo": "2026년 한국어 학습법"
+          "id": "JrACvLMZIXs",
+          "title": "30 Daily Korean Phrases for Beginners",
+          "titleKo": "초보자를 위한 매일 쓰는 한국어 30문장"
         },
         {
-          "id": "FDsthmQq79Q",
-          "title": "How Did Foreign IDOLS Learn Korean So FAST??",
-          "titleKo": "외국인 아이돌은 어떻게 한국어를 빨리 배웠을까??"
+          "id": "AJOYkBZKvyc",
+          "title": "How to say \"Thank You\" in Korean",
+          "titleKo": "한국어로 \"감사합니다\" 말하는 법"
         },
         {
-          "id": "Jzep8XeOvwY",
-          "title": "Listen to Korean as You Get Ready | Essential Words",
-          "titleKo": "준비하면서 듣는 한국어 | 필수 단어"
+          "id": "uNDf0V06m0w",
+          "title": "Korean Alphabet - Learn to Read and Write Hangul",
+          "titleKo": "한글 읽기 쓰기 배우기"
         },
         {
-          "id": "JYIsPXuZ89c",
-          "title": "Listen to Korean on Your Commute | Sentences for Beginners",
-          "titleKo": "출퇴근길 한국어 듣기 | 초보자 문장"
+          "id": "4Y1W4IEmOJY",
+          "title": "20 Must-Know Korean Phrases",
+          "titleKo": "꼭 알아야 할 한국어 표현 20가지"
         },
         {
-          "id": "GMaRQaW2Kpo",
-          "title": "Learn 50 Essential Korean Nouns for Beginners",
-          "titleKo": "초보자를 위한 필수 한국어 명사 50개"
+          "id": "HwhQdltnSls",
+          "title": "100 Must-know Korean Words",
+          "titleKo": "꼭 알아야 할 한국어 단어 100개"
         },
         {
-          "id": "qCmpU3ssip8",
-          "title": "K-pop Demon Hunters Explained by a Korean Teacher",
-          "titleKo": "한국어 선생님이 설명하는 K-pop 퇴마사"
+          "id": "97xnwIq7uRI",
+          "title": "Daily Korean Conversation Practice",
+          "titleKo": "매일 한국어 회화 연습"
+        },
+        {
+          "id": "fXWkG9vS4d0",
+          "title": "How to make sentences in Korean",
+          "titleKo": "한국어 문장 만드는 법"
+        },
+        {
+          "id": "vVjE3mQf2pE",
+          "title": "Korean Slang Words You Should Know",
+          "titleKo": "알아야 할 한국어 슬랭"
+        },
+        {
+          "id": "L2G7pS-M1Yg",
+          "title": "Listen and Repeat: Korean Phrases",
+          "titleKo": "듣고 따라하기: 한국어 표현"
+        },
+        {
+          "id": "0KnUyy6pH-U",
+          "title": "Want to learn Korean? Follow these steps!",
+          "titleKo": "한국어 배우고 싶다면? 이렇게 시작하세요!"
         }
       ]
     },
     {
-      "id": "missvicky",
-      "name": "Korean with Miss Vicky",
-      "handle": "@koreanwithmissvicky",
-      "thumbnail": "https://yt3.googleusercontent.com/ytc/AIdro_nR0B5OLINL0vJ-7L-MwF3CZQzHyB_aMwLh7zVrI4I3qg=s176-c-k-c0x00ffffff-no-rj",
+      "id": "koreanclass101",
+      "name": "Learn Korean with KoreanClass101",
+      "handle": "@KoreanClass101",
+      "thumbnail": "https://yt3.googleusercontent.com/ytc/AIdro_nXzMPMJqxOTSjE-VBk0okNEJkFkTFOzQFO30KFNA=s176-c-k-c0x00ffffff-no-rj",
       "description": {
-        "en": "Fun and engaging Korean lessons with clear explanations. Miss Vicky makes Korean learning approachable with practical expressions and cultural insights.",
-        "ko": "명확한 설명과 함께하는 재미있고 흥미로운 한국어 수업. Miss Vicky가 실용적인 표현과 문화적 인사이트로 한국어 학습을 쉽게 만들어 줍니다."
+        "en": "Comprehensive Korean learning channel with lessons for every level. KoreanClass101 covers vocabulary, listening practice, pronunciation, and practical travel Korean.",
+        "ko": "모든 레벨을 위한 종합 한국어 학습 채널입니다. 어휘, 듣기 연습, 발음, 여행 한국어 등 다양한 콘텐츠를 제공합니다."
       },
       "level": ["Beginner", "Intermediate"],
       "videos": [
         {
-          "id": "mIBkzUdEXoQ",
-          "title": "70 Super-Common Korean Sentences for Daily Practice",
-          "titleKo": "매일 연습하는 초실용 한국어 문장 70개"
+          "id": "KN4mysljHYc",
+          "title": "Learn Korean Hangul (Hana Hana Hangul)",
+          "titleKo": "한글 배우기 (하나하나 한글)"
         },
         {
-          "id": "NTBw0AFY-qU",
-          "title": "All Basics about 은/는 & 이/가 (Subject Particles)",
-          "titleKo": "은/는 & 이/가 기초 완전 정리 (주격 조사)"
+          "id": "Btc_jaBYJKg",
+          "title": "580 Korean Words You'll Use Every Day",
+          "titleKo": "매일 쓰는 한국어 단어 580개"
         },
         {
-          "id": "x3kwxK1b94I",
-          "title": "Korean Consonant Assimilation & Pronunciation Practice",
-          "titleKo": "한국어 자음 동화 & 발음 연습"
+          "id": "NoxUTF4D0ro",
+          "title": "125 Must-Know Korean Words for Everyday Life",
+          "titleKo": "일상생활 필수 한국어 단어 125개"
         },
         {
-          "id": "HGu9C-ECVAY",
-          "title": "Korean Speaking Practice | At a Convenience Store",
-          "titleKo": "한국어 회화 연습 | 편의점에서"
+          "id": "zXQov5AMNgw",
+          "title": "Korean Listening Practice - At a Restaurant",
+          "titleKo": "한국어 듣기 연습 - 식당에서"
         },
         {
-          "id": "KMe2410VCLw",
-          "title": "Korean Pronunciation | Consonant Assimilation Rules",
-          "titleKo": "한국어 발음 | 자음 동화 규칙"
+          "id": "tumU2lQEjGE",
+          "title": "Top 25 Korean Phrases",
+          "titleKo": "한국어 필수 표현 25가지"
         },
         {
-          "id": "Dzi9ytoIdeo",
-          "title": "Review Beginner Korean Grammar with Sentence Building",
-          "titleKo": "문장 만들기로 초급 한국어 문법 복습"
+          "id": "ttN0yg0NTgg",
+          "title": "Learn Korean in 3 Hours: All Words You Need",
+          "titleKo": "3시간 만에 한국어 배우기: 필요한 모든 단어"
+        },
+        {
+          "id": "CNnQP61He6c",
+          "title": "Survival Korean Phrases for Travelers",
+          "titleKo": "여행자를 위한 생존 한국어"
+        },
+        {
+          "id": "MCBJ1cQ1n0w",
+          "title": "Korean Pronunciation Made Easy",
+          "titleKo": "쉽게 배우는 한국어 발음"
+        },
+        {
+          "id": "gwObbXUJkBY",
+          "title": "How to Introduce Yourself in Korean",
+          "titleKo": "한국어로 자기소개하기"
+        },
+        {
+          "id": "tM0bQnKiUTA",
+          "title": "Learn Korean While You Sleep",
+          "titleKo": "자면서 배우는 한국어"
         }
       ]
     }
