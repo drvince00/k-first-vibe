@@ -97,7 +97,7 @@ export default function LearnPage() {
                   className={`channel-tab ${activeChannel === idx ? 'active' : ''}`}
                   onClick={() => handleChannelChange(idx)}
                 >
-                  <img src={ch.thumbnail} alt={ch.name} className="channel-tab-thumb" />
+                  <div className="channel-tab-thumb">{ch.name.charAt(0)}</div>
                   <div className="channel-tab-info">
                     <span className="channel-tab-name">{ch.name}</span>
                     <span className="channel-tab-handle">{ch.handle}</span>

@@ -709,8 +709,14 @@
   width: 56px;
   height: 56px;
   border-radius: 50%;
-  object-fit: cover;
   flex-shrink: 0;
+  background: #A67C52;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  font-weight: 700;
 }
 
 .channel-tab-info {
