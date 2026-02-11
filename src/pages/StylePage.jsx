@@ -184,11 +184,16 @@ export default function StylePage() {
 
       const checkout = await PolarEmbedCheckout.create(url, { theme: 'dark' })
       let paid = false
-      checkout.addEventListener('success', () => {
+      checkout.addEventListener('success', (e) => {
+        e.preventDefault()
         paid = true
       })
-      checkout.addEventListener('close', () => {
-        if (paid) runAnalysis(checkoutId)
+      checkout.addEventListener('close', (e) => {
+        if (paid) {
+          e.preventDefault()
+          checkout.close()
+          runAnalysis(checkoutId)
+        }
       })
     } catch (err) {
       setError(err.message)
