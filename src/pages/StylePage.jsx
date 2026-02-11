@@ -182,11 +182,9 @@ export default function StylePage() {
       const { url, checkoutId } = await res.json()
       setCheckoutLoading(false)
 
-      PolarEmbedCheckout.create(url, {
-        theme: 'dark',
-        onSuccess: () => {
-          runAnalysis(checkoutId)
-        },
+      const checkout = await PolarEmbedCheckout.create(url, { theme: 'dark' })
+      checkout.addEventListener('success', () => {
+        runAnalysis(checkoutId)
       })
     } catch (err) {
       setError(err.message)
