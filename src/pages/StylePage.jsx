@@ -1,5 +1,4 @@
-import { useState, useRef } from 'react'
-import { PolarEmbedCheckout } from '@polar-sh/checkout/embed'
+import { useState, useRef, useEffect } from 'react'
 import { useApp } from '../context/AppContext'
 import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
@@ -101,6 +100,86 @@ export default function StylePage() {
   const [error, setError] = useState(null)
   const formRef = useRef(null)
 
+  // Handle return from Polar checkout
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search)
+    const checkoutId = params.get('checkout_id')
+    if (!checkoutId) return
+
+    // Clean URL
+    window.history.replaceState({}, '', '/style')
+
+    // Restore saved form data
+    const saved = localStorage.getItem('styleFormData')
+    if (!saved) {
+      setError(t('Form data not found. Please try again.', '폼 데이터를 찾을 수 없습니다. 다시 시도해주세요.'))
+      return
+    }
+
+    const savedData = JSON.parse(saved)
+    localStorage.removeItem('styleFormData')
+
+    // Convert base64 back to File for the analysis
+    const byteString = atob(savedData.photoBase64)
+    const bytes = new Uint8Array(byteString.length)
+    for (let i = 0; i < byteString.length; i++) {
+      bytes[i] = byteString.charCodeAt(i)
+    }
+    const file = new File([bytes], 'photo.jpg', { type: savedData.photoMimeType })
+
+    setForm({
+      photo: file,
+      height: savedData.height,
+      weight: savedData.weight,
+      gender: savedData.gender,
+      country: savedData.country,
+      bodyType: savedData.bodyType,
+    })
+    setPhotoPreview(URL.createObjectURL(file))
+
+    // Run analysis with restored data
+    runAnalysisWithData(checkoutId, savedData)
+  }, [])
+
+  const runAnalysisWithData = async (checkoutId, data) => {
+    setLoading(true)
+    setResult(null)
+    try {
+      const selectedCountry = COUNTRIES.find(c => c.code === data.country)
+      const countryName = selectedCountry?.en || data.country
+
+      const res = await fetch(API_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          photo: data.photoBase64,
+          photoMimeType: data.photoMimeType,
+          height: Number(data.height),
+          weight: Number(data.weight),
+          gender: data.gender,
+          country: countryName,
+          bodyType: data.bodyType,
+          checkoutId,
+        }),
+      })
+
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}))
+        const refundMsg = err.refunded
+          ? t(' (payment has been refunded)', ' (결제가 환불되었습니다)')
+          : ''
+        throw new Error((err.error || `Server error: ${res.status}`) + refundMsg)
+      }
+
+      const result = await res.json()
+      setResult(result)
+    } catch (err) {
+      setError(err.message)
+    } finally {
+      setLoading(false)
+    }
+  }
+
   const handlePhotoChange = (e) => {
     const file = e.target.files[0]
     if (!file) return
@@ -118,50 +197,6 @@ export default function StylePage() {
     setForm(prev => ({ ...prev, [name]: value }))
   }
 
-  const runAnalysis = async (checkoutId) => {
-    setLoading(true)
-    setResult(null)
-
-    try {
-      const converted = await fileToBase64(form.photo)
-      const photoData = converted.data
-      const photoMimeType = converted.mimeType
-
-      const selectedCountry = COUNTRIES.find(c => c.code === form.country)
-      const countryName = selectedCountry?.en || form.country
-
-      const res = await fetch(API_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          photo: photoData,
-          photoMimeType,
-          height: Number(form.height),
-          weight: Number(form.weight),
-          gender: form.gender,
-          country: countryName,
-          bodyType: form.bodyType,
-          checkoutId,
-        }),
-      })
-
-      if (!res.ok) {
-        const err = await res.json().catch(() => ({}))
-        const refundMsg = err.refunded
-          ? t(' (payment has been refunded)', ' (결제가 환불되었습니다)')
-          : ''
-        throw new Error((err.error || `Server error: ${res.status}`) + refundMsg)
-      }
-
-      const data = await res.json()
-      setResult(data)
-    } catch (err) {
-      setError(err.message)
-    } finally {
-      setLoading(false)
-    }
-  }
-
   const handleSubmit = async (e) => {
     e.preventDefault()
     if (!form.photo) {
@@ -173,6 +208,18 @@ export default function StylePage() {
     setCheckoutLoading(true)
 
     try {
+      // Save form data to localStorage before redirecting
+      const converted = await fileToBase64(form.photo)
+      localStorage.setItem('styleFormData', JSON.stringify({
+        photoBase64: converted.data,
+        photoMimeType: converted.mimeType,
+        height: form.height,
+        weight: form.weight,
+        gender: form.gender,
+        country: form.country,
+        bodyType: form.bodyType,
+      }))
+
       const res = await fetch(CHECKOUT_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -183,19 +230,9 @@ export default function StylePage() {
         throw new Error(err.error || `Checkout error: ${res.status}`)
       }
 
-      const data = await res.json()
-      console.log('Checkout response:', data)
-      const { url, checkoutId } = data
-      console.log('Checkout URL:', url, 'ID:', checkoutId)
-      setCheckoutLoading(false)
-
-      PolarEmbedCheckout.create(url, {
-        theme: 'dark',
-        onSuccess: () => {
-          console.log('Checkout onSuccess, checkoutId:', checkoutId)
-          runAnalysis(checkoutId)
-        },
-      })
+      const { url } = await res.json()
+      // Redirect to Polar hosted checkout
+      window.location.href = url
     } catch (err) {
       setError(err.message)
       setCheckoutLoading(false)

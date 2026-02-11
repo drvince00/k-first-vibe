@@ -18,7 +18,7 @@ export async function onRequestPost(context) {
       },
       body: JSON.stringify({
         product_id: '69cf0e2a-acdf-4e28-9aa6-3ab20ff35b62',
-        embed_origin: origin,
+        success_url: `${origin}/style?checkout_id={CHECKOUT_ID}`,
       }),
     });
 
