@@ -1,4 +1,5 @@
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef } from 'react'
+import { PolarEmbedCheckout } from '@polar-sh/checkout/embed'
 import { useApp } from '../context/AppContext'
 import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
@@ -100,65 +101,25 @@ export default function StylePage() {
   const [error, setError] = useState(null)
   const formRef = useRef(null)
 
-  // Handle return from Polar checkout
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search)
-    const checkoutId = params.get('checkout_id')
-    if (!checkoutId) return
-
-    // Clean URL
-    window.history.replaceState({}, '', '/style')
-
-    // Restore saved form data
-    const saved = localStorage.getItem('styleFormData')
-    if (!saved) {
-      setError(t('Form data not found. Please try again.', '폼 데이터를 찾을 수 없습니다. 다시 시도해주세요.'))
-      return
-    }
-
-    const savedData = JSON.parse(saved)
-    localStorage.removeItem('styleFormData')
-
-    // Convert base64 back to File for the analysis
-    const byteString = atob(savedData.photoBase64)
-    const bytes = new Uint8Array(byteString.length)
-    for (let i = 0; i < byteString.length; i++) {
-      bytes[i] = byteString.charCodeAt(i)
-    }
-    const file = new File([bytes], 'photo.jpg', { type: savedData.photoMimeType })
-
-    setForm({
-      photo: file,
-      height: savedData.height,
-      weight: savedData.weight,
-      gender: savedData.gender,
-      country: savedData.country,
-      bodyType: savedData.bodyType,
-    })
-    setPhotoPreview(URL.createObjectURL(file))
-
-    // Run analysis with restored data
-    runAnalysisWithData(checkoutId, savedData)
-  }, [])
-
-  const runAnalysisWithData = async (checkoutId, data) => {
+  const runAnalysis = async (checkoutId) => {
     setLoading(true)
     setResult(null)
     try {
-      const selectedCountry = COUNTRIES.find(c => c.code === data.country)
-      const countryName = selectedCountry?.en || data.country
+      const converted = await fileToBase64(form.photo)
+      const selectedCountry = COUNTRIES.find(c => c.code === form.country)
+      const countryName = selectedCountry?.en || form.country
 
       const res = await fetch(API_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          photo: data.photoBase64,
-          photoMimeType: data.photoMimeType,
-          height: Number(data.height),
-          weight: Number(data.weight),
-          gender: data.gender,
+          photo: converted.data,
+          photoMimeType: converted.mimeType,
+          height: Number(form.height),
+          weight: Number(form.weight),
+          gender: form.gender,
           country: countryName,
-          bodyType: data.bodyType,
+          bodyType: form.bodyType,
           checkoutId,
         }),
       })
@@ -171,8 +132,8 @@ export default function StylePage() {
         throw new Error((err.error || `Server error: ${res.status}`) + refundMsg)
       }
 
-      const result = await res.json()
-      setResult(result)
+      const data = await res.json()
+      setResult(data)
     } catch (err) {
       setError(err.message)
     } finally {
@@ -208,18 +169,6 @@ export default function StylePage() {
     setCheckoutLoading(true)
 
     try {
-      // Save form data to localStorage before redirecting
-      const converted = await fileToBase64(form.photo)
-      localStorage.setItem('styleFormData', JSON.stringify({
-        photoBase64: converted.data,
-        photoMimeType: converted.mimeType,
-        height: form.height,
-        weight: form.weight,
-        gender: form.gender,
-        country: form.country,
-        bodyType: form.bodyType,
-      }))
-
       const res = await fetch(CHECKOUT_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -230,9 +179,15 @@ export default function StylePage() {
         throw new Error(err.error || `Checkout error: ${res.status}`)
       }
 
-      const { url } = await res.json()
-      // Redirect to Polar hosted checkout
-      window.location.href = url
+      const { url, checkoutId } = await res.json()
+      setCheckoutLoading(false)
+
+      PolarEmbedCheckout.create(url, {
+        theme: 'dark',
+        onSuccess: () => {
+          runAnalysis(checkoutId)
+        },
+      })
     } catch (err) {
       setError(err.message)
       setCheckoutLoading(false)
