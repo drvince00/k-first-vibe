@@ -183,12 +183,16 @@ export default function StylePage() {
         throw new Error(err.error || `Checkout error: ${res.status}`)
       }
 
-      const { url, checkoutId } = await res.json()
+      const data = await res.json()
+      console.log('Checkout response:', data)
+      const { url, checkoutId } = data
+      console.log('Checkout URL:', url, 'ID:', checkoutId)
       setCheckoutLoading(false)
 
       PolarEmbedCheckout.create(url, {
         theme: 'dark',
         onSuccess: () => {
+          console.log('Checkout onSuccess, checkoutId:', checkoutId)
           runAnalysis(checkoutId)
         },
       })
