@@ -30,7 +30,7 @@ function buildImagePrompt(gender, bodyType, description) {
 
 function buildHairstylePrompt(gender) {
   const genderText = gender === 'male' ? 'male' : 'female';
-  return `Create a 3x3 grid image showing 9 different trendy Korean hairstyles applied to the person in the reference photo. Each cell in the grid shows the same person's face with a different popular Korean ${genderText} hairstyle from 2025-2026. Keep the person's face, skin tone, and facial features exactly the same in all 9 cells. Only change the hairstyle in each cell. Include a variety of styles: short, medium, long, with bangs, without bangs, layered, permed, straight, and textured styles popular in Korea. IMPORTANT: Each cell must show the complete face from the top of the hair to below the chin with generous padding above the head and below the chin. Make the face slightly smaller within each cell to ensure nothing is cropped. Leave at least 15% margin on all sides of each cell. Clean white background for each cell. Professional salon photography style. No text, labels, or watermarks.`;
+  return `Create a 3x3 grid image showing 9 different trendy Korean hairstyles applied to the person in the reference photo. Each cell in the grid shows the same person's face with a different popular Korean ${genderText} hairstyle from 2025-2026. Keep the person's face, skin tone, and facial features exactly the same in all 9 cells. Only change the hairstyle in each cell. Include a variety of styles: short, medium, long, with bangs, without bangs, layered, permed, straight, and textured styles popular in Korea. CRITICAL FRAMING: The face must be small, occupying only about 30-35% of each cell's height. Show the FULL hairstyle from the very top of the hair to the shoulders/upper chest. Leave at least 25% empty space above the tallest point of the hair. The focus is on the HAIRSTYLE, not the face - frame each cell like a hair salon menu photo where the complete hairstyle shape and volume is fully visible. Clean white background for each cell. Professional salon photography style. No text, labels, or watermarks.`;
 }
 
 async function callOpenAIText(prompt, apiKey) {
@@ -105,7 +105,7 @@ async function verifyCheckout(checkoutId, polarToken) {
   });
   if (!res.ok) throw new Error(`Checkout verification failed: ${res.status}`);
   const data = await res.json();
-  if (data.status !== 'succeeded') {
+  if (data.status !== 'succeeded' && data.status !== 'confirmed') {
     throw new Error(`Payment not completed (status: ${data.status})`);
   }
   return data.order_id;
