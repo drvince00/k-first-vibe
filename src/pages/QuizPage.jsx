@@ -1,3 +1,4 @@
+import { useRef } from 'react'
 import { Link } from 'react-router-dom'
 import { useApp } from '../context/AppContext'
 import { playSound } from '../utils/sound'
@@ -13,6 +14,8 @@ export default function QuizPage() {
     categories, selectedCategories, toggleCategory,
     questionCount, setQuestionCount, startQuiz, ready
   } = useApp()
+
+  const quizHeaderRef = useRef(null)
 
   const q = quiz[currentIndex]
   const quizActive = !!q
@@ -38,7 +41,7 @@ export default function QuizPage() {
       setSelected(null)
       setAnswered(false)
       setImgError(false)
-      topRef.current?.scrollIntoView({ behavior: 'smooth' })
+      quizHeaderRef.current?.scrollIntoView({ behavior: 'smooth' })
     } else {
       navigate('/result')
     }
@@ -155,7 +158,7 @@ export default function QuizPage() {
       {/* Active Quiz */}
       {quizActive && (
         <section className="quiz-section-wrapper">
-          <div className="quiz-container">
+          <div className="quiz-container" ref={quizHeaderRef}>
             <div className="quiz-screen">
               <div className="quiz-header">
                 <span className="quiz-progress">

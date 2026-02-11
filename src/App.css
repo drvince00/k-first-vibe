@@ -1347,6 +1347,323 @@
 }
 
 /* ========================================
+   STYLE CONSULTANT PAGE
+   ======================================== */
+
+.style-subtitle {
+  text-align: center;
+  color: #9E8E7E;
+  font-size: 1.05rem;
+  margin: -0.5rem 0 2rem;
+  line-height: 1.6;
+}
+
+.style-form {
+  max-width: 560px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.style-form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.style-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.style-form-group label {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: #5C4F44;
+}
+
+.style-form-group input,
+.style-form-group select {
+  padding: 0.7rem 0.9rem;
+  font-size: 0.95rem;
+  font-family: inherit;
+  border: 2px solid #E8E0D8;
+  border-radius: 10px;
+  background: #fff;
+  color: #2C2421;
+  transition: border-color 0.2s;
+}
+
+.style-form-group input::placeholder {
+  color: #C4B5A6;
+  font-weight: 400;
+  font-style: italic;
+}
+
+.style-form-group input:focus,
+.style-form-group select:focus {
+  outline: none;
+  border-color: #A67C52;
+}
+
+/* Photo Upload */
+.style-photo-group {
+  align-items: center;
+}
+
+.style-photo-upload {
+  position: relative;
+  width: 160px;
+  height: 160px;
+  border-radius: 16px;
+  overflow: hidden;
+  border: 2px dashed #D4C8BC;
+  cursor: pointer;
+  transition: border-color 0.2s;
+}
+
+.style-photo-upload:hover {
+  border-color: #A67C52;
+}
+
+.style-photo-preview {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.style-photo-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  color: #B5A89D;
+  font-size: 0.85rem;
+}
+
+.style-photo-placeholder span:first-child {
+  font-size: 2rem;
+}
+
+.style-file-input {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+/* Submit Button */
+.style-submit-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  width: 100%;
+  padding: 0.9rem;
+  font-size: 1.05rem;
+  font-weight: 700;
+  font-family: inherit;
+  background: linear-gradient(135deg, #A67C52, #C4956A);
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-top: 0.5rem;
+}
+
+.style-submit-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 16px rgba(166, 124, 82, 0.3);
+}
+
+.style-submit-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.style-error {
+  color: #D9534F;
+  font-size: 0.9rem;
+  text-align: center;
+  margin: 0;
+}
+
+/* Spinner */
+.style-spinner {
+  width: 18px;
+  height: 18px;
+  border: 2.5px solid rgba(255,255,255,0.3);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Results */
+.style-results {
+  max-width: 900px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+}
+
+.style-weather-card {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  background: #fff;
+  border: 1px solid #E8E0D8;
+  border-radius: 14px;
+  padding: 0.75rem 1.5rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+}
+
+.style-location-icon {
+  font-size: 1.8rem;
+  flex-shrink: 0;
+}
+
+.style-weather-card > div {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.style-weather-card strong {
+  font-size: 1rem;
+  color: #2C2421;
+}
+
+.style-weather-card span {
+  font-size: 0.88rem;
+  color: #9E8E7E;
+}
+
+
+/* Style Section Title */
+.style-section-title {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #2C2421;
+  margin: 2rem 0 1rem;
+  text-align: center;
+}
+
+/* Style Cards */
+.style-cards {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.5rem;
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.style-card {
+  background: #fff;
+  border: 1px solid #E8E0D8;
+  border-radius: 16px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+  transition: transform 0.2s;
+}
+
+.style-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+}
+
+.style-card-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.9rem 1.1rem;
+  background: #FAF7F3;
+  border-bottom: 1px solid #E8E0D8;
+}
+
+.style-card-emoji {
+  font-size: 1.3rem;
+}
+
+.style-card-label {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #2C2421;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.style-card-image {
+  width: 100%;
+  aspect-ratio: 3/4;
+  object-fit: cover;
+}
+
+.style-card-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #2C2421;
+  margin: 1rem 1.1rem 0.5rem;
+}
+
+.style-card-desc {
+  font-size: 0.88rem;
+  line-height: 1.65;
+  color: #5C4F44;
+  margin: 0 1.1rem;
+  flex: 1;
+}
+
+.style-card-tip {
+  font-size: 0.82rem;
+  line-height: 1.5;
+  color: #A67C52;
+  background: #FBF8F4;
+  margin: 0.75rem 1.1rem 1.1rem;
+  padding: 0.65rem 0.8rem;
+  border-radius: 8px;
+  border-left: 3px solid #C4956A;
+}
+
+/* Hairstyle Section */
+.style-hairstyle-section {
+  margin-top: 2.5rem;
+  text-align: center;
+}
+
+.style-hairstyle-subtitle {
+  font-size: 0.92rem;
+  color: #9E8E7E;
+  margin-bottom: 1.2rem;
+}
+
+.style-hairstyle-grid-wrapper {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.style-hairstyle-grid {
+  width: 100%;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+}
+
+/* ========================================
    RESPONSIVE
    ======================================== */
 
@@ -1456,6 +1773,13 @@
 
   .quiz-section-wrapper {
     padding: 2rem 1.5rem;
+  }
+
+  /* Style page tablet */
+  .style-cards {
+    grid-template-columns: 1fr;
+    max-width: 480px;
+    margin: 0 auto;
   }
 }
 
@@ -1611,5 +1935,15 @@
 
   .quiz-screen {
     padding: 1rem 0 1.5rem;
+  }
+
+  /* Style page mobile */
+  .style-form-row {
+    grid-template-columns: 1fr;
+  }
+
+  .style-photo-upload {
+    width: 130px;
+    height: 130px;
   }
 }

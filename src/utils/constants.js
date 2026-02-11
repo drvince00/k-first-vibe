@@ -43,6 +43,10 @@ export const SEO_DATA = {
     en: { title: 'Learn Korean - K-Culture Cat | YouTube Language Training', desc: 'Learn Korean with the best YouTube teachers! Watch curated lessons from Talk To Me In Korean, Korean with Miss Vicky, and more.' },
     ko: { title: '한국어 배우기 - K-Culture Cat | 유튜브 언어 학습', desc: '최고의 유튜브 선생님들과 한국어를 배우세요! Talk To Me In Korean, Korean with Miss Vicky 등의 엄선된 강의를 시청하세요.' }
   },
+  '/style': {
+    en: { title: 'AI Style Consultant - K-Culture Cat', desc: 'Get personalized Korean fashion recommendations powered by AI. Upload your photo, enter your body info, and receive outfit suggestions for any weather.' },
+    ko: { title: 'AI 스타일 컨설턴트 - K-Culture Cat', desc: 'AI 기반 맞춤 한국 패션 추천을 받아보세요. 사진과 체형 정보를 입력하면 날씨에 맞는 스타일을 제안합니다.' }
+  },
   '/quiz': {
     en: { title: 'Quiz - K-Culture Cat', desc: 'Take the Korean culture quiz now! Test your knowledge of TOPIK, Korean food, and traditions.' },
     ko: { title: '퀴즈 - K-Culture Cat', desc: '지금 한국 문화 퀴즈에 도전하세요! TOPIK, 한국 음식, 전통에 대한 지식을 테스트하세요.' }
