@@ -225,23 +225,6 @@ export default function StylePage() {
     }
   }, [t])
 
-  const handleEmail = useCallback(() => {
-    const subject = encodeURIComponent(t('My AI Style Analysis', 'AI 스타일 분석 결과'))
-    const body = encodeURIComponent(t(
-      'Check out my AI style analysis from K-Culture Cat!\n\nI downloaded my result as an image — please see the attached file.\n\nTry yours at: https://kculturecat.cc/style',
-      'K-Culture Cat에서 AI 스타일 분석을 받았어요!\n\n결과를 이미지로 다운로드했으니 첨부 파일을 확인해주세요.\n\n나도 해보기: https://kculturecat.cc/style'
-    ))
-    window.open(`mailto:?subject=${subject}&body=${body}`, '_self')
-  }, [t])
-
-  const handleCopyLink = useCallback(async () => {
-    try {
-      await navigator.clipboard.writeText('https://kculturecat.cc/style')
-      alert(t('Link copied to clipboard!', '링크가 클립보드에 복사되었습니다!'))
-    } catch {
-      alert(t('Could not copy link', '링크를 복사할 수 없습니다'))
-    }
-  }, [t])
 
   const handleReset = () => {
     setResult(null)
@@ -516,18 +499,6 @@ export default function StylePage() {
                 ) : (
                   <>📥 {t('Download as Image', '이미지로 다운로드')}</>
                 )}
-              </button>
-              <button
-                className="style-action-btn style-share-btn"
-                onClick={handleEmail}
-              >
-                ✉️ {t('Send via Email', '이메일로 보내기')}
-              </button>
-              <button
-                className="style-action-btn style-share-btn"
-                onClick={handleCopyLink}
-              >
-                🔗 {t('Copy Link', '링크 복사')}
               </button>
             </div>
 
