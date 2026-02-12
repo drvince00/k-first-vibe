@@ -1663,6 +1663,149 @@
   box-shadow: 0 4px 20px rgba(0,0,0,0.08);
 }
 
+.style-results-inner {
+  padding: 1rem 0;
+}
+
+/* Body Analysis Section */
+.style-body-analysis {
+  margin-bottom: 2rem;
+}
+
+.style-analysis-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.style-analysis-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 12px;
+  padding: 1rem 1.25rem;
+}
+
+.style-analysis-item.style-analysis-avoid {
+  border-color: rgba(255,100,100,0.25);
+  background: rgba(255,100,100,0.06);
+}
+
+.style-analysis-icon {
+  font-size: 1.5rem;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.style-analysis-item strong {
+  display: block;
+  color: #e8c07a;
+  margin-bottom: 0.25rem;
+  font-size: 0.95rem;
+}
+
+.style-analysis-item p {
+  color: #ccc;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* Common Tips Section */
+.style-common-tips {
+  margin-bottom: 2rem;
+}
+
+.style-tips-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.style-tip-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.85rem;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 10px;
+  padding: 0.85rem 1rem;
+}
+
+.style-tip-number {
+  background: linear-gradient(135deg, #8b6914, #c49b3c);
+  color: #fff;
+  font-weight: 700;
+  font-size: 0.8rem;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.style-tip-item p {
+  color: #ccc;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* Action Buttons */
+.style-action-buttons {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: center;
+  margin: 1.5rem 0;
+}
+
+.style-action-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  border-radius: 10px;
+  border: none;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.style-download-btn {
+  background: linear-gradient(135deg, #8b6914, #c49b3c);
+  color: #fff;
+}
+
+.style-download-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(196,155,60,0.3);
+}
+
+.style-download-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.style-share-btn {
+  background: rgba(255,255,255,0.1);
+  color: #e8c07a;
+  border: 1px solid rgba(232,192,122,0.3);
+}
+
+.style-share-btn:hover {
+  background: rgba(255,255,255,0.15);
+  transform: translateY(-2px);
+}
+
 /* ========================================
    RESPONSIVE
    ======================================== */
@@ -1780,6 +1923,14 @@
     grid-template-columns: 1fr;
     max-width: 480px;
     margin: 0 auto;
+  }
+
+  .style-action-buttons {
+    flex-direction: column;
+  }
+
+  .style-action-btn {
+    justify-content: center;
   }
 }
 

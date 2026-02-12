@@ -12,14 +12,14 @@ function buildTextPrompt(userInfo) {
   const month = now.toLocaleString('en', { month: 'long' });
   const year = now.getFullYear();
 
-  return `You are a professional fashion stylist. Based on the person's info and location/season, recommend 2 outfit styles. Respond in English only.
+  return `You are a professional fashion stylist and personal image consultant. Based on the person's info and location/season, provide a detailed style analysis. Respond in English only.
 
 Person: ${genderText}, ${userInfo.height}cm, ${userInfo.weight}kg, ${bodyDesc}
 Country: ${userInfo.country} (current month: ${month} ${year})
 
 Determine the climate from the country and month. Respond in valid JSON only, no markdown:
 
-{"climate":"brief climate description for this country and month","casual":{"title":"5-7 word title","description":"3-4 sentence outfit description with top, bottom, shoes, accessories","tip":"one styling tip"},"rainy":{"title":"5-7 word title","description":"3-4 sentence outfit description for rainy weather","tip":"one styling tip"}}`;
+{"climate":"brief climate description for this country and month","bodyAnalysis":{"summary":"2-3 sentence overview of this person's body proportions and how to dress to flatter them (e.g. slim build benefits from layering to add visual volume, taller frame can pull off oversized fits, etc.)","skinTone":"1-2 sentence recommendation on colors that complement typical skin tones for their region/ethnicity","silhouette":"1-2 sentences on ideal silhouette and fit style for their body type","avoid":"1 sentence on what styles or fits to avoid"},"commonTips":["5 universal styling tips personalized to this person's body type and proportions, each tip is 1-2 sentences"],"casual":{"title":"5-7 word title","description":"3-4 sentence outfit description with top, bottom, shoes, accessories","tip":"one styling tip"},"rainy":{"title":"5-7 word title","description":"3-4 sentence outfit description for rainy weather","tip":"one styling tip"}}`;
 }
 
 function buildImagePrompt(gender, bodyType, description) {
@@ -175,6 +175,8 @@ export async function onRequestPost(context) {
     return new Response(JSON.stringify({
       location: { country, climate: report.climate || '' },
       report: {
+        bodyAnalysis: report.bodyAnalysis,
+        commonTips: report.commonTips,
         casual: report.casual,
         rainy: report.rainy,
       },

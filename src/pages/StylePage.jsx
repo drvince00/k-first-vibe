@@ -1,4 +1,5 @@
-import { useState, useRef } from 'react'
+import { useState, useRef, useCallback } from 'react'
+import html2canvas from 'html2canvas'
 import { PolarEmbedCheckout } from '@polar-sh/checkout/embed'
 import { useApp } from '../context/AppContext'
 import Navbar from '../components/Navbar'
@@ -99,7 +100,9 @@ export default function StylePage() {
   const [checkoutLoading, setCheckoutLoading] = useState(false)
   const [result, setResult] = useState(null)
   const [error, setError] = useState(null)
+  const [downloading, setDownloading] = useState(false)
   const formRef = useRef(null)
+  const resultRef = useRef(null)
 
   const runAnalysis = async (checkoutId) => {
     setLoading(true)
@@ -200,6 +203,63 @@ export default function StylePage() {
       setCheckoutLoading(false)
     }
   }
+
+  const handleDownload = useCallback(async () => {
+    if (!resultRef.current) return
+    setDownloading(true)
+    try {
+      const canvas = await html2canvas(resultRef.current, {
+        backgroundColor: '#1a1a2e',
+        scale: 2,
+        useCORS: true,
+        logging: false,
+      })
+      const link = document.createElement('a')
+      link.download = 'my-style-analysis.png'
+      link.href = canvas.toDataURL('image/png')
+      link.click()
+    } catch {
+      setError(t('Failed to download image', '이미지 다운로드에 실패했습니다'))
+    } finally {
+      setDownloading(false)
+    }
+  }, [t])
+
+  const handleShare = useCallback(async () => {
+    if (!navigator.share) {
+      try {
+        await navigator.clipboard.writeText(window.location.href)
+        alert(t('Link copied to clipboard!', '링크가 클립보드에 복사되었습니다!'))
+      } catch {
+        alert(t('Could not copy link', '링크를 복사할 수 없습니다'))
+      }
+      return
+    }
+    try {
+      if (resultRef.current) {
+        const canvas = await html2canvas(resultRef.current, {
+          backgroundColor: '#1a1a2e',
+          scale: 2,
+          useCORS: true,
+          logging: false,
+        })
+        const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'))
+        const file = new File([blob], 'my-style-analysis.png', { type: 'image/png' })
+        await navigator.share({
+          title: 'My AI Style Analysis',
+          text: t('Check out my AI style analysis!', 'AI 스타일 분석 결과를 확인해보세요!'),
+          files: [file],
+        })
+      }
+    } catch (err) {
+      if (err.name !== 'AbortError') {
+        await navigator.share({
+          title: 'My AI Style Analysis',
+          url: window.location.href,
+        }).catch(() => {})
+      }
+    }
+  }, [t])
 
   const handleReset = () => {
     setResult(null)
@@ -330,67 +390,158 @@ export default function StylePage() {
           </form>
         ) : (
           <div className="style-results">
-            {/* Location & Climate Card */}
-            {result.location && (
-              <div className="style-weather-card">
-                <span className="style-location-icon">📍</span>
-                <div>
-                  <strong>{result.location.country}</strong>
-                  {result.location.climate && (
-                    <span>{result.location.climate}</span>
-                  )}
-                </div>
-              </div>
-            )}
-
-            {/* Outfit Style Cards */}
-            <h2 className="style-section-title">Outfit Recommendations</h2>
-            <div className="style-cards">
-              {['casual', 'rainy'].map((style) => {
-                const info = result.report?.[style]
-                const image = result.images?.[style]
-                const label = STYLE_LABELS[style]
-                return (
-                  <div key={style} className="style-card">
-                    <div className="style-card-header">
-                      <span className="style-card-emoji">{label.emoji}</span>
-                      <span className="style-card-label">{label.en}</span>
-                    </div>
-                    {image && (
-                      <img
-                        src={`data:${image.mimeType};base64,${image.data}`}
-                        alt={info?.title || style}
-                        className="style-card-image"
-                      />
-                    )}
-                    <h3 className="style-card-title">{info?.title}</h3>
-                    <p className="style-card-desc">{info?.description}</p>
-                    {info?.tip && (
-                      <p className="style-card-tip">
-                        💡 <strong>Tip:</strong> {info.tip}
-                      </p>
+            <div ref={resultRef} className="style-results-inner">
+              {/* Location & Climate Card */}
+              {result.location && (
+                <div className="style-weather-card">
+                  <span className="style-location-icon">📍</span>
+                  <div>
+                    <strong>{result.location.country}</strong>
+                    {result.location.climate && (
+                      <span>{result.location.climate}</span>
                     )}
                   </div>
-                )
-              })}
+                </div>
+              )}
+
+              {/* Body Analysis Section */}
+              {result.report?.bodyAnalysis && (
+                <div className="style-body-analysis">
+                  <h2 className="style-section-title">
+                    {t('Your Style Profile', '나의 스타일 프로필')}
+                  </h2>
+                  <div className="style-analysis-cards">
+                    <div className="style-analysis-item">
+                      <span className="style-analysis-icon">📐</span>
+                      <div>
+                        <strong>{t('Body Proportions', '체형 분석')}</strong>
+                        <p>{result.report.bodyAnalysis.summary}</p>
+                      </div>
+                    </div>
+                    <div className="style-analysis-item">
+                      <span className="style-analysis-icon">🎨</span>
+                      <div>
+                        <strong>{t('Color Palette', '컬러 팔레트')}</strong>
+                        <p>{result.report.bodyAnalysis.skinTone}</p>
+                      </div>
+                    </div>
+                    <div className="style-analysis-item">
+                      <span className="style-analysis-icon">✂️</span>
+                      <div>
+                        <strong>{t('Ideal Silhouette', '이상적인 실루엣')}</strong>
+                        <p>{result.report.bodyAnalysis.silhouette}</p>
+                      </div>
+                    </div>
+                    <div className="style-analysis-item style-analysis-avoid">
+                      <span className="style-analysis-icon">🚫</span>
+                      <div>
+                        <strong>{t('What to Avoid', '피해야 할 스타일')}</strong>
+                        <p>{result.report.bodyAnalysis.avoid}</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Common Styling Tips */}
+              {result.report?.commonTips?.length > 0 && (
+                <div className="style-common-tips">
+                  <h2 className="style-section-title">
+                    {t('General Styling Guide', '기본 스타일링 가이드')}
+                  </h2>
+                  <ul className="style-tips-list">
+                    {result.report.commonTips.map((tip, i) => (
+                      <li key={i} className="style-tip-item">
+                        <span className="style-tip-number">{i + 1}</span>
+                        <p>{tip}</p>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
+              {/* Outfit Style Cards */}
+              <h2 className="style-section-title">
+                {t('Outfit Recommendations', '의상 추천')}
+              </h2>
+              <div className="style-cards">
+                {['casual', 'rainy'].map((style) => {
+                  const info = result.report?.[style]
+                  const image = result.images?.[style]
+                  const label = STYLE_LABELS[style]
+                  return (
+                    <div key={style} className="style-card">
+                      <div className="style-card-header">
+                        <span className="style-card-emoji">{label.emoji}</span>
+                        <span className="style-card-label">
+                          {lang === 'en' ? label.en : label.ko}
+                        </span>
+                      </div>
+                      {image && (
+                        <img
+                          src={`data:${image.mimeType};base64,${image.data}`}
+                          alt={info?.title || style}
+                          className="style-card-image"
+                        />
+                      )}
+                      <h3 className="style-card-title">{info?.title}</h3>
+                      <p className="style-card-desc">{info?.description}</p>
+                      {info?.tip && (
+                        <p className="style-card-tip">
+                          💡 <strong>Tip:</strong> {info.tip}
+                        </p>
+                      )}
+                    </div>
+                  )
+                })}
+              </div>
+
+              {/* Korean Hairstyle Grid */}
+              {result.hairstyle && (
+                <div className="style-hairstyle-section">
+                  <h2 className="style-section-title">
+                    {t('Trending Korean Hairstyles', '인기 한국 헤어스타일')}
+                  </h2>
+                  <p className="style-hairstyle-subtitle">
+                    {t(
+                      '9 popular Korean hairstyles applied to your photo',
+                      '당신의 사진에 적용된 9가지 인기 한국 헤어스타일'
+                    )}
+                  </p>
+                  <div className="style-hairstyle-grid-wrapper">
+                    <img
+                      src={`data:${result.hairstyle.mimeType};base64,${result.hairstyle.data}`}
+                      alt="Korean hairstyle recommendations in 3x3 grid"
+                      className="style-hairstyle-grid"
+                    />
+                  </div>
+                </div>
+              )}
             </div>
 
-            {/* Korean Hairstyle Grid */}
-            {result.hairstyle && (
-              <div className="style-hairstyle-section">
-                <h2 className="style-section-title">Trending Korean Hairstyles</h2>
-                <p className="style-hairstyle-subtitle">
-                  9 popular Korean hairstyles applied to your photo
-                </p>
-                <div className="style-hairstyle-grid-wrapper">
-                  <img
-                    src={`data:${result.hairstyle.mimeType};base64,${result.hairstyle.data}`}
-                    alt="Korean hairstyle recommendations in 3x3 grid"
-                    className="style-hairstyle-grid"
-                  />
-                </div>
-              </div>
-            )}
+            {/* Action Buttons */}
+            <div className="style-action-buttons">
+              <button
+                className="style-action-btn style-download-btn"
+                onClick={handleDownload}
+                disabled={downloading}
+              >
+                {downloading ? (
+                  <>
+                    <span className="style-spinner" />
+                    {t('Creating image...', '이미지 생성 중...')}
+                  </>
+                ) : (
+                  <>📥 {t('Download as Image', '이미지로 다운로드')}</>
+                )}
+              </button>
+              <button
+                className="style-action-btn style-share-btn"
+                onClick={handleShare}
+              >
+                🔗 {t('Share', '공유하기')}
+              </button>
+            </div>
 
             <button className="style-submit-btn" onClick={handleReset}>
               {t('Try Again', '다시 분석하기')}
