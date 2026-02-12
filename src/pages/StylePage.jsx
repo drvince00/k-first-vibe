@@ -71,6 +71,47 @@ const STYLE_LABELS = {
   rainy: { en: 'Rainy Day', ko: '비 오는 날', emoji: '🌧️' },
 }
 
+const MAX_SIZE = 2048
+const MAX_BYTES = 4 * 1024 * 1024
+
+function compressImage(file) {
+  return new Promise((resolve, reject) => {
+    const img = new Image()
+    img.onload = () => {
+      let { width, height } = img
+      if (width > MAX_SIZE || height > MAX_SIZE) {
+        const ratio = Math.min(MAX_SIZE / width, MAX_SIZE / height)
+        width = Math.round(width * ratio)
+        height = Math.round(height * ratio)
+      }
+      const canvas = document.createElement('canvas')
+      canvas.width = width
+      canvas.height = height
+      const ctx = canvas.getContext('2d')
+      ctx.drawImage(img, 0, 0, width, height)
+
+      let quality = 0.85
+      const tryCompress = () => {
+        canvas.toBlob(
+          (blob) => {
+            if (blob.size > MAX_BYTES && quality > 0.3) {
+              quality -= 0.1
+              tryCompress()
+            } else {
+              resolve(new File([blob], file.name, { type: 'image/jpeg' }))
+            }
+          },
+          'image/jpeg',
+          quality
+        )
+      }
+      tryCompress()
+    }
+    img.onerror = reject
+    img.src = URL.createObjectURL(file)
+  })
+}
+
 function fileToBase64(file) {
   return new Promise((resolve, reject) => {
     const reader = new FileReader()
@@ -149,16 +190,19 @@ export default function StylePage() {
     }
   }
 
-  const handlePhotoChange = (e) => {
+  const handlePhotoChange = async (e) => {
     const file = e.target.files[0]
     if (!file) return
-    if (file.size > 5 * 1024 * 1024) {
-      setError(t('Photo must be under 5MB', '사진은 5MB 이하여야 합니다'))
-      return
-    }
-    setForm(prev => ({ ...prev, photo: file }))
-    setPhotoPreview(URL.createObjectURL(file))
     setError(null)
+    try {
+      const processed = file.size > MAX_BYTES || file.type === 'image/png'
+        ? await compressImage(file)
+        : file
+      setForm(prev => ({ ...prev, photo: processed }))
+      setPhotoPreview(URL.createObjectURL(processed))
+    } catch {
+      setError(t('Failed to process photo', '사진 처리에 실패했습니다'))
+    }
   }
 
   const handleChange = (e) => {
