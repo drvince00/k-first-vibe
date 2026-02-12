@@ -8,6 +8,7 @@ import QuizPage from './pages/QuizPage'
 import ResultPage from './pages/ResultPage'
 import LearnPage from './pages/LearnPage'
 import StylePage from './pages/StylePage'
+import RefundPage from './pages/RefundPage'
 import NotFoundPage from './pages/NotFoundPage'
 import './App.css'
 
@@ -18,6 +19,7 @@ function AppRoutes() {
       <Route path="/about" element={<AboutPage />} />
       <Route path="/privacy" element={<PrivacyPage />} />
       <Route path="/terms" element={<TermsPage />} />
+      <Route path="/refund" element={<RefundPage />} />
       <Route path="/learn" element={<LearnPage />} />
       <Route path="/quiz" element={<QuizPage />} />
       <Route path="/style" element={<StylePage />} />

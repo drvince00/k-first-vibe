@@ -119,6 +119,10 @@ export default function Footer() {
         <Link to="/terms" className="footer-link">
           {lang === 'en' ? 'Terms of Service' : '이용약관'}
         </Link>
+        <span className="footer-divider">|</span>
+        <Link to="/refund" className="footer-link">
+          {lang === 'en' ? 'Refund Policy' : '환불 정책'}
+        </Link>
       </div>
 
       <div className="footer-share">
