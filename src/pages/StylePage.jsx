@@ -225,39 +225,21 @@ export default function StylePage() {
     }
   }, [t])
 
-  const handleShare = useCallback(async () => {
-    if (!navigator.share) {
-      try {
-        await navigator.clipboard.writeText(window.location.href)
-        alert(t('Link copied to clipboard!', '링크가 클립보드에 복사되었습니다!'))
-      } catch {
-        alert(t('Could not copy link', '링크를 복사할 수 없습니다'))
-      }
-      return
-    }
+  const handleEmail = useCallback(() => {
+    const subject = encodeURIComponent(t('My AI Style Analysis', 'AI 스타일 분석 결과'))
+    const body = encodeURIComponent(t(
+      'Check out my AI style analysis from K-Culture Cat!\n\nI downloaded my result as an image — please see the attached file.\n\nTry yours at: https://kculturecat.cc/style',
+      'K-Culture Cat에서 AI 스타일 분석을 받았어요!\n\n결과를 이미지로 다운로드했으니 첨부 파일을 확인해주세요.\n\n나도 해보기: https://kculturecat.cc/style'
+    ))
+    window.open(`mailto:?subject=${subject}&body=${body}`, '_self')
+  }, [t])
+
+  const handleCopyLink = useCallback(async () => {
     try {
-      if (resultRef.current) {
-        const canvas = await html2canvas(resultRef.current, {
-          backgroundColor: '#1a1a2e',
-          scale: 2,
-          useCORS: true,
-          logging: false,
-        })
-        const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'))
-        const file = new File([blob], 'my-style-analysis.png', { type: 'image/png' })
-        await navigator.share({
-          title: 'My AI Style Analysis',
-          text: t('Check out my AI style analysis!', 'AI 스타일 분석 결과를 확인해보세요!'),
-          files: [file],
-        })
-      }
-    } catch (err) {
-      if (err.name !== 'AbortError') {
-        await navigator.share({
-          title: 'My AI Style Analysis',
-          url: window.location.href,
-        }).catch(() => {})
-      }
+      await navigator.clipboard.writeText('https://kculturecat.cc/style')
+      alert(t('Link copied to clipboard!', '링크가 클립보드에 복사되었습니다!'))
+    } catch {
+      alert(t('Could not copy link', '링크를 복사할 수 없습니다'))
     }
   }, [t])
 
@@ -537,9 +519,15 @@ export default function StylePage() {
               </button>
               <button
                 className="style-action-btn style-share-btn"
-                onClick={handleShare}
+                onClick={handleEmail}
               >
-                🔗 {t('Share', '공유하기')}
+                ✉️ {t('Send via Email', '이메일로 보내기')}
+              </button>
+              <button
+                className="style-action-btn style-share-btn"
+                onClick={handleCopyLink}
+              >
+                🔗 {t('Copy Link', '링크 복사')}
               </button>
             </div>
 
