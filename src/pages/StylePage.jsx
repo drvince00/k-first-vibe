@@ -101,6 +101,10 @@ export default function StylePage() {
   const [result, setResult] = useState(null)
   const [error, setError] = useState(null)
   const [downloading, setDownloading] = useState(false)
+  const [email, setEmail] = useState('')
+  const [emailSending, setEmailSending] = useState(false)
+  const [emailSent, setEmailSent] = useState(false)
+  const [emailError, setEmailError] = useState(null)
   const formRef = useRef(null)
   const resultRef = useRef(null)
 
@@ -251,9 +255,34 @@ export default function StylePage() {
     }
   }, [t])
 
+  const handleSendEmail = async () => {
+    if (!email || !result) return
+    setEmailSending(true)
+    setEmailError(null)
+    try {
+      const res = await fetch('/api/send-report', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, result }),
+      })
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}))
+        throw new Error(err.error || `Error: ${res.status}`)
+      }
+      setEmailSent(true)
+    } catch (err) {
+      setEmailError(err.message)
+    } finally {
+      setEmailSending(false)
+    }
+  }
+
   const handleReset = () => {
     setResult(null)
     setError(null)
+    setEmail('')
+    setEmailSent(false)
+    setEmailError(null)
   }
 
   return (
@@ -533,6 +562,44 @@ export default function StylePage() {
                   📤 {t('Share', '공유하기')}
                 </button>
               )}
+            </div>
+
+            {/* Email Report */}
+            <div className="style-email-section">
+              <h3 className="style-email-title">
+                {t('Get your report via email', '이메일로 리포트 받기')}
+              </h3>
+              {emailSent ? (
+                <p className="style-email-sent">
+                  {t('Sent! Check your inbox.', '전송 완료! 받은편지함을 확인하세요.')}
+                </p>
+              ) : (
+                <div className="style-email-form">
+                  <input
+                    type="email"
+                    className="style-email-input"
+                    placeholder={t('your@email.com', 'your@email.com')}
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    disabled={emailSending}
+                  />
+                  <button
+                    className="style-action-btn style-email-btn"
+                    onClick={handleSendEmail}
+                    disabled={emailSending || !email}
+                  >
+                    {emailSending ? (
+                      <>
+                        <span className="style-spinner" />
+                        {t('Sending...', '전송 중...')}
+                      </>
+                    ) : (
+                      <>{t('Send to Email', '이메일로 받기')}</>
+                    )}
+                  </button>
+                </div>
+              )}
+              {emailError && <p className="style-error">{emailError}</p>}
             </div>
 
             <button className="style-submit-btn" onClick={handleReset}>
