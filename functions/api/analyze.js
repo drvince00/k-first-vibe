@@ -108,7 +108,7 @@ async function verifyCheckout(checkoutId, polarToken) {
   if (data.status !== 'succeeded' && data.status !== 'confirmed') {
     throw new Error(`Payment not completed (status: ${data.status})`);
   }
-  return data.order_id;
+  return { orderId: data.order_id, customerEmail: data.customer_email || null };
 }
 
 async function refundOrder(orderId, polarToken) {
@@ -151,7 +151,9 @@ export async function onRequestPost(context) {
         headers: { 'Content-Type': 'application/json' },
       });
     }
-    orderId = await verifyCheckout(checkoutId, polarToken);
+    const verified = await verifyCheckout(checkoutId, polarToken);
+    orderId = verified.orderId;
+    const customerEmail = verified.customerEmail;
 
     const apiKey = context.env.OPENAI_API_KEY;
     const userInfo = { height, weight, gender, country, bodyType: bodyType || 'average' };
@@ -173,6 +175,7 @@ export async function onRequestPost(context) {
     ]);
 
     return new Response(JSON.stringify({
+      customerEmail,
       location: { country, climate: report.climate || '' },
       report: {
         bodyAnalysis: report.bodyAnalysis,

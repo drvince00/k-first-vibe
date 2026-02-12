@@ -140,6 +140,7 @@ export default function StylePage() {
       }
 
       const data = await res.json()
+      if (data.customerEmail) setEmail(data.customerEmail)
       setResult(data)
     } catch (err) {
       setError(err.message)
