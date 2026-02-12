@@ -225,6 +225,31 @@ export default function StylePage() {
     }
   }, [t])
 
+  const handleShare = useCallback(async () => {
+    if (!resultRef.current || !navigator.share) return
+    try {
+      const canvas = await html2canvas(resultRef.current, {
+        backgroundColor: '#1a1a2e',
+        scale: 2,
+        useCORS: true,
+        logging: false,
+      })
+      const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'))
+      const file = new File([blob], 'my-style-analysis.png', { type: 'image/png' })
+      await navigator.share({
+        title: t('My AI Style Analysis', 'AI 스타일 분석 결과'),
+        text: t('Check out my AI style analysis!', 'AI 스타일 분석 결과를 확인해보세요!'),
+        files: [file],
+      })
+    } catch (err) {
+      if (err.name !== 'AbortError') {
+        await navigator.share({
+          title: t('My AI Style Analysis', 'AI 스타일 분석 결과'),
+          url: 'https://kculturecat.cc/style',
+        }).catch(() => {})
+      }
+    }
+  }, [t])
 
   const handleReset = () => {
     setResult(null)
@@ -500,6 +525,14 @@ export default function StylePage() {
                   <>📥 {t('Download as Image', '이미지로 다운로드')}</>
                 )}
               </button>
+              {navigator.share && (
+                <button
+                  className="style-action-btn style-share-btn"
+                  onClick={handleShare}
+                >
+                  📤 {t('Share', '공유하기')}
+                </button>
+              )}
             </div>
 
             <button className="style-submit-btn" onClick={handleReset}>
