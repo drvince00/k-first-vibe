@@ -6,18 +6,19 @@ export default function AuthCallbackPage() {
   const navigate = useNavigate()
 
   useEffect(() => {
-    const params = new URLSearchParams(window.location.search)
-    const hashParams = new URLSearchParams(window.location.hash.replace('#', '?'))
-    if (params.get('error') || hashParams.get('error')) {
+    const fullUrl = window.location.href
+    if (fullUrl.includes('error=')) {
       navigate('/login', { replace: true })
       return
     }
 
-    supabase.auth.onAuthStateChange((event) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
       if (event === 'SIGNED_IN') {
         navigate('/', { replace: true })
       }
     })
+
+    return () => subscription.unsubscribe()
   }, [navigate])
 
   return (
