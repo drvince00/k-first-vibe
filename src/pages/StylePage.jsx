@@ -382,6 +382,11 @@ export default function StylePage() {
                   max="250"
                   required
                 />
+                {form.height >= 100 && form.height <= 250 && (
+                  <span className="style-unit-hint">
+                    ≈ {Math.floor(form.height / 2.54 / 12)}'{Math.round((form.height / 2.54) % 12)}"
+                  </span>
+                )}
               </div>
               <div className="style-form-group">
                 <label>{t('Weight (kg)', '몸무게 (kg)')}</label>
@@ -395,6 +400,11 @@ export default function StylePage() {
                   max="200"
                   required
                 />
+                {form.weight >= 30 && form.weight <= 200 && (
+                  <span className="style-unit-hint">
+                    ≈ {Math.round(form.weight * 2.205)} lbs
+                  </span>
+                )}
               </div>
             </div>
 
