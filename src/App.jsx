@@ -1,6 +1,5 @@
 import { Routes, Route } from 'react-router-dom'
 import { AppProvider } from './context/AppContext'
-import { AuthProvider } from './context/AuthContext'
 import HomePage from './pages/HomePage'
 import AboutPage from './pages/AboutPage'
 import PrivacyPage from './pages/PrivacyPage'
@@ -10,8 +9,6 @@ import ResultPage from './pages/ResultPage'
 import LearnPage from './pages/LearnPage'
 import StylePage from './pages/StylePage'
 import RefundPage from './pages/RefundPage'
-import LoginPage from './pages/LoginPage'
-import AuthCallbackPage from './pages/AuthCallbackPage'
 import NotFoundPage from './pages/NotFoundPage'
 import './App.css'
 
@@ -27,8 +24,6 @@ function AppRoutes() {
       <Route path="/quiz" element={<QuizPage />} />
       <Route path="/style" element={<StylePage />} />
       <Route path="/result" element={<ResultPage />} />
-      <Route path="/login" element={<LoginPage />} />
-      <Route path="/auth/callback" element={<AuthCallbackPage />} />
       <Route path="*" element={<NotFoundPage />} />
     </Routes>
   )
@@ -36,11 +31,9 @@ function AppRoutes() {
 
 function App() {
   return (
-    <AuthProvider>
-      <AppProvider>
-        <AppRoutes />
-      </AppProvider>
-    </AuthProvider>
+    <AppProvider>
+      <AppRoutes />
+    </AppProvider>
   )
 }
 

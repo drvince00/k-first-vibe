@@ -1,26 +1,8 @@
-import { useState, useRef, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { useApp } from '../context/AppContext'
-import { useAuth } from '../context/AuthContext'
 
 export default function Navbar() {
   const { lang, setLang } = useApp()
-  const { user, loading, signOut } = useAuth()
-  const [menuOpen, setMenuOpen] = useState(false)
-  const menuRef = useRef(null)
-
-  useEffect(() => {
-    const handleClick = (e) => {
-      if (menuRef.current && !menuRef.current.contains(e.target)) {
-        setMenuOpen(false)
-      }
-    }
-    document.addEventListener('mousedown', handleClick)
-    return () => document.removeEventListener('mousedown', handleClick)
-  }, [])
-
-  const avatarUrl = user?.user_metadata?.avatar_url
-  const displayName = user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'User'
 
   return (
     <nav className="navbar">
@@ -35,35 +17,6 @@ export default function Navbar() {
         >
           {lang === 'en' ? '한글' : 'English'}
         </button>
-
-        {!loading && (
-          user ? (
-            <div className="user-menu" ref={menuRef}>
-              <button className="user-menu-trigger" onClick={() => setMenuOpen(!menuOpen)}>
-                {avatarUrl ? (
-                  <img src={avatarUrl} alt="" className="user-avatar" referrerPolicy="no-referrer" />
-                ) : (
-                  <span className="user-avatar-fallback">{displayName[0].toUpperCase()}</span>
-                )}
-              </button>
-              {menuOpen && (
-                <div className="user-dropdown">
-                  <div className="user-dropdown-name">{displayName}</div>
-                  <button
-                    className="user-dropdown-item"
-                    onClick={() => { signOut(); setMenuOpen(false) }}
-                  >
-                    {lang === 'ko' ? '로그아웃' : 'Sign Out'}
-                  </button>
-                </div>
-              )}
-            </div>
-          ) : (
-            <Link to="/login" className="nav-login-btn">
-              {lang === 'ko' ? '로그인' : 'Login'}
-            </Link>
-          )
-        )}
       </div>
     </nav>
   )

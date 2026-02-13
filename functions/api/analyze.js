@@ -41,7 +41,7 @@ async function callOpenAIText(prompt, apiKey) {
       'Authorization': `Bearer ${apiKey}`,
     },
     body: JSON.stringify({
-      model: 'gpt-4.1-mini',
+      model: 'gpt-4.1',
       messages: [{ role: 'user', content: prompt }],
       temperature: 0.7,
     }),
