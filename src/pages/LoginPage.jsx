@@ -6,7 +6,7 @@ import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
 
 export default function LoginPage() {
-  const { user, loading, signInWithGoogle, signInWithApple, signInWithFacebook } = useAuth()
+  const { user, loading, signInWithGoogle, signInWithFacebook } = useAuth()
   const { lang } = useApp()
   const navigate = useNavigate()
   const location = useLocation()
@@ -36,14 +36,12 @@ export default function LoginPage() {
       title: 'Welcome Back',
       subtitle: 'Sign in to save your results and unlock more features',
       google: 'Continue with Google',
-      apple: 'Continue with Apple',
       facebook: 'Continue with Facebook',
     },
     ko: {
       title: '로그인',
       subtitle: '결과를 저장하고 더 많은 기능을 이용하세요',
       google: 'Google로 계속하기',
-      apple: 'Apple로 계속하기',
       facebook: 'Facebook으로 계속하기',
     },
   }
@@ -66,13 +64,6 @@ export default function LoginPage() {
                 <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
               </svg>
               <span>{tx.google}</span>
-            </button>
-
-            <button className="social-btn social-apple" onClick={signInWithApple}>
-              <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
-                <path d="M17.05 20.28c-.98.95-2.05.88-3.08.4-1.09-.5-2.08-.48-3.24 0-1.44.62-2.2.44-3.06-.4C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.32 2.32-2.11 4.45-3.74 4.25z"/>
-              </svg>
-              <span>{tx.apple}</span>
             </button>
 
             <button className="social-btn social-facebook" onClick={signInWithFacebook}>

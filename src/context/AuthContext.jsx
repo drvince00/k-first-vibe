@@ -30,16 +30,16 @@ export function AuthProvider({ children }) {
       options: { redirectTo: `${window.location.origin}/auth/callback` },
     })
 
-  const signInWithApple = () =>
-    supabase.auth.signInWithOAuth({
-      provider: 'apple',
-      options: { redirectTo: `${window.location.origin}/auth/callback` },
-    })
-
   const signInWithFacebook = () =>
     supabase.auth.signInWithOAuth({
       provider: 'facebook',
       options: { redirectTo: `${window.location.origin}/auth/callback` },
+    })
+
+  const signInWithEmail = (email) =>
+    supabase.auth.signInWithOtp({
+      email,
+      options: { emailRedirectTo: `${window.location.origin}/auth/callback` },
     })
 
   const signOut = () => supabase.auth.signOut()
@@ -49,8 +49,8 @@ export function AuthProvider({ children }) {
     session,
     loading,
     signInWithGoogle,
-    signInWithApple,
     signInWithFacebook,
+    signInWithEmail,
     signOut,
   }
 

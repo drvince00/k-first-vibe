@@ -6,6 +6,13 @@ export default function AuthCallbackPage() {
   const navigate = useNavigate()
 
   useEffect(() => {
+    const params = new URLSearchParams(window.location.search)
+    const hashParams = new URLSearchParams(window.location.hash.replace('#', '?'))
+    if (params.get('error') || hashParams.get('error')) {
+      navigate('/login', { replace: true })
+      return
+    }
+
     supabase.auth.onAuthStateChange((event) => {
       if (event === 'SIGNED_IN') {
         navigate('/', { replace: true })
