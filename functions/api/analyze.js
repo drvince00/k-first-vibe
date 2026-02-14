@@ -33,6 +33,34 @@ function buildHairstylePrompt(gender) {
   return `Create a 3x3 grid showing 9 trendy Korean ${genderText} hairstyles on the person from the reference photo. Keep face and features identical in all 9 cells. Each cell must be framed as a HEAD AND SHOULDERS portrait shot - show from MID-CHEST up to well ABOVE the top of the hair. The camera should be zoomed OUT so that the face is small (about 25% of cell height) and the HAIR is the main focus. There must be large empty space above the hair in every cell - no hair should touch or be cropped by the top edge. Similarly, show down to the shoulders/chest - no chin should be cropped at the bottom. Think of it as a zoomed-out salon catalog photo. Variety: short, medium, long, bangs, no bangs, layered, permed, straight, textured. Clean white background. No text or watermarks.`;
 }
 
+function isQuotaError(status) {
+  return status === 402 || status === 429;
+}
+
+async function notifyOperator(resendKey, errorDetail) {
+  try {
+    await fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${resendKey}`,
+      },
+      body: JSON.stringify({
+        from: 'K-Culture Cat Alert <noreply@kculturecat.cc>',
+        to: ['kculturecat@gmail.com'],
+        subject: '[URGENT] K-Culture Cat - OpenAI API Credit Exhausted',
+        html: `<h2>OpenAI API Credit Alert</h2>
+<p><strong>Time:</strong> ${new Date().toISOString()}</p>
+<p><strong>Error:</strong> ${errorDetail}</p>
+<p>The AI Stylist service has been automatically paused. Please recharge your OpenAI API credits immediately.</p>
+<p><a href="https://platform.openai.com/settings/organization/billing">Go to OpenAI Billing</a></p>`,
+      }),
+    });
+  } catch (e) {
+    console.error('Failed to send operator alert:', e.message);
+  }
+}
+
 async function callOpenAIText(prompt, apiKey) {
   const res = await fetch('https://api.openai.com/v1/chat/completions', {
     method: 'POST',
@@ -49,6 +77,9 @@ async function callOpenAIText(prompt, apiKey) {
 
   if (!res.ok) {
     const err = await res.text();
+    if (isQuotaError(res.status)) {
+      throw Object.assign(new Error(`QUOTA_EXHAUSTED: ${res.status} - ${err}`), { quotaError: true });
+    }
     throw new Error(`OpenAI text error: ${res.status} - ${err}`);
   }
 
@@ -87,6 +118,9 @@ async function callOpenAIImage(prompt, photoBase64, photoMimeType, apiKey, size 
 
   if (!res.ok) {
     const err = await res.text();
+    if (isQuotaError(res.status)) {
+      throw Object.assign(new Error(`QUOTA_EXHAUSTED: ${res.status} - ${err}`), { quotaError: true });
+    }
     throw new Error(`OpenAI image error: ${res.status} - ${err}`);
   }
 
@@ -198,11 +232,17 @@ export async function onRequestPost(context) {
       await refundOrder(orderId, polarToken);
     }
 
+    // Notify operator if OpenAI quota exhausted
+    if (err.quotaError && context.env.RESEND_API_KEY) {
+      await notifyOperator(context.env.RESEND_API_KEY, err.message);
+    }
+
     return new Response(JSON.stringify({
       error: err.message,
       refunded: !!orderId,
+      serviceUnavailable: !!err.quotaError,
     }), {
-      status: 500,
+      status: err.quotaError ? 503 : 500,
       headers: { 'Content-Type': 'application/json' },
     });
   }

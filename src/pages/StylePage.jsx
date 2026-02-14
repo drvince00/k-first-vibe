@@ -174,6 +174,17 @@ export default function StylePage() {
 
       if (!res.ok) {
         const err = await res.json().catch(() => ({}))
+        if (err.serviceUnavailable) {
+          const refundMsg = err.refunded
+            ? t(' Your payment has been refunded.', ' 결제가 환불되었습니다.')
+            : ''
+          throw new Error(
+            t(
+              'The AI Stylist service is temporarily unavailable. We are working to restore it as soon as possible.' + refundMsg,
+              'AI 스타일리스트 서비스가 일시적으로 중단되었습니다. 빠르게 복구하겠습니다.' + refundMsg
+            )
+          )
+        }
         const refundMsg = err.refunded
           ? t(' (payment has been refunded)', ' (결제가 환불되었습니다)')
           : ''
