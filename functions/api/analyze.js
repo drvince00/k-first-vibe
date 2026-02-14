@@ -131,7 +131,7 @@ async function callOpenAIImage(prompt, photoBase64, photoMimeType, apiKey, size 
   return { mimeType: 'image/png', data: imageData };
 }
 
-const POLAR_API_BASE = 'https://sandbox-api.polar.sh/v1';
+const POLAR_API_BASE = 'https://api.polar.sh/v1';
 
 async function verifyCheckout(checkoutId, polarToken) {
   const res = await fetch(`${POLAR_API_BASE}/checkouts/${checkoutId}`, {

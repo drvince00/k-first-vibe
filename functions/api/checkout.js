@@ -9,17 +9,22 @@ export async function onRequestPost(context) {
 
   try {
     const origin = new URL(context.request.url).origin;
+    const body = await context.request.json().catch(() => ({}));
 
-    const res = await fetch('https://sandbox-api.polar.sh/v1/checkouts/', {
+    const checkoutBody = {
+      product_id: 'c6117b99-5581-463f-a64f-a5cce0582c49',
+      embed_origin: origin,
+    };
+    if (body.email) checkoutBody.customer_email = body.email;
+    if (body.country) checkoutBody.customer_billing_address = { country: body.country };
+
+    const res = await fetch('https://api.polar.sh/v1/checkouts/', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${env.POLAR_ACCESS_TOKEN}`,
       },
-      body: JSON.stringify({
-        product_id: '69cf0e2a-acdf-4e28-9aa6-3ab20ff35b62',
-        embed_origin: origin,
-      }),
+      body: JSON.stringify(checkoutBody),
     });
 
     if (!res.ok) {

@@ -1,7 +1,8 @@
-import { useState, useRef, useCallback } from 'react'
+import { useState, useRef, useCallback, useEffect } from 'react'
 import html2canvas from 'html2canvas'
 import { PolarEmbedCheckout } from '@polar-sh/checkout/embed'
 import { useApp } from '../context/AppContext'
+import { useAuth } from '../context/AuthContext'
 import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
 
@@ -126,6 +127,7 @@ function fileToBase64(file) {
 
 export default function StylePage() {
   const { lang } = useApp()
+  const { user } = useAuth()
   const t = (en, ko) => lang === 'en' ? en : ko
 
   const [form, setForm] = useState({
@@ -143,6 +145,13 @@ export default function StylePage() {
   const [error, setError] = useState(null)
   const [downloading, setDownloading] = useState(false)
   const [email, setEmail] = useState('')
+
+  // Pre-fill email from logged-in user
+  useEffect(() => {
+    if (user?.email && !email) {
+      setEmail(user.email)
+    }
+  }, [user])
   const [emailSending, setEmailSending] = useState(false)
   const [emailSent, setEmailSent] = useState(false)
   const [emailError, setEmailError] = useState(null)
@@ -235,6 +244,10 @@ export default function StylePage() {
       const res = await fetch(CHECKOUT_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: user?.email || '',
+          country: form.country,
+        }),
       })
 
       if (!res.ok) {
