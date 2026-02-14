@@ -3,7 +3,7 @@ import { useApp } from '../context/AppContext'
 import Footer from '../components/Footer'
 
 export default function ResultPage() {
-  const { lang, quiz, score, handleRetry, navigate } = useApp()
+  const { lang, quiz, score, handleRetry, navigate, selectedCategories } = useApp()
 
   const percentage = quiz.length > 0 ? Math.round((score / quiz.length) * 100) : 0
   const passed = percentage >= 70

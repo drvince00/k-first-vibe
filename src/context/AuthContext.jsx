@@ -42,6 +42,38 @@ export function AuthProvider({ children }) {
       options: { emailRedirectTo: `${window.location.origin}/auth/callback` },
     })
 
+  const signUpWithEmail = (email, password) =>
+    supabase.auth.signUp({
+      email,
+      password,
+      options: { emailRedirectTo: `${window.location.origin}/auth/callback` },
+    })
+
+  const signInWithPassword = (email, password) =>
+    supabase.auth.signInWithPassword({ email, password })
+
+  const resetPassword = (email) =>
+    supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${window.location.origin}/reset-password`,
+    })
+
+  const updatePassword = (newPassword) =>
+    supabase.auth.updateUser({ password: newPassword })
+
+  const updateProfile = async (data) => {
+    const { error } = await supabase.auth.updateUser({ data })
+    if (error) throw error
+    const { data: { user: updated } } = await supabase.auth.getUser()
+    setUser(updated)
+  }
+
+  const deleteAccount = async () => {
+    if (!user?.id) throw new Error('Not logged in')
+    const { error } = await supabase.rpc('delete_own_account')
+    if (error) throw error
+    await signOut()
+  }
+
   const signOut = () => supabase.auth.signOut()
 
   const value = {
@@ -51,6 +83,12 @@ export function AuthProvider({ children }) {
     signInWithGoogle,
     signInWithFacebook,
     signInWithEmail,
+    signUpWithEmail,
+    signInWithPassword,
+    resetPassword,
+    updatePassword,
+    updateProfile,
+    deleteAccount,
     signOut,
   }
 

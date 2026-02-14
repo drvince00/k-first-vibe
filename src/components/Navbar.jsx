@@ -1,11 +1,12 @@
 import { useState, useRef, useEffect } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { useApp } from '../context/AppContext'
 import { useAuth } from '../context/AuthContext'
 
 export default function Navbar() {
   const { lang, setLang } = useApp()
   const { user, loading, signOut } = useAuth()
+  const navigate = useNavigate()
   const [menuOpen, setMenuOpen] = useState(false)
   const menuRef = useRef(null)
 
@@ -49,6 +50,12 @@ export default function Navbar() {
               {menuOpen && (
                 <div className="user-dropdown">
                   <div className="user-dropdown-name">{displayName}</div>
+                  <button
+                    className="user-dropdown-item"
+                    onClick={() => { navigate('/mypage'); setMenuOpen(false) }}
+                  >
+                    {lang === 'ko' ? '마이페이지' : 'My Page'}
+                  </button>
                   <button
                     className="user-dropdown-item"
                     onClick={() => { signOut(); setMenuOpen(false) }}

@@ -1,23 +1,72 @@
-import { useEffect } from 'react'
-import { useNavigate, useLocation } from 'react-router-dom'
+import { useEffect, useState } from 'react'
+import { useNavigate, useLocation, Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { useApp } from '../context/AppContext'
 import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
 
 export default function LoginPage() {
-  const { user, loading, signInWithGoogle, signInWithFacebook } = useAuth()
+  const { user, loading, signInWithGoogle, signInWithFacebook, signUpWithEmail, signInWithPassword } = useAuth()
   const { lang } = useApp()
   const navigate = useNavigate()
   const location = useLocation()
 
   const from = location.state?.from || '/'
 
+  const [mode, setMode] = useState('login') // 'login' | 'signup'
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [confirmPassword, setConfirmPassword] = useState('')
+  const [error, setError] = useState('')
+  const [success, setSuccess] = useState('')
+  const [submitting, setSubmitting] = useState(false)
+
   useEffect(() => {
     if (!loading && user) {
       navigate(from, { replace: true })
     }
   }, [user, loading, navigate, from])
+
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+    setError('')
+    setSuccess('')
+
+    if (!email || !password) {
+      setError(lang === 'ko' ? '이메일과 비밀번호를 입력하세요.' : 'Please enter email and password.')
+      return
+    }
+
+    if (mode === 'signup') {
+      if (password.length < 6) {
+        setError(lang === 'ko' ? '비밀번호는 6자 이상이어야 합니다.' : 'Password must be at least 6 characters.')
+        return
+      }
+      if (password !== confirmPassword) {
+        setError(lang === 'ko' ? '비밀번호가 일치하지 않습니다.' : 'Passwords do not match.')
+        return
+      }
+    }
+
+    setSubmitting(true)
+    try {
+      if (mode === 'signup') {
+        const { error: err } = await signUpWithEmail(email, password)
+        if (err) throw err
+        setSuccess(lang === 'ko' ? '인증 이메일을 보냈습니다. 이메일을 확인하세요.' : 'Verification email sent. Please check your inbox.')
+        setEmail('')
+        setPassword('')
+        setConfirmPassword('')
+      } else {
+        const { error: err } = await signInWithPassword(email, password)
+        if (err) throw err
+      }
+    } catch (err) {
+      setError(err.message)
+    } finally {
+      setSubmitting(false)
+    }
+  }
 
   if (loading) {
     return (
@@ -37,12 +86,30 @@ export default function LoginPage() {
       subtitle: 'Sign in to save your results and unlock more features',
       google: 'Continue with Google',
       facebook: 'Continue with Facebook',
+      or: 'OR',
+      emailLabel: 'Email',
+      passwordLabel: 'Password',
+      confirmLabel: 'Confirm Password',
+      loginBtn: 'Sign In',
+      signupBtn: 'Create Account',
+      switchToSignup: "Don't have an account? Sign up",
+      switchToLogin: 'Already have an account? Sign in',
+      forgotPassword: 'Forgot password?',
     },
     ko: {
       title: '로그인',
       subtitle: '결과를 저장하고 더 많은 기능을 이용하세요',
       google: 'Google로 계속하기',
       facebook: 'Facebook으로 계속하기',
+      or: '또는',
+      emailLabel: '이메일',
+      passwordLabel: '비밀번호',
+      confirmLabel: '비밀번호 확인',
+      loginBtn: '로그인',
+      signupBtn: '회원가입',
+      switchToSignup: '계정이 없으신가요? 회원가입',
+      switchToLogin: '이미 계정이 있으신가요? 로그인',
+      forgotPassword: '비밀번호 찾기',
     },
   }
   const tx = t[lang] || t.en
@@ -73,6 +140,59 @@ export default function LoginPage() {
               <span>{tx.facebook}</span>
             </button>
           </div>
+
+          <div className="login-divider">
+            <span>{tx.or}</span>
+          </div>
+
+          <form className="login-form" onSubmit={handleSubmit}>
+            {error && <div className="login-message login-error">{error}</div>}
+            {success && <div className="login-message login-success">{success}</div>}
+
+            <input
+              type="email"
+              className="login-input"
+              placeholder={tx.emailLabel}
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              autoComplete="email"
+            />
+            <input
+              type="password"
+              className="login-input"
+              placeholder={tx.passwordLabel}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              autoComplete={mode === 'signup' ? 'new-password' : 'current-password'}
+            />
+            {mode === 'signup' && (
+              <input
+                type="password"
+                className="login-input"
+                placeholder={tx.confirmLabel}
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                autoComplete="new-password"
+              />
+            )}
+
+            <button type="submit" className="login-submit-btn" disabled={submitting}>
+              {submitting ? <span className="loader-small" /> : (mode === 'signup' ? tx.signupBtn : tx.loginBtn)}
+            </button>
+
+            {mode === 'login' && (
+              <Link to="/reset-password" className="login-forgot-link">
+                {tx.forgotPassword}
+              </Link>
+            )}
+          </form>
+
+          <button
+            className="login-mode-toggle"
+            onClick={() => { setMode(mode === 'login' ? 'signup' : 'login'); setError(''); setSuccess('') }}
+          >
+            {mode === 'login' ? tx.switchToSignup : tx.switchToLogin}
+          </button>
         </div>
       </main>
       <Footer />
