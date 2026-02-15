@@ -1,4 +1,4 @@
-import { useRef } from 'react'
+import { useRef, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { useApp } from '../context/AppContext'
 import { playSound } from '../utils/sound'
@@ -12,8 +12,13 @@ export default function QuizPage() {
     score, setScore, soundOn, setSoundOn, imgError, setImgError,
     setCurrentIndex, navigate, topRef,
     categories, selectedCategories, toggleCategory,
-    questionCount, setQuestionCount, startQuiz, ready
+    questionCount, setQuestionCount, startQuiz, ready, resetQuizSetup
   } = useApp()
+
+  // Reset quiz setup every time user navigates to this page
+  useEffect(() => {
+    resetQuizSetup()
+  }, [resetQuizSetup])
 
   const quizHeaderRef = useRef(null)
 
@@ -62,8 +67,8 @@ export default function QuizPage() {
       <header className="learn-hero">
         <div className="learn-hero-content">
           <img
-            src="/images/catatsuwon.jpg"
-            alt="Cat mascot at Suwon"
+            src="/images/char-quiz.png"
+            alt="Quiz cat mascot"
             className="learn-hero-img"
           />
           <div className="learn-hero-text">

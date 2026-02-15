@@ -19,7 +19,7 @@ export default function HomePage() {
       <header className="home-hero-split">
         <div className="home-hero-left">
           <img
-            src="/images/char-quiz.png"
+            src="/images/catatsuwon.jpg"
             alt="K-Culture Cat mascot"
             className="home-hero-cat"
           />
@@ -68,45 +68,33 @@ export default function HomePage() {
         </div>
       </header>
 
-      {/* Feature Cards (Mobile) */}
-      <div className="feature-grid">
-        <Link to="/quiz" className="feature-card">
-          <img src="/images/char-quiz.png" alt="Korean Culture Quiz" />
-          <h3>{lang === 'en' ? 'K-Quiz' : 'K-퀴즈'}</h3>
-          <p>{lang === 'en' ? 'Test your Korean knowledge' : '한국 문화 지식 테스트'}</p>
-        </Link>
-        <div className="feature-card feature-card-disabled">
-          <img src="/images/char-style.png" alt="AI Stylist" />
-          <h3>{lang === 'en' ? 'AI Stylist' : 'AI 스타일리스트'}</h3>
-          <p>{lang === 'en' ? 'Coming Soon' : '곧 출시'}</p>
-        </div>
-        <Link to="/learn" className="feature-card feature-full">
-          <img src="/images/char-learn.png" alt="Learn Korean" />
-          <div className="card-text">
-            <h3>{lang === 'en' ? 'Learn Korean' : '한국어 배우기'}</h3>
-            <p>{lang === 'en' ? 'YouTube lessons from top teachers' : '인기 유튜버 강의 모음'}</p>
+      {/* Feature Cards Section */}
+      <section className="home-features-section">
+        <div className="home-features-grid">
+          <Link to="/quiz" className="home-feature-card">
+            <div className="home-feature-icon">
+              <img src="/images/char-quiz.png" alt="Korean Culture Quiz" />
+            </div>
+            <h3>{lang === 'en' ? 'Korean Culture Quiz' : '한국 문화 퀴즈'}</h3>
+            <p>{lang === 'en' ? '522+ questions — TOPIK, food, and traditions' : '522개 이상의 문제 — TOPIK, 음식, 전통'}</p>
+          </Link>
+          <div className="home-feature-card home-feature-card-disabled">
+            <div className="home-feature-icon">
+              <img src="/images/char-style.png" alt="AI Stylist" />
+            </div>
+            <span className="coming-soon-badge">{lang === 'en' ? 'Coming Soon' : '곧 출시'}</span>
+            <h3>{lang === 'en' ? 'K-Fashion AI' : 'K-패션 AI'}</h3>
+            <p>{lang === 'en' ? 'AI-powered Korean fashion & hairstyle analysis' : 'AI 기반 한국 패션 & 헤어스타일 분석'}</p>
           </div>
-        </Link>
-      </div>
-
-      {/* Desktop: Feature Cards Section */}
-      <div className="desktop-features">
-        <Link to="/quiz" className="desktop-feature-card">
-          <img src="/images/char-quiz.png" alt="Korean Culture Quiz" />
-          <h3>{lang === 'en' ? 'Korean Culture Quiz' : '한국 문화 퀴즈'}</h3>
-          <p>{lang === 'en' ? '522+ questions about TOPIK, Korean food, and traditions — test your K-culture knowledge' : 'TOPIK, 한국 음식, 전통에 대한 522개 이상의 문제 — K-문화 지식 테스트'}</p>
-        </Link>
-        <div className="desktop-feature-card desktop-feature-card-disabled">
-          <img src="/images/char-style.png" alt="AI Stylist" />
-          <h3>{lang === 'en' ? 'K-Fashion AI Analysis' : 'K-패션 AI 분석'}</h3>
-          <p>{lang === 'en' ? 'Coming Soon — Upload your photo and get personalized Korean fashion & hairstyle recommendations' : '곧 출시 — 사진을 업로드하고 맞춤 한국 패션 & 헤어스타일 추천을 받으세요'}</p>
+          <Link to="/learn" className="home-feature-card">
+            <div className="home-feature-icon">
+              <img src="/images/char-learn.png" alt="Learn Korean" />
+            </div>
+            <h3>{lang === 'en' ? 'Learn Korean' : '한국어 배우기'}</h3>
+            <p>{lang === 'en' ? 'Curated YouTube lessons from top teachers' : '인기 유튜버 엄선 강의 모음'}</p>
+          </Link>
         </div>
-        <Link to="/learn" className="desktop-feature-card">
-          <img src="/images/char-learn.png" alt="Learn Korean" />
-          <h3>{lang === 'en' ? 'Learn Korean Language' : '한국어 배우기'}</h3>
-          <p>{lang === 'en' ? 'Curated YouTube videos and resources to help you master Korean language and culture' : '한국어와 문화를 마스터할 수 있는 엄선된 유튜브 영상과 자료'}</p>
-        </Link>
-      </div>
+      </section>
 
       <Footer />
     </div>

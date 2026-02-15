@@ -134,6 +134,17 @@ export function AppProvider({ children }) {
     )
   }
 
+  const resetQuizSetup = useCallback(() => {
+    setSelectedCategories(['FOOD', 'CULTURE'])
+    setQuestionCount(10)
+    setQuiz([])
+    setCurrentIndex(0)
+    setScore(0)
+    setSelected(null)
+    setAnswered(false)
+    setImgError(false)
+  }, [])
+
   const startQuiz = () => {
     const built = buildQuiz()
     if (built.length === 0) return
@@ -187,7 +198,7 @@ export function AppProvider({ children }) {
     questionCount, setQuestionCount,
     imgError, setImgError, ready, soundOn, setSoundOn,
     // Quiz actions
-    buildQuiz, startQuiz, handleRetry,
+    buildQuiz, startQuiz, handleRetry, resetQuizSetup,
     // Contact
     contactEmail, setContactEmail, contactMessage, setContactMessage,
     contactStatus, handleContactSubmit,

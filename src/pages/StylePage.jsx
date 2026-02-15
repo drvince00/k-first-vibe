@@ -358,16 +358,37 @@ export default function StylePage() {
     <div className="home-page">
       <Navbar />
 
+      {/* Hero Banner */}
+      <header className="learn-hero">
+        <div className="learn-hero-content">
+          <img
+            src="/images/char-style.png"
+            alt="AI Stylist cat mascot"
+            className="learn-hero-img"
+          />
+          <div className="learn-hero-text">
+            <span className="hero-label">AI STYLIST</span>
+            <h1 className="hero-title">
+              {lang === 'en' ? (
+                <>K-Fashion AI<br />Style Analysis</>
+              ) : (
+                <>K-패션 AI<br />스타일 분석</>
+              )}
+            </h1>
+            <p className="hero-desc">
+              {t(
+                'Get personalized outfit & hairstyle recommendations based on your body type and local weather.',
+                '체형과 현지 날씨를 기반으로 맞춤 스타일과 헤어스타일을 추천받으세요.'
+              )}
+            </p>
+            <div className="learn-speech-bubble">
+              {t('Looking fabulous! ✨', '멋져 보여요! ✨')}
+            </div>
+          </div>
+        </div>
+      </header>
+
       <main className="page-content">
-        <h1 className="page-title">
-          {t('AI Style Consultant', 'AI 스타일 컨설턴트')}
-        </h1>
-        <p className="style-subtitle">
-          {t(
-            'Get personalized outfit & hairstyle recommendations based on your body type and local weather',
-            '체형과 현지 날씨를 기반으로 맞춤 스타일과 헤어스타일을 추천받으세요'
-          )}
-        </p>
 
         {!result ? (
           <form className="style-form" ref={formRef} onSubmit={handleSubmit}>
