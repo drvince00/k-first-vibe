@@ -183,20 +183,19 @@ export default function StylePage() {
 
       if (!res.ok) {
         const err = await res.json().catch(() => ({}))
-        if (err.serviceUnavailable) {
-          const refundMsg = err.refunded
-            ? t(' Your payment has been refunded.', ' 결제가 환불되었습니다.')
+        const refundMsg = err.refunded
+          ? t(' Your payment has been refunded.', ' 결제가 환불되었습니다.')
+          : err.refundFailed
+            ? t(' We could not process your refund automatically. Please contact us at kculturecat@gmail.com and we will refund you manually.', ' 자동 환불 처리에 실패했습니다. kculturecat@gmail.com으로 연락 주시면 수동으로 환불해 드리겠습니다.')
             : ''
+        if (err.serviceUnavailable) {
           throw new Error(
             t(
-              'The AI Stylist service is temporarily unavailable. We are working to restore it as soon as possible.' + refundMsg,
-              'AI 스타일리스트 서비스가 일시적으로 중단되었습니다. 빠르게 복구하겠습니다.' + refundMsg
-            )
+              'The AI Stylist service is temporarily unavailable. We are working to restore it as soon as possible.',
+              'AI 스타일리스트 서비스가 일시적으로 중단되었습니다. 빠르게 복구하겠습니다.'
+            ) + refundMsg
           )
         }
-        const refundMsg = err.refunded
-          ? t(' (payment has been refunded)', ' (결제가 환불되었습니다)')
-          : ''
         throw new Error((err.error || `Server error: ${res.status}`) + refundMsg)
       }
 

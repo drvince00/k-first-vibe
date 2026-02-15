@@ -160,6 +160,32 @@ async function refundOrder(orderId, polarToken) {
   if (!res.ok) {
     const err = await res.text();
     console.error(`Refund failed for order ${orderId}: ${err}`);
+    return false;
+  }
+  return true;
+}
+
+async function notifyRefundFailure(resendKey, orderId, originalError) {
+  try {
+    await fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${resendKey}`,
+      },
+      body: JSON.stringify({
+        from: 'K-Culture Cat Alert <noreply@kculturecat.cc>',
+        to: ['kculturecat@gmail.com'],
+        subject: '[URGENT] Refund Failed - Manual Action Required',
+        html: `<h2>Refund Failed Alert</h2>
+<p><strong>Time:</strong> ${new Date().toISOString()}</p>
+<p><strong>Order ID:</strong> ${orderId}</p>
+<p><strong>Original Error:</strong> ${originalError}</p>
+<p>The automatic refund failed. Please process this refund manually in the <a href="https://polar.sh/kculturecat/orders">Polar Dashboard</a>.</p>`,
+      }),
+    });
+  } catch (e) {
+    console.error('Failed to send refund failure alert:', e.message);
   }
 }
 
@@ -227,9 +253,16 @@ export async function onRequestPost(context) {
       headers: { 'Content-Type': 'application/json' },
     });
   } catch (err) {
+    let refunded = false;
+
     // Auto-refund if payment was verified but analysis failed
     if (orderId && polarToken) {
-      await refundOrder(orderId, polarToken);
+      refunded = await refundOrder(orderId, polarToken);
+
+      // If refund failed, urgently notify operator for manual refund
+      if (!refunded && context.env.RESEND_API_KEY) {
+        await notifyRefundFailure(context.env.RESEND_API_KEY, orderId, err.message);
+      }
     }
 
     // Notify operator if OpenAI quota exhausted
@@ -239,7 +272,8 @@ export async function onRequestPost(context) {
 
     return new Response(JSON.stringify({
       error: err.message,
-      refunded: !!orderId,
+      refunded,
+      refundFailed: !!orderId && !refunded,
       serviceUnavailable: !!err.quotaError,
     }), {
       status: err.quotaError ? 503 : 500,
