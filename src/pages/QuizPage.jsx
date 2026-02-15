@@ -168,6 +168,7 @@ export default function QuizPage() {
               <div className="quiz-header">
                 <span className="quiz-progress">
                   {currentIndex + 1} / {quiz.length}
+                  {q.id != null && <span style={{ fontSize: '0.75em', color: '#888', marginLeft: '0.4em' }}>(No.{q.id})</span>}
                 </span>
                 <div className="quiz-header-right">
                   <button className="sound-toggle" onClick={() => setSoundOn((v) => !v)}>

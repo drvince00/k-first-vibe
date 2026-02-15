@@ -14,6 +14,9 @@ import LoginPage from './pages/LoginPage'
 import ResetPasswordPage from './pages/ResetPasswordPage'
 import MyPage from './pages/MyPage'
 import AuthCallbackPage from './pages/AuthCallbackPage'
+import BoardPage from './pages/BoardPage'
+import PostDetailPage from './pages/PostDetailPage'
+import PostWritePage from './pages/PostWritePage'
 import NotFoundPage from './pages/NotFoundPage'
 import './App.css'
 
@@ -32,6 +35,10 @@ function AppRoutes() {
       <Route path="/login" element={<LoginPage />} />
       <Route path="/reset-password" element={<ResetPasswordPage />} />
       <Route path="/mypage" element={<MyPage />} />
+      <Route path="/board" element={<BoardPage />} />
+      <Route path="/board/write" element={<PostWritePage />} />
+      <Route path="/board/write/:id" element={<PostWritePage />} />
+      <Route path="/board/:id" element={<PostDetailPage />} />
       <Route path="/auth/callback" element={<AuthCallbackPage />} />
       <Route path="*" element={<NotFoundPage />} />
     </Routes>
