@@ -102,10 +102,42 @@
   border-color: #ffd700;
 }
 
+/* ===== Home Hero Split ===== */
+.home-hero-split {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px 20px 0;
+  position: relative;
+  z-index: 2;
+}
+
+.home-hero-left {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.home-hero-cat {
+  width: 160px;
+  height: 160px;
+  object-fit: contain;
+  margin-bottom: 16px;
+  filter: drop-shadow(0 4px 20px rgba(0,0,0,0.3));
+}
+
+.home-hero-right {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
 /* ===== Home Hero Slider ===== */
 .home-hero-slider {
   position: relative;
-  width: calc(100% - 40px);
+  width: 100%;
   max-width: 480px;
   margin: 0 auto 20px;
   border-radius: 20px;
@@ -135,14 +167,6 @@
 .home-hero-slider .slider-arrow svg {
   width: 18px;
   height: 18px;
-}
-
-/* ===== Home Hero Text ===== */
-.home-hero-text {
-  text-align: center;
-  position: relative;
-  z-index: 2;
-  margin: 0 20px 24px;
 }
 
 .home-hero-title {
@@ -217,6 +241,13 @@
   color: rgba(255,255,255,0.7);
   line-height: 1.4;
   margin: 0;
+}
+
+.feature-card-disabled,
+.desktop-feature-card-disabled {
+  opacity: 0.5;
+  cursor: default;
+  pointer-events: none;
 }
 
 /* Full-width feature card */
@@ -306,23 +337,43 @@
     margin: 0;
   }
 
+  .home-hero-split {
+    flex-direction: row;
+    align-items: center;
+    padding: 40px 60px 20px;
+    gap: 40px;
+  }
+
+  .home-hero-left {
+    flex: 0 0 auto;
+    align-items: flex-start;
+    text-align: left;
+    margin-bottom: 0;
+  }
+
+  .home-hero-cat {
+    width: 220px;
+    height: 220px;
+  }
+
+  .home-hero-right {
+    flex: 1;
+    min-width: 0;
+  }
+
   .home-hero-slider {
     max-width: 560px;
     border-radius: 28px;
     border: 3px solid rgba(255,255,255,0.15);
-    margin-bottom: 30px;
+    margin-bottom: 0;
   }
 
   .home-hero-title {
-    font-size: 42px;
+    font-size: 36px;
   }
 
   .home-hero-sub {
-    font-size: 17px;
-  }
-
-  .home-hero-text {
-    margin-bottom: 40px;
+    font-size: 16px;
   }
 }
 
