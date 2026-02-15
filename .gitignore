@@ -29,4 +29,3 @@ dist-ssr
 # Cloudflare
 .dev.vars
 .wrangler
-wrangler.toml
