@@ -91,7 +91,7 @@ async function notifyOperator(resendKey, errorDetail) {
 }
 
 async function callOpenAIText(prompt, apiKey) {
-  const res = await fetchWithRetry('https://api.openai.com/v1/chat/completions', {
+  const res = await fetchWithRetry('https://gateway.ai.cloudflare.com/v1/1b9d390db4dbabd680f186ddd291afcb/openai-proxy/openai/chat/completions', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -145,7 +145,7 @@ async function callOpenAIImage(prompt, photoBase64, photoMimeType, apiKey, size 
     body: formData,
   };
   // Image API: only retry once (large payload)
-  const res = await fetchWithRetry('https://api.openai.com/v1/images/edits', fetchOpts, 1);
+  const res = await fetchWithRetry('https://gateway.ai.cloudflare.com/v1/1b9d390db4dbabd680f186ddd291afcb/openai-proxy/openai/images/edits', fetchOpts, 1);
 
   if (!res.ok) {
     const err = await res.text();
