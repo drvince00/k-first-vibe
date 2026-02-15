@@ -9,6 +9,13 @@ import Footer from '../components/Footer'
 const MAX_IMAGES = 5
 const MAX_FILE_SIZE = 5 * 1024 * 1024 // 5MB
 
+const EMOJI_LIST = [
+  '😀','😂','🥰','😍','🤩','😎','🤔','😭','🥺','😤',
+  '👍','👏','🙌','💪','🔥','❤️','💜','💯','🎉','🎊',
+  '🇰🇷','🐱','🐾','🍜','🍚','🍣','🥢','🧋','🎵','🎶',
+  '📚','✏️','💡','⭐','✨','🌸','🌺','🏯','👑','🎭',
+]
+
 export default function PostWritePage() {
   const { user, loading } = useAuth()
   const { lang } = useApp()
@@ -24,6 +31,21 @@ export default function PostWritePage() {
   const [previews, setPreviews] = useState([]) // preview URLs for new files
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState('')
+  const [showEmoji, setShowEmoji] = useState(false)
+  const textareaRef = useRef(null)
+
+  const insertEmoji = (emoji) => {
+    const ta = textareaRef.current
+    if (!ta) { setContent((prev) => prev + emoji); return }
+    const start = ta.selectionStart
+    const end = ta.selectionEnd
+    const newVal = content.slice(0, start) + emoji + content.slice(end)
+    setContent(newVal)
+    requestAnimationFrame(() => {
+      ta.selectionStart = ta.selectionEnd = start + emoji.length
+      ta.focus()
+    })
+  }
 
   useEffect(() => {
     if (!loading && !user) {
@@ -193,8 +215,32 @@ export default function PostWritePage() {
             </div>
 
             <div className="post-form-group">
-              <label>{lang === 'ko' ? '내용' : 'Content'}</label>
+              <div className="post-form-label-row">
+                <label>{lang === 'ko' ? '내용' : 'Content'}</label>
+                <button
+                  type="button"
+                  className="emoji-toggle-btn"
+                  onClick={() => setShowEmoji((v) => !v)}
+                >
+                  {showEmoji ? '⌨️' : '😀'} {lang === 'ko' ? '이모지' : 'Emoji'}
+                </button>
+              </div>
+              {showEmoji && (
+                <div className="emoji-picker">
+                  {EMOJI_LIST.map((em) => (
+                    <button
+                      key={em}
+                      type="button"
+                      className="emoji-btn"
+                      onClick={() => insertEmoji(em)}
+                    >
+                      {em}
+                    </button>
+                  ))}
+                </div>
+              )}
               <textarea
+                ref={textareaRef}
                 className="post-form-textarea"
                 maxLength={5000}
                 rows={10}

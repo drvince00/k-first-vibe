@@ -153,6 +153,14 @@ export default function PostDetailPage() {
               <div className="post-quiz-card">
                 <span className="board-quiz-badge">Quiz #{post.quiz_id}</span>
                 <p className="post-quiz-question">{quizQuestion.question}</p>
+                {quizQuestion.type === 'PIC' && quizQuestion.image && (
+                  <img
+                    src={quizQuestion.image}
+                    alt={`Quiz #${post.quiz_id}`}
+                    className="post-quiz-image"
+                    loading="lazy"
+                  />
+                )}
                 <div className="post-quiz-options">
                   {quizQuestion.options.map((opt, i) => (
                     <span key={i} className={`post-quiz-option ${i === quizQuestion.answer ? 'correct' : ''}`}>
