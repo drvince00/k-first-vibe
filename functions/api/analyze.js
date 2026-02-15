@@ -37,6 +37,35 @@ function isQuotaError(status) {
   return status === 402 || status === 429;
 }
 
+function isRetryableError(status, body) {
+  if (status === 429) return true;
+  if (status === 500 || status === 502 || status === 503) return true;
+  if (status === 403 && body?.includes('unsupported_country_region_territory')) return true;
+  return false;
+}
+
+async function fetchWithRetry(url, options, maxRetries = 2) {
+  for (let attempt = 0; attempt <= maxRetries; attempt++) {
+    const res = await fetch(url, options);
+    if (res.ok) return res;
+
+    const body = await res.text();
+
+    if (attempt < maxRetries && isRetryableError(res.status, body)) {
+      const delay = (attempt + 1) * 2000;
+      await new Promise(r => setTimeout(r, delay));
+      continue;
+    }
+
+    // Return a fake Response with the body we already consumed
+    return new Response(body, {
+      status: res.status,
+      statusText: res.statusText,
+      headers: res.headers,
+    });
+  }
+}
+
 async function notifyOperator(resendKey, errorDetail) {
   try {
     await fetch('https://api.resend.com/emails', {
@@ -62,7 +91,7 @@ async function notifyOperator(resendKey, errorDetail) {
 }
 
 async function callOpenAIText(prompt, apiKey) {
-  const res = await fetch('https://api.openai.com/v1/chat/completions', {
+  const res = await fetchWithRetry('https://api.openai.com/v1/chat/completions', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -108,13 +137,15 @@ async function callOpenAIImage(prompt, photoBase64, photoMimeType, apiKey, size 
   formData.append('size', size);
   formData.append('quality', 'medium');
 
-  const res = await fetch('https://api.openai.com/v1/images/edits', {
+  const fetchOpts = {
     method: 'POST',
     headers: {
       'Authorization': `Bearer ${apiKey}`,
     },
     body: formData,
-  });
+  };
+  // Image API: only retry once (large payload)
+  const res = await fetchWithRetry('https://api.openai.com/v1/images/edits', fetchOpts, 1);
 
   if (!res.ok) {
     const err = await res.text();
