@@ -1,15 +1,25 @@
 import { useState, useEffect, useRef } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { useApp } from '../context/AppContext'
+import { useAuth } from '../context/AuthContext'
 import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
 
 export default function LearnPage() {
   const { lang } = useApp()
+  const { user, loading: authLoading } = useAuth()
+  const navigate = useNavigate()
   const [channels, setChannels] = useState([])
   const [activeChannel, setActiveChannel] = useState(0)
   const [activeVideo, setActiveVideo] = useState(0)
   const [currentVideoId, setCurrentVideoId] = useState('')
   const playerRef = useRef(null)
+
+  useEffect(() => {
+    if (!authLoading && !user) {
+      navigate('/login', { state: { from: '/learn' }, replace: true })
+    }
+  }, [user, authLoading, navigate])
 
   useEffect(() => {
     fetch('/learnData.json')

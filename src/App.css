@@ -68,14 +68,14 @@
 }
 
 .navbar-glass .nav-link {
-  color: #f0ecff;
+  color: #c4b8ff;
   font-weight: 700;
-  text-shadow: 0 1px 4px rgba(0,0,0,0.4);
+  text-shadow: 0 1px 3px rgba(0,0,0,0.3);
 }
 
 .navbar-glass .nav-link:hover {
-  color: #ffd700;
-  background: rgba(255,215,0,0.12);
+  color: #fff;
+  background: rgba(255,255,255,0.12);
 }
 
 .navbar-glass .lang-toggle {
@@ -425,7 +425,7 @@
   font-family: 'Outfit', sans-serif;
   font-size: 0.92rem;
   font-weight: 700;
-  color: #1a1a2e;
+  color: #7c6dcd;
   cursor: pointer;
   padding: 0.35em 0.6em;
   border-radius: 8px;
@@ -435,8 +435,8 @@
 }
 
 .nav-link:hover {
-  color: #7c6dcd;
-  background: rgba(124,109,205,0.08);
+  color: #5b4ebd;
+  background: rgba(124,109,205,0.1);
   border: none;
 }
 

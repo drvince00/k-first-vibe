@@ -1,4 +1,5 @@
 import { useState, useRef, useCallback, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 import html2canvas from 'html2canvas'
 import { PolarEmbedCheckout } from '@polar-sh/checkout/embed'
 import { useApp } from '../context/AppContext'
@@ -127,8 +128,15 @@ function fileToBase64(file) {
 
 export default function StylePage() {
   const { lang } = useApp()
-  const { user } = useAuth()
+  const { user, loading: authLoading } = useAuth()
+  const authNavigate = useNavigate()
   const t = (en, ko) => lang === 'en' ? en : ko
+
+  useEffect(() => {
+    if (!authLoading && !user) {
+      authNavigate('/login', { state: { from: '/style' }, replace: true })
+    }
+  }, [user, authLoading, authNavigate])
 
   const [form, setForm] = useState({
     photo: null,
