@@ -138,7 +138,7 @@ export default function BoardPage() {
                     <div className="board-item-main">
                       <div className="board-item-title-row">
                         <span className="board-item-title">{post.title}</span>
-                        {hasImages && <span className="board-item-img-icon" title="Image">🖼</span>}
+                        {hasImages && <span className="board-item-img-icon" title="Image">📷</span>}
                         {commentCount > 0 && <span className="board-item-comment-count">[{commentCount}]</span>}
                       </div>
                       {post.quiz_id != null && (

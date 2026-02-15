@@ -13,7 +13,7 @@ export default function HomePage() {
 
   return (
     <div className="home-page home-gradient">
-      <Navbar variant="glass" />
+      <Navbar />
 
       {/* Hero: Cat left + Slider right */}
       <header className="home-hero-split">
