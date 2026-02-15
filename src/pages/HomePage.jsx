@@ -1,165 +1,105 @@
 import { Link } from 'react-router-dom'
 import { useApp } from '../context/AppContext'
-import { CATEGORY_IMAGES, CATEGORY_DESC, HERO_IMAGES } from '../utils/constants'
+import { HERO_IMAGES } from '../utils/constants'
 import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
 
 export default function HomePage() {
   const {
-    lang, categories, selectedCategories, toggleCategory,
-    questionCount, setQuestionCount, startQuiz, ready,
-    slideIndex, slideTransition, prevSlide, nextSlide
+    lang, slideIndex, slideTransition, prevSlide, nextSlide
   } = useApp()
 
-  // Add clone of first image at end for seamless loop
   const sliderImages = [...HERO_IMAGES, HERO_IMAGES[0]]
 
   return (
-    <div className="home-page">
-      <Navbar />
+    <div className="home-page home-gradient">
+      <Navbar variant="glass" />
 
-      <header className="hero">
-        <div className="hero-content">
-          <span className="hero-label">KOREAN CULTURE</span>
-          <h1 className="hero-title">
-            {lang === 'en' ? (
-              <>Welcome to<br />K-Culture Cat</>
-            ) : (
-              <>K-Culture Cat에<br />오신 것을 환영합니다</>
-            )}
-          </h1>
-          <p className="hero-desc">
-            {lang === 'en'
-              ? 'Your gateway to Korean culture — from language and food to fashion, traditions, and everyday life in Korea.'
-              : '한국어, 음식, 패션, 전통 그리고 일상까지 — 한국 문화를 향한 당신의 관문입니다.'}
-          </p>
+      {/* Hero Slider */}
+      <div className="home-hero-slider">
+        <button className="slider-arrow slider-prev" onClick={prevSlide} aria-label="Previous image">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <polyline points="15 18 9 12 15 6" />
+          </svg>
+        </button>
+        <div
+          className="slider-track"
+          style={{
+            transform: `translateX(-${slideIndex * 100}%)`,
+            transition: slideTransition ? 'transform 0.7s ease-in-out' : 'none'
+          }}
+        >
+          {sliderImages.map((src, i) => (
+            <img
+              key={`${src}-${i}`}
+              src={src}
+              alt={`Korean culture ${(i % HERO_IMAGES.length) + 1}`}
+              className="slider-img"
+            />
+          ))}
         </div>
-        <div className="hero-slider">
-          <button className="slider-arrow slider-prev" onClick={prevSlide} aria-label="Previous image">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-              <polyline points="15 18 9 12 15 6" />
-            </svg>
-          </button>
-          <div
-            className="slider-track"
-            style={{
-              transform: `translateX(-${slideIndex * 100}%)`,
-              transition: slideTransition ? 'transform 0.7s ease-in-out' : 'none'
-            }}
-          >
-            {sliderImages.map((src, i) => (
-              <img
-                key={`${src}-${i}`}
-                src={src}
-                alt={`Korean culture ${(i % HERO_IMAGES.length) + 1}`}
-                className="slider-img"
-              />
-            ))}
-          </div>
-          <button className="slider-arrow slider-next" onClick={nextSlide} aria-label="Next image">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-              <polyline points="9 18 15 12 9 6" />
-            </svg>
-          </button>
-        </div>
-      </header>
-
-      <div className="featured-wrapper">
-      <section className="featured" id="quiz-section">
-        <div className="featured-image">
-          <img src="/quiz/rim-sunny-1196278665-23833464.jpg" alt="Korean BBQ galbi" loading="lazy" />
-        </div>
-        <div className="featured-content">
-          <span className="section-tag">K-QUIZ</span>
-          <h2 className="section-title">
-            {lang === 'en' ? (
-              <>Test Your Korean<br />Culture Knowledge</>
-            ) : (
-              <>한국 문화 지식을<br />테스트해보세요</>
-            )}
-          </h2>
-          <p className="section-desc">
-            {lang === 'en'
-              ? 'Choose categories and the number of questions to begin your journey.'
-              : '카테고리와 문제 수를 선택하고 여행을 시작하세요.'}
-          </p>
-
-          <div className="category-mini-cards">
-            {categories.map((cat) => (
-              <div
-                key={cat}
-                className={`category-mini-card ${selectedCategories.includes(cat) ? 'selected' : ''}`}
-                onClick={() => toggleCategory(cat)}
-              >
-                {selectedCategories.includes(cat) && (
-                  <span className="mini-card-check">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-                      <polyline points="20 6 9 17 4 12" />
-                    </svg>
-                  </span>
-                )}
-                <img
-                  src={CATEGORY_IMAGES[cat]}
-                  alt={`${cat} - ${CATEGORY_DESC[cat]?.en}`}
-                  loading="lazy"
-                />
-                <div className="mini-card-info">
-                  <h3>{cat}</h3>
-                  <p>{CATEGORY_DESC[cat]?.[lang]}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-
-          <div className="count-options">
-            {[5, 10, 20, 30].map((n) => (
-              <button
-                key={n}
-                className={`count-chip ${questionCount === n ? 'active' : ''}`}
-                onClick={() => setQuestionCount(n)}
-              >
-                {n}
-              </button>
-            ))}
-          </div>
-          <button
-            className="btn-primary"
-            onClick={startQuiz}
-            disabled={selectedCategories.length === 0 || !ready}
-          >
-            {!ready
-              ? 'Loading...'
-              : lang === 'en'
-                ? 'START QUIZ'
-                : '퀴즈 시작'}
-          </button>
-        </div>
-      </section>
+        <button className="slider-arrow slider-next" onClick={nextSlide} aria-label="Next image">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <polyline points="9 18 15 12 9 6" />
+          </svg>
+        </button>
       </div>
 
-      <section className="featured" id="learn-section">
-        <div className="featured-content">
-          <span className="section-tag">LANGUAGE TRAINING</span>
-          <h2 className="section-title">
-            {lang === 'en' ? (
-              <>Learn Korean with<br />YouTube Teachers</>
-            ) : (
-              <>유튜브 선생님과<br />한국어를 배우세요</>
-            )}
-          </h2>
-          <p className="section-desc">
-            {lang === 'en'
-              ? 'Watch curated lessons from top Korean language YouTube channels. From hangul basics to advanced grammar — all in one place.'
-              : '최고의 한국어 유튜브 채널에서 엄선된 강의를 시청하세요. 한글 기초부터 고급 문법까지 — 한곳에서 모두.'}
-          </p>
-          <Link to="/learn" className="btn-primary" style={{ textDecoration: 'none', display: 'inline-block', textAlign: 'center' }}>
-            {lang === 'en' ? 'START LEARNING' : '학습 시작'}
-          </Link>
-        </div>
-        <div className="featured-image">
-          <img src="/images/catwithjjajangmyun.jpg" alt="Cat mascot eating jjajangmyun" loading="lazy" />
-        </div>
-      </section>
+      {/* Hero Text */}
+      <div className="home-hero-text">
+        <h1 className="home-hero-title">
+          {lang === 'en' ? (
+            <>Explore <span className="gold-text">Korean Culture</span> with Fun</>
+          ) : (
+            <>재미있게 <span className="gold-text">한국 문화</span>를 탐험하세요</>
+          )}
+        </h1>
+        <p className="home-hero-sub">
+          {lang === 'en'
+            ? 'Quizzes, AI styling, and more — all in one place'
+            : '퀴즈, AI 스타일링 등 — 모두 한곳에서'}
+        </p>
+      </div>
+
+      {/* Feature Cards */}
+      <div className="feature-grid">
+        <Link to="/quiz" className="feature-card">
+          <img src="/temp/Gemini_Generated_Image_cuioa3cuioa3cuio.png" alt="Korean Culture Quiz" />
+          <h3>{lang === 'en' ? 'K-Quiz' : 'K-퀴즈'}</h3>
+          <p>{lang === 'en' ? 'Test your Korean knowledge' : '한국 문화 지식 테스트'}</p>
+        </Link>
+        <Link to="/style" className="feature-card">
+          <img src="/temp/Gemini_Generated_Image_h7of0jh7of0jh7of.png" alt="AI Stylist" />
+          <h3>{lang === 'en' ? 'AI Stylist' : 'AI 스타일리스트'}</h3>
+          <p>{lang === 'en' ? 'K-Fashion AI analysis' : 'K-패션 AI 분석'}</p>
+        </Link>
+        <Link to="/learn" className="feature-card feature-full">
+          <img src="/temp/Gemini_Generated_Image_vkgvslvkgvslvkgv.png" alt="Learn Korean" />
+          <div className="card-text">
+            <h3>{lang === 'en' ? 'Learn Korean' : '한국어 배우기'}</h3>
+            <p>{lang === 'en' ? 'YouTube lessons from top teachers' : '인기 유튜버 강의 모음'}</p>
+          </div>
+        </Link>
+      </div>
+
+      {/* Desktop: Feature Cards Section */}
+      <div className="desktop-features">
+        <Link to="/quiz" className="desktop-feature-card">
+          <img src="/temp/Gemini_Generated_Image_cuioa3cuioa3cuio.png" alt="Korean Culture Quiz" />
+          <h3>{lang === 'en' ? 'Korean Culture Quiz' : '한국 문화 퀴즈'}</h3>
+          <p>{lang === 'en' ? '522+ questions about TOPIK, Korean food, and traditions — test your K-culture knowledge' : 'TOPIK, 한국 음식, 전통에 대한 522개 이상의 문제 — K-문화 지식 테스트'}</p>
+        </Link>
+        <Link to="/style" className="desktop-feature-card">
+          <img src="/temp/Gemini_Generated_Image_h7of0jh7of0jh7of.png" alt="AI Stylist" />
+          <h3>{lang === 'en' ? 'K-Fashion AI Analysis' : 'K-패션 AI 분석'}</h3>
+          <p>{lang === 'en' ? 'Upload your photo and get personalized Korean fashion & hairstyle recommendations' : '사진을 업로드하고 맞춤 한국 패션 & 헤어스타일 추천을 받으세요'}</p>
+        </Link>
+        <Link to="/learn" className="desktop-feature-card">
+          <img src="/temp/Gemini_Generated_Image_vkgvslvkgvslvkgv.png" alt="Learn Korean" />
+          <h3>{lang === 'en' ? 'Learn Korean Language' : '한국어 배우기'}</h3>
+          <p>{lang === 'en' ? 'Curated YouTube videos and resources to help you master Korean language and culture' : '한국어와 문화를 마스터할 수 있는 엄선된 유튜브 영상과 자료'}</p>
+        </Link>
+      </div>
 
       <Footer />
     </div>

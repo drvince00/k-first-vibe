@@ -149,7 +149,7 @@ export default function Footer() {
           ))}
           <button
             className="footer-share-btn"
-            style={{ background: '#9E8E7E', color: '#fff' }}
+            style={{ background: '#7c6dcd', color: '#fff' }}
             onClick={() => {
               navigator.clipboard?.writeText(SITE_URL)
               alert(lang === 'en' ? 'Link copied!' : '링크가 복사되었습니다!')

@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { useApp } from '../context/AppContext'
 import { useAuth } from '../context/AuthContext'
 
-export default function Navbar() {
+export default function Navbar({ variant } = {}) {
   const { lang, setLang } = useApp()
   const { user, loading, signOut } = useAuth()
   const navigate = useNavigate()
@@ -24,7 +24,7 @@ export default function Navbar() {
   const displayName = user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'User'
 
   return (
-    <nav className="navbar">
+    <nav className={`navbar ${variant === 'glass' ? 'navbar-glass' : ''}`}>
       <Link to="/" className="nav-logo">K-Culture Cat</Link>
       <div className="nav-menu">
         <Link to="/quiz" className="nav-link">K-Quiz</Link>
