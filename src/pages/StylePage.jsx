@@ -151,6 +151,8 @@ export default function StylePage() {
   const [checkoutLoading, setCheckoutLoading] = useState(false)
   const [result, setResult] = useState(null)
   const [error, setError] = useState(null)
+  const [sampleOpen, setSampleOpen] = useState(false)
+  const [sampleImg] = useState(() => Math.random() < 0.5 ? '/images/style-sample-1.jpg' : '/images/style-sample-2.jpg')
   const [downloading, setDownloading] = useState(false)
   const [email, setEmail] = useState('')
 
@@ -494,6 +496,78 @@ export default function StylePage() {
 
             {error && <p className="style-error">{error}</p>}
 
+            {/* Sample Preview Toggle */}
+            <button
+              type="button"
+              className="style-sample-toggle"
+              onClick={() => setSampleOpen(prev => !prev)}
+            >
+              {t('What You\'ll Get', '이런 결과를 받게 됩니다')}
+              <span className={`style-sample-arrow ${sampleOpen ? 'open' : ''}`}>▾</span>
+            </button>
+
+            <div className={`style-sample-preview ${sampleOpen ? 'open' : ''}`}>
+              <div className="style-sample-cards">
+                <div className="style-sample-item">
+                  <span className="style-analysis-icon">📐</span>
+                  <div>
+                    <strong>{t('Body Proportions', '체형 분석')}</strong>
+                    <p className="style-sample-text">
+                      {t(
+                        'Personalized analysis of your body shape with recommendations to highlight your best features.',
+                        '체형에 맞는 맞춤 분석과 장점을 부각시키는 추천을 받아보세요.'
+                      )}
+                    </p>
+                  </div>
+                </div>
+                <div className="style-sample-item">
+                  <span className="style-analysis-icon">🎨</span>
+                  <div>
+                    <strong>{t('Color Palette', '컬러 팔레트')}</strong>
+                    <p className="style-sample-text">
+                      {t(
+                        'Discover which colors complement your skin tone beautifully.',
+                        '피부톤에 어울리는 컬러를 알아보세요.'
+                      )}
+                    </p>
+                  </div>
+                </div>
+                <div className="style-sample-item">
+                  <span className="style-analysis-icon">👗</span>
+                  <div>
+                    <strong>{t('2 Outfit Recommendations', '2가지 의상 추천')}</strong>
+                    <p className="style-sample-text">
+                      {t(
+                        'AI-generated outfit images for casual & rainy day styles based on your local weather.',
+                        '현지 날씨에 맞는 캐주얼 & 우천 스타일의 AI 생성 의상 이미지.'
+                      )}
+                    </p>
+                  </div>
+                </div>
+                <div className="style-sample-item">
+                  <span className="style-analysis-icon">💇</span>
+                  <div>
+                    <strong>{t('9 Korean Hairstyles', '9가지 한국 헤어스타일')}</strong>
+                    <p className="style-sample-text">
+                      {t(
+                        'See trending Korean hairstyles applied to YOUR photo.',
+                        '내 사진에 적용된 트렌디한 한국 헤어스타일을 확인하세요.'
+                      )}
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="style-sample-image-wrapper">
+                <img
+                  src={sampleImg}
+                  alt="Sample style analysis result"
+                  className="style-sample-image"
+                />
+                <div className="style-sample-overlay" />
+              </div>
+            </div>
+
             <button
               type="submit"
               className="style-submit-btn"
@@ -510,7 +584,7 @@ export default function StylePage() {
                   {t('Opening checkout...', '결제 페이지 여는 중...')}
                 </>
               ) : (
-                t('Analyze My Style', '스타일 분석하기')
+                t('Analyze My Style — $3.99', '스타일 분석하기 — $3.99')
               )}
             </button>
           </form>

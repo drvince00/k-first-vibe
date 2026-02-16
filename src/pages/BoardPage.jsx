@@ -42,7 +42,8 @@ export default function BoardPage() {
       .range(offset, offset + PAGE_SIZE - 1)
 
     if (search.trim()) {
-      query = query.ilike('title', `%${search.trim()}%`)
+      const term = search.trim().replace(/%/g, '\\%')
+      query = query.or(`title.ilike.%${term}%,content.ilike.%${term}%`)
     }
 
     const { data, count, error } = await query
@@ -109,7 +110,7 @@ export default function BoardPage() {
             <input
               type="text"
               className="board-search-input"
-              placeholder={lang === 'ko' ? '제목 검색...' : 'Search titles...'}
+              placeholder={lang === 'ko' ? '제목/내용 검색...' : 'Search...'}
               value={searchInput}
               onChange={(e) => setSearchInput(e.target.value)}
             />
