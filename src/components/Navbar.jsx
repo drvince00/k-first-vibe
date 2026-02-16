@@ -29,7 +29,7 @@ export default function Navbar({ variant } = {}) {
       <div className="nav-menu">
         <Link to="/quiz" className="nav-link">K-Quiz</Link>
         <Link to="/learn" className="nav-link">Learn</Link>
-        <Link to="/board" className="nav-link">{lang === 'ko' ? '게시판' : 'Board'}</Link>
+        <Link to="/board" className="nav-link">Board</Link>
         <Link to="/about" className="nav-link">About</Link>
         <button
           className="lang-toggle"
@@ -55,20 +55,20 @@ export default function Navbar({ variant } = {}) {
                     className="user-dropdown-item"
                     onClick={() => { navigate('/mypage'); setMenuOpen(false) }}
                   >
-                    {lang === 'ko' ? '마이페이지' : 'My Page'}
+                    My Page
                   </button>
                   <button
                     className="user-dropdown-item"
                     onClick={() => { signOut(); setMenuOpen(false) }}
                   >
-                    {lang === 'ko' ? '로그아웃' : 'Sign Out'}
+                    Sign Out
                   </button>
                 </div>
               )}
             </div>
           ) : (
             <Link to="/login" className="nav-login-btn">
-              {lang === 'ko' ? '로그인' : 'Login'}
+              Login
             </Link>
           )
         )}
