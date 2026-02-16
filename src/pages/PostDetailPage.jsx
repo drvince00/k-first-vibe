@@ -1,10 +1,11 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useParams, useNavigate, Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { useApp } from '../context/AppContext'
 import { supabase } from '../lib/supabase'
 import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
+import EmojiPicker from '../components/EmojiPicker'
 
 export default function PostDetailPage() {
   const { id } = useParams()
@@ -20,6 +21,20 @@ export default function PostDetailPage() {
   const [fetching, setFetching] = useState(true)
   const [showDeleteModal, setShowDeleteModal] = useState(false)
   const [deleting, setDeleting] = useState(false)
+  const commentInputRef = useRef(null)
+
+  const insertCommentEmoji = (emoji) => {
+    const input = commentInputRef.current
+    if (!input) { setCommentText((prev) => prev + emoji); return }
+    const start = input.selectionStart
+    const end = input.selectionEnd
+    const newVal = commentText.slice(0, start) + emoji + commentText.slice(end)
+    setCommentText(newVal)
+    requestAnimationFrame(() => {
+      input.selectionStart = input.selectionEnd = start + emoji.length
+      input.focus()
+    })
+  }
 
   useEffect(() => {
     if (!loading && !user) {
@@ -233,18 +248,22 @@ export default function PostDetailPage() {
               </div>
             )}
 
-            <form className="comment-form" onSubmit={handleAddComment}>
-              <input
-                type="text"
-                className="comment-input"
-                maxLength={1000}
-                value={commentText}
-                onChange={(e) => setCommentText(e.target.value)}
-                placeholder={lang === 'ko' ? '댓글을 입력하세요...' : 'Write a comment...'}
-              />
-              <button type="submit" className="comment-submit-btn" disabled={submittingComment || !commentText.trim()}>
-                {submittingComment ? <span className="loader-small" /> : (lang === 'ko' ? '등록' : 'Post')}
-              </button>
+            <form className="comment-form-with-emoji" onSubmit={handleAddComment}>
+              <EmojiPicker onSelect={insertCommentEmoji} lang={lang} compact />
+              <div className="comment-input-row">
+                <input
+                  ref={commentInputRef}
+                  type="text"
+                  className="comment-input"
+                  maxLength={1000}
+                  value={commentText}
+                  onChange={(e) => setCommentText(e.target.value)}
+                  placeholder={lang === 'ko' ? '댓글을 입력하세요...' : 'Write a comment...'}
+                />
+                <button type="submit" className="comment-submit-btn" disabled={submittingComment || !commentText.trim()}>
+                  {submittingComment ? <span className="loader-small" /> : (lang === 'ko' ? '등록' : 'Post')}
+                </button>
+              </div>
             </form>
           </section>
         </div>

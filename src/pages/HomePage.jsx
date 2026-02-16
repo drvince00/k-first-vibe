@@ -93,6 +93,13 @@ export default function HomePage() {
             <h3>{lang === 'en' ? 'Learn Korean' : '한국어 배우기'}</h3>
             <p>{lang === 'en' ? 'Curated YouTube lessons from top teachers' : '인기 유튜버 엄선 강의 모음'}</p>
           </Link>
+          <Link to="/board" className="home-feature-card">
+            <div className="home-feature-icon">
+              <img src="/images/selka.jpg" alt="Community Board" />
+            </div>
+            <h3>{lang === 'en' ? 'Community Board' : '자유게시판'}</h3>
+            <p>{lang === 'en' ? 'Share tips, questions & K-culture stories' : '꿀팁, 질문, K-컬처 이야기를 나눠보세요'}</p>
+          </Link>
         </div>
       </section>
 

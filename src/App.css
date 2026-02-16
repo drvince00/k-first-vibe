@@ -206,7 +206,7 @@
 
 .home-features-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   gap: 16px;
   max-width: 1000px;
   margin: 0 auto;
@@ -277,6 +277,12 @@
   padding: 3px 12px;
   border-radius: 12px;
   margin-bottom: 8px;
+}
+
+@media (max-width: 900px) {
+  .home-features-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 
 @media (max-width: 600px) {
@@ -3921,42 +3927,29 @@
   align-items: center;
 }
 
-.emoji-toggle-btn {
-  font-size: 0.82rem;
-  font-weight: 600;
-  font-family: inherit;
-  color: #7c6dcd;
-  background: rgba(124,109,205,0.08);
-  border: 1.5px solid rgba(124,109,205,0.25);
-  border-radius: 20px;
-  padding: 0.3em 0.9em;
-  cursor: pointer;
-  transition: all 0.2s;
+/* Emoji Picker Component */
+.emoji-picker-wrapper {
+  margin-bottom: 0.5rem;
 }
 
-.emoji-toggle-btn:hover {
-  background: rgba(124,109,205,0.15);
-}
-
-.emoji-picker {
+.emoji-quick-row {
   display: flex;
   flex-wrap: wrap;
-  gap: 4px;
-  padding: 0.6rem;
-  background: #fff;
-  border: 2px solid #e0e4eb;
+  gap: 2px;
+  align-items: center;
+  padding: 0.4rem;
+  background: #faf9ff;
+  border: 1.5px solid #e8e4f5;
   border-radius: 12px;
-  max-height: 140px;
-  overflow-y: auto;
 }
 
 .emoji-btn {
-  width: 36px;
-  height: 36px;
+  width: 34px;
+  height: 34px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.25rem;
+  font-size: 1.2rem;
   background: none;
   border: none;
   border-radius: 8px;
@@ -3968,6 +3961,135 @@
 .emoji-btn:hover {
   background: #f0edff;
   transform: scale(1.2);
+}
+
+.emoji-expand-btn {
+  width: 34px;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #7c6dcd;
+  background: rgba(124,109,205,0.1);
+  border: 1.5px solid rgba(124,109,205,0.3);
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-left: 2px;
+}
+
+.emoji-expand-btn:hover {
+  background: rgba(124,109,205,0.2);
+  transform: scale(1.1);
+}
+
+.emoji-expand-btn.active {
+  background: #7c6dcd;
+  color: #fff;
+  border-color: #7c6dcd;
+}
+
+.emoji-expanded-panel {
+  margin-top: 0.4rem;
+  border: 1.5px solid #e8e4f5;
+  border-radius: 12px;
+  background: #fff;
+  overflow: hidden;
+}
+
+.emoji-category-tabs {
+  display: flex;
+  gap: 0;
+  border-bottom: 1.5px solid #f0eef8;
+  padding: 0.3rem 0.4rem 0;
+}
+
+.emoji-category-tab {
+  flex: 1;
+  padding: 0.4rem 0.2rem;
+  font-size: 1.15rem;
+  background: none;
+  border: none;
+  border-bottom: 2.5px solid transparent;
+  border-radius: 0;
+  cursor: pointer;
+  transition: all 0.15s;
+  opacity: 0.5;
+}
+
+.emoji-category-tab:hover {
+  opacity: 0.8;
+  background: #faf9ff;
+}
+
+.emoji-category-tab.active {
+  opacity: 1;
+  border-bottom-color: #7c6dcd;
+  background: #faf9ff;
+}
+
+.emoji-category-label {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: #9b8ec4;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 0.4rem 0.6rem 0.1rem;
+}
+
+.emoji-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px;
+  padding: 0.3rem 0.4rem 0.5rem;
+  max-height: 180px;
+  overflow-y: auto;
+}
+
+.emoji-grid::-webkit-scrollbar {
+  width: 5px;
+}
+
+.emoji-grid::-webkit-scrollbar-thumb {
+  background: #d8d4ec;
+  border-radius: 5px;
+}
+
+/* Compact mode for comment emoji picker */
+.emoji-compact .emoji-quick-row {
+  padding: 0.3rem;
+  gap: 1px;
+}
+
+.emoji-compact .emoji-btn {
+  width: 30px;
+  height: 30px;
+  font-size: 1.05rem;
+}
+
+.emoji-compact .emoji-expand-btn {
+  width: 30px;
+  height: 30px;
+  font-size: 0.95rem;
+}
+
+.emoji-compact .emoji-grid {
+  max-height: 150px;
+}
+
+/* Comment form with emoji */
+.comment-form-with-emoji {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid #f0f2f7;
+}
+
+.comment-input-row {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.4rem;
 }
 
 /* Image Upload Grid */
@@ -4143,12 +4265,22 @@
     border-radius: 14px;
   }
 
-  .comment-form {
+  .comment-form-with-emoji .comment-input-row {
     flex-direction: column;
   }
 
   .comment-submit-btn {
     width: 100%;
+  }
+
+  .emoji-quick-row {
+    gap: 1px;
+  }
+
+  .emoji-compact .emoji-btn {
+    width: 28px;
+    height: 28px;
+    font-size: 1rem;
   }
 
   .post-form-actions {

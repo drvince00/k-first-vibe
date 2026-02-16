@@ -9,12 +9,7 @@ import Footer from '../components/Footer'
 const MAX_IMAGES = 5
 const MAX_FILE_SIZE = 5 * 1024 * 1024 // 5MB
 
-const EMOJI_LIST = [
-  '😀','😂','🥰','😍','🤩','😎','🤔','😭','🥺','😤',
-  '👍','👏','🙌','💪','🔥','❤️','💜','💯','🎉','🎊',
-  '🇰🇷','🐱','🐾','🍜','🍚','🍣','🥢','🧋','🎵','🎶',
-  '📚','✏️','💡','⭐','✨','🌸','🌺','🏯','👑','🎭',
-]
+import EmojiPicker from '../components/EmojiPicker'
 
 export default function PostWritePage() {
   const { user, loading } = useAuth()
@@ -31,7 +26,6 @@ export default function PostWritePage() {
   const [previews, setPreviews] = useState([]) // preview URLs for new files
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState('')
-  const [showEmoji, setShowEmoji] = useState(false)
   const textareaRef = useRef(null)
 
   const insertEmoji = (emoji) => {
@@ -217,28 +211,8 @@ export default function PostWritePage() {
             <div className="post-form-group">
               <div className="post-form-label-row">
                 <label>{lang === 'ko' ? '내용' : 'Content'}</label>
-                <button
-                  type="button"
-                  className="emoji-toggle-btn"
-                  onClick={() => setShowEmoji((v) => !v)}
-                >
-                  {showEmoji ? '⌨️' : '😀'} {lang === 'ko' ? '이모지' : 'Emoji'}
-                </button>
               </div>
-              {showEmoji && (
-                <div className="emoji-picker">
-                  {EMOJI_LIST.map((em) => (
-                    <button
-                      key={em}
-                      type="button"
-                      className="emoji-btn"
-                      onClick={() => insertEmoji(em)}
-                    >
-                      {em}
-                    </button>
-                  ))}
-                </div>
-              )}
+              <EmojiPicker onSelect={insertEmoji} lang={lang} />
               <textarea
                 ref={textareaRef}
                 className="post-form-textarea"
