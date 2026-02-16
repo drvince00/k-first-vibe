@@ -26,18 +26,24 @@ export default function PostWritePage() {
   const [previews, setPreviews] = useState([]) // preview URLs for new files
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState('')
+  const titleRef = useRef(null)
   const textareaRef = useRef(null)
+  const lastFocusedRef = useRef('content') // 'title' or 'content'
 
   const insertEmoji = (emoji) => {
-    const ta = textareaRef.current
-    if (!ta) { setContent((prev) => prev + emoji); return }
-    const start = ta.selectionStart
-    const end = ta.selectionEnd
-    const newVal = content.slice(0, start) + emoji + content.slice(end)
-    setContent(newVal)
+    const isTitle = lastFocusedRef.current === 'title'
+    const el = isTitle ? titleRef.current : textareaRef.current
+    const value = isTitle ? title : content
+    const setter = isTitle ? setTitle : setContent
+
+    if (!el) { setter((prev) => prev + emoji); return }
+    const start = el.selectionStart
+    const end = el.selectionEnd
+    const newVal = value.slice(0, start) + emoji + value.slice(end)
+    setter(newVal)
     requestAnimationFrame(() => {
-      ta.selectionStart = ta.selectionEnd = start + emoji.length
-      ta.focus()
+      el.selectionStart = el.selectionEnd = start + emoji.length
+      el.focus()
     })
   }
 
@@ -198,11 +204,13 @@ export default function PostWritePage() {
             <div className="post-form-group">
               <label>{lang === 'ko' ? '제목' : 'Title'}</label>
               <input
+                ref={titleRef}
                 type="text"
                 className="post-form-input"
                 maxLength={200}
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
+                onFocus={() => { lastFocusedRef.current = 'title' }}
                 placeholder={lang === 'ko' ? '제목을 입력하세요' : 'Enter title'}
               />
               <span className="post-form-hint">{title.length}/200</span>
@@ -220,6 +228,7 @@ export default function PostWritePage() {
                 rows={10}
                 value={content}
                 onChange={(e) => setContent(e.target.value)}
+                onFocus={() => { lastFocusedRef.current = 'content' }}
                 placeholder={lang === 'ko' ? '내용을 입력하세요' : 'Write your post'}
               />
               <span className="post-form-hint">{content.length}/5000</span>
