@@ -3424,6 +3424,58 @@
   gap: 0.5rem;
 }
 
+/* Admin bar */
+.board-admin-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.5rem 0.8rem;
+  margin-bottom: 0.5rem;
+  background: rgba(139,156,247,0.08);
+  border-radius: 10px;
+}
+.board-select-all {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.85rem;
+  color: #555;
+  cursor: pointer;
+}
+.board-select-all input { cursor: pointer; }
+.board-delete-btn {
+  padding: 0.35rem 0.8rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+  font-family: inherit;
+  color: #fff;
+  background: #D9534F;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.board-delete-btn:hover { background: #c9302c; }
+.board-delete-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+.board-item-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.board-item-checkbox {
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+}
+.board-item-deleted {
+  opacity: 0.45;
+}
+.board-item-deleted .board-item-title {
+  text-decoration: line-through;
+  color: #999;
+}
+
 .board-item {
   display: flex;
   justify-content: space-between;

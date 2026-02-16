@@ -9,7 +9,7 @@ import EmojiPicker from '../components/EmojiPicker'
 
 export default function PostDetailPage() {
   const { id } = useParams()
-  const { user, loading } = useAuth()
+  const { user, loading, profile } = useAuth()
   const { lang } = useApp()
   const navigate = useNavigate()
 
@@ -97,18 +97,32 @@ export default function PostDetailPage() {
   }
 
   const handleDeleteComment = async (commentId) => {
-    await supabase.from('comments').delete().eq('id', commentId).eq('author_id', user.id)
+    if (isAdmin) {
+      await supabase.from('comments').delete().eq('id', commentId)
+    } else {
+      await supabase.from('comments').delete().eq('id', commentId).eq('author_id', user.id)
+    }
     fetchComments()
   }
 
   const handleDeletePost = async () => {
     setDeleting(true)
-    // Delete comments first, then post
-    await supabase.from('comments').delete().eq('post_id', Number(id))
-    const { error } = await supabase.from('posts').delete().eq('id', id).eq('author_id', user.id)
-    setDeleting(false)
-    if (!error) {
-      navigate('/board', { replace: true })
+    if (isAdmin) {
+      // Admin: hard delete (comments + post)
+      await supabase.from('comments').delete().eq('post_id', Number(id))
+      const { error } = await supabase.from('posts').delete().eq('id', id)
+      setDeleting(false)
+      if (!error) navigate('/board', { replace: true })
+    } else {
+      // Author: soft delete (keep comments)
+      const { error } = await supabase.from('posts').update({
+        title: lang === 'ko' ? '삭제된 게시물입니다' : 'This post has been deleted',
+        content: lang === 'ko' ? '작성자에 의해 삭제된 게시물입니다.' : 'This post has been deleted by the author.',
+        image_urls: [],
+        deleted_at: new Date().toISOString(),
+      }).eq('id', id).eq('author_id', user.id)
+      setDeleting(false)
+      if (!error) navigate('/board', { replace: true })
     }
     setShowDeleteModal(false)
   }
@@ -120,7 +134,9 @@ export default function PostDetailPage() {
     })
   }
 
+  const isAdmin = profile?.is_admin === true
   const isAuthor = post && user && post.author_id === user.id
+  const isDeleted = !!post?.deleted_at
 
   if (loading || fetching) {
     return (
@@ -199,13 +215,20 @@ export default function PostDetailPage() {
             )}
 
             {/* Actions */}
-            {isAuthor && (
+            {!isDeleted && isAuthor && (
               <div className="post-detail-actions">
                 <Link to={`/board/write/${post.id}`} className="post-edit-btn">
                   {lang === 'ko' ? '수정' : 'Edit'}
                 </Link>
                 <button className="post-delete-btn" onClick={() => setShowDeleteModal(true)}>
                   {lang === 'ko' ? '삭제' : 'Delete'}
+                </button>
+              </div>
+            )}
+            {isDeleted && isAdmin && (
+              <div className="post-detail-actions">
+                <button className="post-delete-btn" onClick={() => setShowDeleteModal(true)}>
+                  {lang === 'ko' ? '완전 삭제' : 'Hard Delete'}
                 </button>
               </div>
             )}
@@ -236,7 +259,7 @@ export default function PostDetailPage() {
                         <span className="comment-nickname">{c.profiles?.nickname || 'Anonymous'}</span>
                         <span className="comment-date">{formatDate(c.created_at)}</span>
                       </div>
-                      {user && c.author_id === user.id && (
+                      {user && (c.author_id === user.id || isAdmin) && (
                         <button className="comment-delete-btn" onClick={() => handleDeleteComment(c.id)}>
                           {lang === 'ko' ? '삭제' : 'Delete'}
                         </button>
@@ -274,9 +297,13 @@ export default function PostDetailPage() {
         <div className="modal-overlay" onClick={() => setShowDeleteModal(false)}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
             <p className="modal-text">
-              {lang === 'ko'
-                ? '정말 이 글을 삭제하시겠습니까?'
-                : 'Are you sure you want to delete this post?'}
+              {isAdmin
+                ? (lang === 'ko'
+                    ? '관리자 권한으로 완전 삭제합니다. 댓글도 모두 삭제됩니다.'
+                    : 'Admin: permanently delete this post and all comments?')
+                : (lang === 'ko'
+                    ? '게시물을 삭제하시겠습니까? (댓글은 유지됩니다)'
+                    : 'Delete this post? (Comments will be kept.)')}
             </p>
             <div className="modal-actions">
               <button className="modal-cancel-btn" onClick={() => setShowDeleteModal(false)}>

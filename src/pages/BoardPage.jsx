@@ -9,9 +9,10 @@ import Footer from '../components/Footer'
 const PAGE_SIZE = 10
 
 export default function BoardPage() {
-  const { user, loading } = useAuth()
+  const { user, loading, profile } = useAuth()
   const { lang } = useApp()
   const navigate = useNavigate()
+  const isAdmin = profile?.is_admin === true
 
   const [posts, setPosts] = useState([])
   const [totalCount, setTotalCount] = useState(0)
@@ -19,6 +20,8 @@ export default function BoardPage() {
   const [fetching, setFetching] = useState(true)
   const [search, setSearch] = useState('')
   const [searchInput, setSearchInput] = useState('')
+  const [selected, setSelected] = useState(new Set())
+  const [deleting, setDeleting] = useState(false)
 
   useEffect(() => {
     if (!loading && !user) {
@@ -37,7 +40,7 @@ export default function BoardPage() {
 
     let query = supabase
       .from('posts')
-      .select('id, title, content, image_urls, quiz_id, created_at, author_id, profiles(nickname, avatar_url)', { count: 'exact' })
+      .select('id, title, content, image_urls, quiz_id, created_at, author_id, deleted_at, profiles(nickname, avatar_url)', { count: 'exact' })
       .order('created_at', { ascending: false })
       .range(offset, offset + PAGE_SIZE - 1)
 
@@ -84,6 +87,41 @@ export default function BoardPage() {
     setSearch(searchInput)
   }
 
+  const toggleSelect = (id) => {
+    setSelected(prev => {
+      const next = new Set(prev)
+      next.has(id) ? next.delete(id) : next.add(id)
+      return next
+    })
+  }
+
+  const toggleSelectAll = () => {
+    if (selected.size === posts.length) {
+      setSelected(new Set())
+    } else {
+      setSelected(new Set(posts.map(p => p.id)))
+    }
+  }
+
+  const handleBulkDelete = async () => {
+    if (selected.size === 0) return
+    const msg = lang === 'ko'
+      ? `${selected.size}개 게시글을 삭제하시겠습니까?`
+      : `Delete ${selected.size} post(s)?`
+    if (!confirm(msg)) return
+    setDeleting(true)
+    const ids = [...selected]
+    // Delete comments first, then posts
+    await supabase.from('comments').delete().in('post_id', ids)
+    const { error } = await supabase.from('posts').delete().in('id', ids)
+    if (error) {
+      console.error('Delete error:', error)
+    }
+    setSelected(new Set())
+    setDeleting(false)
+    fetchPosts()
+  }
+
   const formatDate = (dateStr) => {
     const d = new Date(dateStr)
     const now = new Date()
@@ -119,6 +157,30 @@ export default function BoardPage() {
             </button>
           </form>
 
+          {isAdmin && posts.length > 0 && !fetching && (
+            <div className="board-admin-bar">
+              <label className="board-select-all">
+                <input
+                  type="checkbox"
+                  checked={posts.length > 0 && selected.size === posts.length}
+                  onChange={toggleSelectAll}
+                />
+                <span>{lang === 'ko' ? '전체 선택' : 'Select All'}</span>
+              </label>
+              {selected.size > 0 && (
+                <button
+                  className="board-delete-btn"
+                  onClick={handleBulkDelete}
+                  disabled={deleting}
+                >
+                  {deleting
+                    ? (lang === 'ko' ? '삭제 중...' : 'Deleting...')
+                    : (lang === 'ko' ? `${selected.size}개 삭제` : `Delete ${selected.size}`)}
+                </button>
+              )}
+            </div>
+          )}
+
           {fetching ? (
             <div className="board-loading">
               <div className="loader" />
@@ -134,23 +196,34 @@ export default function BoardPage() {
               {posts.map((post) => {
                 const commentCount = post._commentCount || 0
                 const hasImages = post.image_urls && post.image_urls.length > 0
+                const softDeleted = !!post.deleted_at
                 return (
-                  <Link to={`/board/${post.id}`} key={post.id} className="board-item">
-                    <div className="board-item-main">
-                      <div className="board-item-title-row">
-                        <span className="board-item-title">{post.title}</span>
-                        {hasImages && <span className="board-item-img-icon" title="Image">📷</span>}
-                        {commentCount > 0 && <span className="board-item-comment-count">[{commentCount}]</span>}
+                  <div key={post.id} className="board-item-row">
+                    {isAdmin && (
+                      <input
+                        type="checkbox"
+                        className="board-item-checkbox"
+                        checked={selected.has(post.id)}
+                        onChange={() => toggleSelect(post.id)}
+                      />
+                    )}
+                    <Link to={`/board/${post.id}`} className={`board-item${softDeleted ? ' board-item-deleted' : ''}`} style={{ flex: 1 }}>
+                      <div className="board-item-main">
+                        <div className="board-item-title-row">
+                          <span className="board-item-title">{post.title}</span>
+                          {hasImages && <span className="board-item-img-icon" title="Image">📷</span>}
+                          {commentCount > 0 && <span className="board-item-comment-count">[{commentCount}]</span>}
+                        </div>
+                        {post.quiz_id != null && (
+                          <span className="board-quiz-badge">Quiz #{post.quiz_id}</span>
+                        )}
                       </div>
-                      {post.quiz_id != null && (
-                        <span className="board-quiz-badge">Quiz #{post.quiz_id}</span>
-                      )}
-                    </div>
-                    <div className="board-item-meta">
-                      <span className="board-item-author">{post.profiles?.nickname || 'Anonymous'}</span>
-                      <span className="board-item-date">{formatDate(post.created_at)}</span>
-                    </div>
-                  </Link>
+                      <div className="board-item-meta">
+                        <span className="board-item-author">{post.profiles?.nickname || 'Anonymous'}</span>
+                        <span className="board-item-date">{formatDate(post.created_at)}</span>
+                      </div>
+                    </Link>
+                  </div>
                 )
               })}
             </div>

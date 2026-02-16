@@ -154,7 +154,7 @@ export default function StylePage() {
   const [sampleOpen, setSampleOpen] = useState(false)
   const [sampleImg] = useState(() => Math.random() < 0.5 ? '/images/style-sample-1.jpg' : '/images/style-sample-2.jpg')
   const [downloading, setDownloading] = useState(false)
-  const [email, setEmail] = useState('')
+  const [email, setEmail] = useState(user?.email || '')
 
   // Pre-fill email from logged-in user
   useEffect(() => {
@@ -358,7 +358,7 @@ export default function StylePage() {
   const handleReset = () => {
     setResult(null)
     setError(null)
-    setEmail('')
+    setEmail(user?.email || '')
     setEmailSent(false)
     setEmailError(null)
   }

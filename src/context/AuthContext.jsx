@@ -13,7 +13,7 @@ export function AuthProvider({ children }) {
     if (!authUser) { setProfile(null); return }
     const { data } = await supabase
       .from('profiles')
-      .select('nickname, avatar_url')
+      .select('nickname, avatar_url, is_admin')
       .eq('id', authUser.id)
       .single()
 
