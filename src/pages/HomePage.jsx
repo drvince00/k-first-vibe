@@ -76,7 +76,7 @@ export default function HomePage() {
               <img src="/images/char-quiz.png" alt="Korean Culture Quiz" />
             </div>
             <h3>{lang === 'en' ? 'Korean Culture Quiz' : '한국 문화 퀴즈'}</h3>
-            <p>{lang === 'en' ? '522+ questions — TOPIK, food, and traditions' : '522개 이상의 문제 — TOPIK, 음식, 전통'}</p>
+            <p>{lang === 'en' ? 'TOPIK, food, and traditions' : 'TOPIK, 음식, 전통'}</p>
           </Link>
           <Link to="/style" className="home-feature-card">
             <div className="home-feature-icon">

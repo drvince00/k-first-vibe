@@ -8,7 +8,11 @@
         "en": "The most systematic Korean learning channel with structured curriculum from beginner to advanced. TTMIK offers grammar, vocabulary, and real conversation practice.",
         "ko": "가장 체계적인 커리큘럼으로 유명한 TTMIK의 핵심 영상들입니다. 문법, 어휘, 실전 회화를 연습할 수 있습니다."
       },
-      "level": ["Beginner", "Intermediate", "Advanced"],
+      "level": [
+        "Beginner",
+        "Intermediate",
+        "Advanced"
+      ],
       "videos": [
         {
           "id": "JrACvLMZIXs",
@@ -70,7 +74,10 @@
         "en": "Comprehensive Korean learning channel with lessons for every level. KoreanClass101 covers vocabulary, listening practice, pronunciation, and practical travel Korean.",
         "ko": "모든 레벨을 위한 종합 한국어 학습 채널입니다. 어휘, 듣기 연습, 발음, 여행 한국어 등 다양한 콘텐츠를 제공합니다."
       },
-      "level": ["Beginner", "Intermediate"],
+      "level": [
+        "Beginner",
+        "Intermediate"
+      ],
       "videos": [
         {
           "id": "KN4mysljHYc",
@@ -121,6 +128,309 @@
           "id": "tM0bQnKiUTA",
           "title": "Learn Korean While You Sleep",
           "titleKo": "자면서 배우는 한국어"
+        }
+      ]
+    },
+    {
+      "id": "quickkorean",
+      "name": "Quick Korean",
+      "handle": "@QuickKorean",
+      "description": {
+        "en": "Official Korean course by Cyber University of Korea. Structured lessons covering Hangul, greetings, grammar, and daily expressions.",
+        "ko": "고려사이버대학교 공식 한국어 강좌. 한글, 인사, 문법, 일상 표현을 체계적으로 학습합니다."
+      },
+      "level": [
+        "Beginner"
+      ],
+      "videos": [
+        {
+          "id": "MRInzFff9Uw",
+          "title": "[Quick Korean 1] 1-1 The Korean Alphabet, Hangeul I",
+          "titleKo": "한국어 알파벳 한글 I"
+        },
+        {
+          "id": "f4qJ1ZUnOeM",
+          "title": "[Quick Korean 1] 1-2 The Korean Alphabet, Hangeul II",
+          "titleKo": "한국어 알파벳 한글 II"
+        },
+        {
+          "id": "BZDX_uEe9mc",
+          "title": "[Quick Korean 1] 2-1 Hello.",
+          "titleKo": "안녕하세요."
+        },
+        {
+          "id": "Hup-c8wTw0c",
+          "title": "[Quick Korean 1] 2-2 I am Korean.",
+          "titleKo": "저는 한국 사람입니다."
+        },
+        {
+          "id": "xS5pzLZb6xg",
+          "title": "[Quick Korean 1] 3-1 Is there a desk?",
+          "titleKo": "책상이 있어요?"
+        },
+        {
+          "id": "3078Hf1Hras",
+          "title": "[Quick Korean 1] 3-2 Is this room warm during the winter?",
+          "titleKo": "이 방은 겨울에 따뜻해요?"
+        },
+        {
+          "id": "YFwPrto_k8c",
+          "title": "[Quick Korean 1] 4-1 Where is the key?",
+          "titleKo": "열쇠가 어디에 있어요?"
+        },
+        {
+          "id": "BlDnOJVblWs",
+          "title": "[Quick Korean 1] 5-1 What time do you wake up?",
+          "titleKo": "몇 시에 일어나요?"
+        },
+        {
+          "id": "jyYmrbLRIjQ",
+          "title": "[Quick Korean 1] 5-2 Where are you going?",
+          "titleKo": "어디 가세요?"
+        },
+        {
+          "id": "MpmvdZyg6rI",
+          "title": "[Quick Korean 1] 6-1 What day is the concert?",
+          "titleKo": "콘서트가 무슨 요일이에요?"
+        }
+      ]
+    },
+    {
+      "id": "missvicky",
+      "name": "Korean with Miss Vicky",
+      "handle": "@KoreanwithMissVicky",
+      "description": {
+        "en": "Clear and detailed Korean grammar lessons for absolute beginners. Covers particles, verb conjugation, and sentence structure.",
+        "ko": "초보자를 위한 명쾌한 한국어 문법 강의. 조사, 동사 활용, 문장 구조를 다룹니다."
+      },
+      "level": [
+        "Beginner",
+        "Intermediate"
+      ],
+      "videos": [
+        {
+          "id": "EGv0-5JCCXY",
+          "title": "Korean Grammar for Absolute Beginners | Word Order & Core Particles",
+          "titleKo": "초보자 문법: 어순과 핵심 조사"
+        },
+        {
+          "id": "WCmh1zWUXdE",
+          "title": "7 Basics in Korean Grammar (for beginners)",
+          "titleKo": "초보자를 위한 한국어 문법 기초 7가지"
+        },
+        {
+          "id": "zIwLPeRuQkM",
+          "title": "How To Make Sentences in Korean",
+          "titleKo": "한국어 문장 만들기"
+        },
+        {
+          "id": "iYsq-Vij48Q",
+          "title": "Basic Korean 01: Greeting, I, You, 반말 vs 존댓말",
+          "titleKo": "기초 한국어: 인사, 반말 vs 존댓말"
+        },
+        {
+          "id": "Cmvk3E3NThI",
+          "title": "10+ Phrases for Beginners to Start Korean With",
+          "titleKo": "한국어 시작을 위한 10가지 표현"
+        },
+        {
+          "id": "NTBw0AFY-qU",
+          "title": "All Basics about 은/는 & 이/가 (Subject Particles)",
+          "titleKo": "은/는 & 이/가 주격 조사 기초"
+        },
+        {
+          "id": "2c8XjCmOAbk",
+          "title": "How to Use 의 (Possessive Particle) & Pronoun Contractions",
+          "titleKo": "의 (소유격 조사) 사용법"
+        },
+        {
+          "id": "scbnyWLPI00",
+          "title": "Korean Grammar for Beginners #2 | Verbs (Conjugation & Dictation)",
+          "titleKo": "초보 문법 #2: 동사 활용"
+        },
+        {
+          "id": "K7dgMVKPTHw",
+          "title": "All About Verbs in Korean (Present Tense Conjugation)",
+          "titleKo": "한국어 동사 현재시제 활용"
+        },
+        {
+          "id": "_VcXJDvtNEk",
+          "title": "Present Progressive in Korean (-고 있어요, -는 중이에요)",
+          "titleKo": "현재 진행형 (-고 있어요)"
+        }
+      ]
+    },
+    {
+      "id": "sweetandtasty",
+      "name": "sweetandtastyTV",
+      "handle": "@sweetandtastyTV",
+      "description": {
+        "en": "Explore Korean street food and traditional markets across Seoul. A fun way to learn Korean food culture through market tours.",
+        "ko": "서울 곳곳의 길거리 음식과 전통 시장 탐방. 시장 투어로 한국 음식 문화를 재미있게 배웁니다."
+      },
+      "level": [
+        "Beginner",
+        "Intermediate"
+      ],
+      "videos": [
+        {
+          "id": "OPeuAL-hUDw",
+          "title": "Korean Street Food at Mangwon Market in Seoul",
+          "titleKo": "서울 망원시장 길거리 음식"
+        },
+        {
+          "id": "pgnkD91vcoc",
+          "title": "Eating Bibimbap at Gwangjang Market",
+          "titleKo": "광장시장에서 비빔밥 먹기"
+        },
+        {
+          "id": "_48zDYpsj5I",
+          "title": "Korean Street Food at Namdaemun Market ft. Hotteok",
+          "titleKo": "남대문시장 길거리 음식 & 호떡"
+        },
+        {
+          "id": "V4794kekzZg",
+          "title": "Korean Street Food in Myeongdong",
+          "titleKo": "명동 길거리 음식"
+        },
+        {
+          "id": "H9Tl-nNcKLg",
+          "title": "Street Food & Weekend Nightlife in Hongdae",
+          "titleKo": "홍대 길거리 음식 & 주말 야경"
+        },
+        {
+          "id": "mBKVpP6dXsE",
+          "title": "Street Food in Traditional Korean Village",
+          "titleKo": "한국 전통마을 길거리 음식"
+        },
+        {
+          "id": "3-jvOhNEQe0",
+          "title": "Korean Street Food Tour ft. Frozen S'mores",
+          "titleKo": "한국 길거리 음식 투어"
+        },
+        {
+          "id": "shCVKIw29yA",
+          "title": "Korean Night Market Street Food Tour",
+          "titleKo": "야시장 길거리 음식 투어"
+        },
+        {
+          "id": "qyPzUsf4ah8",
+          "title": "Street Food Tour at Dongdaemun Night Market",
+          "titleKo": "동대문 야시장 음식 투어"
+        },
+        {
+          "id": "otwFnDEOCrc",
+          "title": "Traditional Korean Market Tour in Pyeongchang",
+          "titleKo": "평창 전통시장 투어"
+        }
+      ]
+    },
+    {
+      "id": "conversational",
+      "name": "Conversational Korean",
+      "handle": "@ConversationalKorean",
+      "description": {
+        "en": "Build your Korean vocabulary with frequently used words. Short, focused lessons perfect for daily study.",
+        "ko": "자주 쓰이는 한국어 단어로 어휘력을 키우세요. 매일 학습에 딱 맞는 짧고 집중된 강의."
+      },
+      "level": [
+        "Beginner"
+      ],
+      "videos": [
+        {
+          "id": "WLTDdZe6xtU",
+          "title": "Frequently Used Korean Words #1",
+          "titleKo": "자주 쓰는 한국어 단어 #1"
+        },
+        {
+          "id": "JEa_p_czyc8",
+          "title": "Frequently Used Korean Words #2",
+          "titleKo": "자주 쓰는 한국어 단어 #2"
+        },
+        {
+          "id": "HP2CD5Bbyjw",
+          "title": "Frequently Used Korean Words #3",
+          "titleKo": "자주 쓰는 한국어 단어 #3"
+        },
+        {
+          "id": "B6PXFxuvFUU",
+          "title": "Frequently Used Korean Words #4",
+          "titleKo": "자주 쓰는 한국어 단어 #4"
+        },
+        {
+          "id": "ZKLiQXbqalo",
+          "title": "Frequently Used Korean Words #5",
+          "titleKo": "자주 쓰는 한국어 단어 #5"
+        },
+        {
+          "id": "GQYHRxJLhXI",
+          "title": "Frequently Used Korean Words #6",
+          "titleKo": "자주 쓰는 한국어 단어 #6"
+        },
+        {
+          "id": "R_rXM3ndIFk",
+          "title": "Frequently Used Korean Words #7",
+          "titleKo": "자주 쓰는 한국어 단어 #7"
+        }
+      ]
+    },
+    {
+      "id": "yourkoreansaem",
+      "name": "Your Korean Saem",
+      "handle": "@YourKoreanSaem",
+      "description": {
+        "en": "In-depth Korean grammar lessons explaining particles, conjugation, and expressions. Great for learners who want to understand the \"why\" behind Korean grammar.",
+        "ko": "조사, 활용, 표현을 깊이 있게 설명하는 한국어 문법 강의. 문법의 원리를 이해하고 싶은 학습자에게 추천."
+      },
+      "level": [
+        "Beginner",
+        "Intermediate"
+      ],
+      "videos": [
+        {
+          "id": "RhiEK8dkKdY",
+          "title": "Difference Between Particles 에 and 에서",
+          "titleKo": "에 vs 에서 차이점"
+        },
+        {
+          "id": "ofXTY_5b5LM",
+          "title": "How to Say \"I WISH\" or \"I HOPE\" in Korean",
+          "titleKo": "\"바라다/희망하다\" 표현법"
+        },
+        {
+          "id": "p_77zPF9mAk",
+          "title": "When to Use Sino-Korean or Native Korean to Count",
+          "titleKo": "한자어 vs 고유어 숫자 사용법"
+        },
+        {
+          "id": "oQMmXVvGcnM",
+          "title": "Watch This Before You Learn Korean Verb Conjugation!",
+          "titleKo": "동사 활용 배우기 전 필수 시청!"
+        },
+        {
+          "id": "Z1VBYWkGxAA",
+          "title": "3 Ways to Say BECAUSE in Korean",
+          "titleKo": "\"왜냐하면\" 3가지 표현법"
+        },
+        {
+          "id": "ILqndwccElM",
+          "title": "2 Ways to Say ALMOST in Korean",
+          "titleKo": "\"거의\" 2가지 표현법"
+        },
+        {
+          "id": "c4d_RJKKPf0",
+          "title": "How to Ask Questions in Korean (Who, What, When, Where, Why, How)",
+          "titleKo": "의문사 (누구, 무엇, 언제, 어디, 왜, 어떻게)"
+        },
+        {
+          "id": "kyqIEocBNkM",
+          "title": "은/는/이/가 Topic & Subject Markers Explained",
+          "titleKo": "은/는/이/가 주제·주격 조사 설명"
+        },
+        {
+          "id": "GYwvblw9Gto",
+          "title": "3 Ways to EXAGGERATE in Korean (SO, REALLY)",
+          "titleKo": "과장 표현 3가지 (정말, 너무, 진짜)"
         }
       ]
     }
