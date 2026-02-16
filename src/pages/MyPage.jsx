@@ -6,7 +6,7 @@ import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
 
 export default function MyPage() {
-  const { user, loading, updatePassword, updateProfile, deleteAccount } = useAuth()
+  const { user, profile, loading, updatePassword, updateProfile, deleteAccount } = useAuth()
   const { lang } = useApp()
   const navigate = useNavigate()
 
@@ -28,10 +28,10 @@ export default function MyPage() {
   }, [user, loading, navigate])
 
   useEffect(() => {
-    if (user) {
-      setNickname(user.user_metadata?.nickname || user.user_metadata?.full_name || '')
+    if (profile) {
+      setNickname(profile.nickname || user?.user_metadata?.full_name || '')
     }
-  }, [user])
+  }, [profile, user])
 
   const handleProfileSave = async () => {
     setProfileMsg({ type: '', text: '' })
@@ -131,8 +131,8 @@ export default function MyPage() {
   }
   const tx = t[lang] || t.en
 
-  const avatarUrl = user.user_metadata?.avatar_url
-  const displayName = nickname || user.user_metadata?.full_name || user.email?.split('@')[0] || 'User'
+  const avatarUrl = profile?.avatar_url || user.user_metadata?.avatar_url
+  const displayName = nickname || profile?.nickname || user.user_metadata?.full_name || user.email?.split('@')[0] || 'User'
 
   return (
     <div className="home-page">

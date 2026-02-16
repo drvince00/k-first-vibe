@@ -5,7 +5,7 @@ import { useAuth } from '../context/AuthContext'
 
 export default function Navbar({ variant } = {}) {
   const { lang, setLang } = useApp()
-  const { user, loading, signOut } = useAuth()
+  const { user, profile, loading, signOut } = useAuth()
   const navigate = useNavigate()
   const [menuOpen, setMenuOpen] = useState(false)
   const menuRef = useRef(null)
@@ -20,8 +20,8 @@ export default function Navbar({ variant } = {}) {
     return () => document.removeEventListener('mousedown', handleClick)
   }, [])
 
-  const avatarUrl = user?.user_metadata?.avatar_url
-  const displayName = user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'User'
+  const avatarUrl = profile?.avatar_url || user?.user_metadata?.avatar_url
+  const displayName = profile?.nickname || user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'User'
 
   return (
     <nav className={`navbar ${variant === 'glass' ? 'navbar-glass' : ''}`}>

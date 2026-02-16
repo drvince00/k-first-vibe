@@ -6,18 +6,40 @@ const AuthContext = createContext()
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null)
   const [session, setSession] = useState(null)
+  const [profile, setProfile] = useState(null)
   const [loading, setLoading] = useState(true)
+
+  const fetchProfile = async (authUser) => {
+    if (!authUser) { setProfile(null); return }
+    const { data } = await supabase
+      .from('profiles')
+      .select('nickname, avatar_url')
+      .eq('id', authUser.id)
+      .single()
+
+    if (data) {
+      // Auto-fill nickname from social login if null
+      if (!data.nickname) {
+        const socialName = authUser.user_metadata?.full_name || authUser.email?.split('@')[0] || 'User'
+        await supabase.from('profiles').update({ nickname: socialName }).eq('id', authUser.id)
+        data.nickname = socialName
+      }
+      setProfile(data)
+    }
+  }
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session)
       setUser(session?.user ?? null)
+      fetchProfile(session?.user ?? null)
       setLoading(false)
     })
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session)
       setUser(session?.user ?? null)
+      fetchProfile(session?.user ?? null)
       setLoading(false)
     })
 
@@ -61,10 +83,19 @@ export function AuthProvider({ children }) {
     supabase.auth.updateUser({ password: newPassword })
 
   const updateProfile = async (data) => {
+    // Update auth user_metadata
     const { error } = await supabase.auth.updateUser({ data })
     if (error) throw error
+    // Update profiles table
+    const updates = {}
+    if (data.nickname !== undefined) updates.nickname = data.nickname
+    if (Object.keys(updates).length > 0) {
+      updates.updated_at = new Date().toISOString()
+      await supabase.from('profiles').update(updates).eq('id', user.id)
+    }
     const { data: { user: updated } } = await supabase.auth.getUser()
     setUser(updated)
+    await fetchProfile(updated)
   }
 
   const deleteAccount = async () => {
@@ -79,6 +110,7 @@ export function AuthProvider({ children }) {
   const value = {
     user,
     session,
+    profile,
     loading,
     signInWithGoogle,
     signInWithFacebook,
