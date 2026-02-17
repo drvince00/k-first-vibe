@@ -13,7 +13,7 @@ export default function QuizPage() {
     score, setScore, soundOn, setSoundOn, imgError, setImgError,
     setCurrentIndex, navigate, topRef,
     categories, selectedCategories, toggleCategory,
-    questionCount, setQuestionCount, startQuiz, ready, resetQuizSetup
+    questionCount, setQuestionCount, startQuiz, ready, quizLoading, resetQuizSetup
   } = useApp()
   const { user, loading: authLoading } = useAuth()
   const routerNavigate = useRouterNavigate()
@@ -156,9 +156,9 @@ export default function QuizPage() {
               <button
                 className="btn-primary"
                 onClick={startQuiz}
-                disabled={selectedCategories.length === 0 || !ready}
+                disabled={selectedCategories.length === 0 || !ready || quizLoading}
               >
-                {!ready
+                {quizLoading
                   ? 'Loading...'
                   : lang === 'en'
                     ? 'START QUIZ'

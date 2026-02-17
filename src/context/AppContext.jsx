@@ -2,21 +2,22 @@ import { createContext, useContext, useState, useEffect, useRef, useCallback } f
 import { useNavigate, useLocation } from 'react-router-dom'
 import { shuffle } from '../utils/sound'
 import { HERO_IMAGES, SEO_DATA } from '../utils/constants'
+import { supabase } from '../lib/supabase'
 
 const AppContext = createContext()
 
 export function AppProvider({ children }) {
-  const [allQuiz, setAllQuiz] = useState([])
   const [quiz, setQuiz] = useState([])
   const [currentIndex, setCurrentIndex] = useState(0)
   const [score, setScore] = useState(0)
   const [selected, setSelected] = useState(null)
   const [answered, setAnswered] = useState(false)
-  const [categories, setCategories] = useState(['TOPIK', 'FOOD', 'CULTURE'])
+  const [categories] = useState(['TOPIK', 'FOOD', 'CULTURE'])
   const [selectedCategories, setSelectedCategories] = useState(['TOPIK', 'FOOD', 'CULTURE'])
   const [questionCount, setQuestionCount] = useState(10)
   const [imgError, setImgError] = useState(false)
-  const [ready, setReady] = useState(false)
+  const [ready] = useState(true)
+  const [quizLoading, setQuizLoading] = useState(false)
   const [soundOn, setSoundOn] = useState(() => !/Mobi|Android|iPhone|iPad/i.test(navigator.userAgent))
   const [contactEmail, setContactEmail] = useState('')
   const [contactMessage, setContactMessage] = useState('')
@@ -51,17 +52,7 @@ export function AppProvider({ children }) {
     document.querySelector('meta[property="og:url"]')?.setAttribute('content', 'https://kculturecat.cc' + (location.pathname === '/' ? '/' : location.pathname))
   }, [location.pathname, lang])
 
-  useEffect(() => {
-    fetch('/quizData.json')
-      .then((res) => res.json())
-      .then((data) => {
-        setAllQuiz(data)
-        const cats = [...new Set(data.map((q) => q.category))]
-        setCategories(cats)
-        setSelectedCategories(cats)
-        setReady(true)
-      })
-  }, [])
+  // No longer fetching entire JSON — quizzes are loaded from Supabase on demand
 
   useEffect(() => {
     if (location.hash === '#contact-section') {
@@ -74,12 +65,30 @@ export function AppProvider({ children }) {
     }
   }, [location.pathname, location.hash])
 
-  const buildQuiz = useCallback(() => {
-    let filtered = allQuiz.filter((q) => selectedCategories.includes(q.category))
-    filtered = shuffle(filtered).slice(0, questionCount)
-    setQuiz(filtered)
-    return filtered
-  }, [allQuiz, selectedCategories, questionCount])
+  const buildQuiz = useCallback(async () => {
+    setQuizLoading(true)
+    try {
+      // Distribute questions evenly across selected categories
+      const perCat = Math.ceil(questionCount / selectedCategories.length)
+      const promises = selectedCategories.map(async (cat) => {
+        const { data, error } = await supabase.rpc('get_random_quizzes', {
+          cat_name: cat,
+          lim: perCat
+        })
+        if (error) throw error
+        return data
+      })
+      const results = await Promise.all(promises)
+      const all = shuffle(results.flat()).slice(0, questionCount)
+      setQuiz(all)
+      return all
+    } catch (err) {
+      console.error('Failed to load quizzes:', err)
+      return []
+    } finally {
+      setQuizLoading(false)
+    }
+  }, [selectedCategories, questionCount])
 
   // Reset to first slide when reaching the clone (seamless loop)
   useEffect(() => {
@@ -145,26 +154,26 @@ export function AppProvider({ children }) {
     setImgError(false)
   }, [])
 
-  const startQuiz = () => {
-    const built = buildQuiz()
-    if (built.length === 0) return
-    navigate('/quiz')
+  const startQuiz = async () => {
     setCurrentIndex(0)
     setScore(0)
     setSelected(null)
     setAnswered(false)
     setImgError(false)
+    const built = await buildQuiz()
+    if (built.length === 0) return
+    navigate('/quiz')
   }
 
-  const handleRetry = () => {
-    const built = buildQuiz()
-    if (built.length === 0) return
-    navigate('/quiz')
+  const handleRetry = async () => {
     setCurrentIndex(0)
     setScore(0)
     setSelected(null)
     setAnswered(false)
     setImgError(false)
+    const built = await buildQuiz()
+    if (built.length === 0) return
+    navigate('/quiz')
   }
 
   const handleContactSubmit = async (e) => {
@@ -192,11 +201,11 @@ export function AppProvider({ children }) {
     // Language
     lang, setLang,
     // Quiz data
-    allQuiz, quiz, setQuiz, currentIndex, setCurrentIndex, score, setScore,
+    quiz, setQuiz, currentIndex, setCurrentIndex, score, setScore,
     selected, setSelected, answered, setAnswered,
     categories, selectedCategories, toggleCategory,
     questionCount, setQuestionCount,
-    imgError, setImgError, ready, soundOn, setSoundOn,
+    imgError, setImgError, ready, quizLoading, soundOn, setSoundOn,
     // Quiz actions
     buildQuiz, startQuiz, handleRetry, resetQuizSetup,
     // Contact
