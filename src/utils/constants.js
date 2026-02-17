@@ -24,8 +24,8 @@ export const HERO_IMAGES = [
 
 export const SEO_DATA = {
   '/': {
-    en: { title: 'K-Culture Cat - Korean Culture Quiz | 522+ Questions', desc: 'Discover Korean culture through 522+ interactive quizzes about TOPIK, Korean food, and traditions. Test your knowledge of Korean language, cuisine, and heritage.' },
-    ko: { title: 'K-Culture Cat - 한국 문화 퀴즈 | 522개 이상의 문제', desc: '한국어 TOPIK, 한국 음식, 전통 문화에 대한 522개 이상의 인터랙티브 퀴즈로 한국 문화를 발견하세요.' }
+    en: { title: 'K-Culture Cat - Korean Culture Quiz', desc: 'Discover Korean culture through interactive quizzes about TOPIK, Korean food, and traditions. Test your knowledge of Korean language, cuisine, and heritage.' },
+    ko: { title: 'K-Culture Cat - 한국 문화 퀴즈', desc: '한국어 TOPIK, 한국 음식, 전통 문화에 대한 인터랙티브 퀴즈로 한국 문화를 발견하세요.' }
   },
   '/about': {
     en: { title: 'About K-Culture Cat - Our Mission & Team', desc: 'Learn about K-Culture Cat, an independent educational platform helping people worldwide discover Korean culture through interactive quizzes and content.' },

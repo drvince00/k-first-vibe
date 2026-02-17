@@ -82,7 +82,7 @@ export default function HomePage() {
             <div className="home-feature-icon">
               <img src="/images/char-style.png" alt="AI Stylist" />
             </div>
-            <h3>{lang === 'en' ? 'K-Fashion AI' : 'K-패션 AI'}</h3>
+            <h3>{lang === 'en' ? 'K-Fashion Analysis' : 'K-패션 분석'}</h3>
             <p>{lang === 'en' ? 'AI-powered Korean fashion & hairstyle analysis' : 'AI 기반 한국 패션 & 헤어스타일 분석'}</p>
           </Link>
           <Link to="/learn" className="home-feature-card">
