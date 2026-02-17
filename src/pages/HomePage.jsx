@@ -73,21 +73,21 @@ export default function HomePage() {
         <div className="home-features-grid">
           <Link to="/quiz" className="home-feature-card">
             <div className="home-feature-icon">
-              <img src="/images/char-quiz.png" alt="Korean Culture Quiz" />
+              <img src="/images/char-quiz.webp" alt="Korean Culture Quiz" loading="lazy" />
             </div>
             <h3>{lang === 'en' ? 'Korean Culture Quiz' : '한국 문화 퀴즈'}</h3>
             <p>{lang === 'en' ? 'TOPIK, food, and traditions' : 'TOPIK, 음식, 전통'}</p>
           </Link>
           <Link to="/style" className="home-feature-card">
             <div className="home-feature-icon">
-              <img src="/images/char-style.png" alt="AI Stylist" />
+              <img src="/images/char-style.webp" alt="AI Stylist" loading="lazy" />
             </div>
             <h3>{lang === 'en' ? 'K-Fashion Analysis' : 'K-패션 분석'}</h3>
             <p>{lang === 'en' ? 'AI-powered Korean fashion & hairstyle analysis' : 'AI 기반 한국 패션 & 헤어스타일 분석'}</p>
           </Link>
           <Link to="/learn" className="home-feature-card">
             <div className="home-feature-icon">
-              <img src="/images/char-learn.png" alt="Learn Korean" />
+              <img src="/images/char-learn.webp" alt="Learn Korean" loading="lazy" />
             </div>
             <h3>{lang === 'en' ? 'Learn Korean' : '한국어 배우기'}</h3>
             <p>{lang === 'en' ? 'Curated YouTube lessons from top teachers' : '인기 유튜버 엄선 강의 모음'}</p>

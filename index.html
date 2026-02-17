@@ -1,13 +1,6 @@
 <!doctype html>
 <html lang="en">
   <head>
-    <!-- Google Tag Manager -->
-    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-    })(window,document,'script','dataLayer','GTM-NR3J6MG5');</script>
-    <!-- End Google Tag Manager -->
     <meta charset="UTF-8" />
     <link rel="icon" href="/favicon.ico" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -45,8 +38,8 @@
     <meta name="twitter:description" content="Discover Korean culture through interactive quizzes about TOPIK, Korean food, and traditions." />
     <meta name="twitter:image" content="https://kculturecat.cc/quiz/gyeongbok-palace-2929520_640.jpg" />
 
-    <!-- Google Analytics -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-H0W3FX5WXF"></script>
+    <!-- Google Analytics (deferred) -->
+    <script defer src="https://www.googletagmanager.com/gtag/js?id=G-H0W3FX5WXF"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
@@ -246,5 +239,15 @@
       </div>
     </noscript>
     <script type="module" src="/src/main.jsx"></script>
+    <!-- Google Tag Manager (deferred to end of body) -->
+    <script>
+      window.addEventListener('load', function() {
+        (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+        new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+        j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+        'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+        })(window,document,'script','dataLayer','GTM-NR3J6MG5');
+      });
+    </script>
   </body>
 </html>

@@ -371,9 +371,10 @@ export default function StylePage() {
       <header className="learn-hero">
         <div className="learn-hero-content">
           <img
-            src="/images/char-style.png"
+            src="/images/char-style.webp"
             alt="AI Stylist cat mascot"
             className="learn-hero-img"
+            loading="lazy"
           />
           <div className="learn-hero-text">
             <span className="hero-label">AI STYLIST</span>

@@ -76,9 +76,10 @@ export default function QuizPage() {
       <header className="learn-hero">
         <div className="learn-hero-content">
           <img
-            src="/images/char-quiz.png"
+            src="/images/char-quiz.webp"
             alt="Quiz cat mascot"
             className="learn-hero-img"
+            loading="lazy"
           />
           <div className="learn-hero-text">
             <span className="hero-label">K-QUIZ</span>

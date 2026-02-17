@@ -62,9 +62,10 @@ export default function LearnPage() {
       <header className="learn-hero">
         <div className="learn-hero-content">
           <img
-            src="/images/char-learn.png"
+            src="/images/char-learn.webp"
             alt="Learn Korean cat mascot"
             className="learn-hero-img"
+            loading="lazy"
           />
           <div className="learn-hero-text">
             <span className="hero-label">LANGUAGE TRAINING</span>
