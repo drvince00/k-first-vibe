@@ -191,27 +191,6 @@ export default function LearnPage() {
         </section>
       )}
 
-      {/* Coming Soon - Community Board */}
-      <section className="learn-coming-soon">
-        <div className="learn-coming-soon-inner">
-          <span className="section-tag">COMING SOON</span>
-          <h2 className="section-title">
-            {lang === 'en' ? 'Community Board' : '커뮤니티 게시판'}
-          </h2>
-          <p className="section-desc">
-            {lang === 'en'
-              ? 'Share your learning progress, ask questions, and connect with fellow Korean learners. Stay tuned!'
-              : '학습 진행 상황을 공유하고, 질문하고, 한국어 학습자들과 소통하세요. 곧 만나요!'}
-          </p>
-          <div className="coming-soon-placeholder">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" width="48" height="48">
-              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
-            </svg>
-            <span>{lang === 'en' ? 'Community features coming soon...' : '커뮤니티 기능 준비 중...'}</span>
-          </div>
-        </div>
-      </section>
-
       <Footer />
     </div>
   )

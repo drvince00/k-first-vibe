@@ -1064,9 +1064,9 @@
 }
 
 .channel-tabs {
-  display: flex;
-  gap: 1.5rem;
-  justify-content: center;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
   margin-bottom: 1.5rem;
 }
 
@@ -1082,7 +1082,7 @@
   transition: all 0.25s;
   text-align: left;
   font-family: inherit;
-  min-width: 280px;
+  min-width: 0;
 }
 
 .channel-tab:hover {
@@ -2446,14 +2446,11 @@
   }
 
   .channel-tabs {
-    flex-direction: column;
-    align-items: center;
+    grid-template-columns: repeat(2, 1fr);
   }
 
   .channel-tab {
-    min-width: 0;
-    width: 100%;
-    max-width: 400px;
+    max-width: none;
   }
 
   .learn-player-section {
@@ -2586,6 +2583,10 @@
 
   .learn-channels {
     padding: 1.5rem 1rem;
+  }
+
+  .channel-tabs {
+    grid-template-columns: 1fr;
   }
 
   .channel-tab {
