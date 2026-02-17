@@ -1532,6 +1532,19 @@
   color: #1a1a2e;
 }
 
+.question-context {
+  font-size: clamp(1rem, 2.8vw, 1.15rem);
+  line-height: 1.8;
+  color: #333;
+  background: #f4f2ff;
+  border-left: 4px solid #7c6dcd;
+  padding: 1rem 1.2rem;
+  border-radius: 8px;
+  margin: 0 0 1.2rem 0;
+  text-align: left;
+  word-break: keep-all;
+}
+
 /* Question Image */
 .question-image-wrapper {
   display: flex;

@@ -199,6 +199,10 @@ export default function QuizPage() {
               <div className="quiz-body">
                 <h2 className="question-text">{q.question}</h2>
 
+                {q.context && (
+                  <p className="question-context">{q.context}</p>
+                )}
+
                 {showImage && (
                   <div className="question-image-wrapper">
                     <img
