@@ -3,17 +3,49 @@
         xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
     <loc>https://kculturecat.cc/</loc>
-    <lastmod>2026-02-05</lastmod>
+    <lastmod>2026-02-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://kculturecat.cc/" />
     <xhtml:link rel="alternate" hreflang="ko" href="https://kculturecat.cc/" />
   </url>
   <url>
-    <loc>https://kculturecat.cc/about</loc>
-    <lastmod>2026-02-05</lastmod>
-    <changefreq>monthly</changefreq>
+    <loc>https://kculturecat.cc/quiz</loc>
+    <lastmod>2026-02-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://kculturecat.cc/quiz" />
+    <xhtml:link rel="alternate" hreflang="ko" href="https://kculturecat.cc/quiz" />
+  </url>
+  <url>
+    <loc>https://kculturecat.cc/style</loc>
+    <lastmod>2026-02-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://kculturecat.cc/style" />
+    <xhtml:link rel="alternate" hreflang="ko" href="https://kculturecat.cc/style" />
+  </url>
+  <url>
+    <loc>https://kculturecat.cc/learn</loc>
+    <lastmod>2026-02-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://kculturecat.cc/learn" />
+    <xhtml:link rel="alternate" hreflang="ko" href="https://kculturecat.cc/learn" />
+  </url>
+  <url>
+    <loc>https://kculturecat.cc/board</loc>
+    <lastmod>2026-02-17</lastmod>
+    <changefreq>daily</changefreq>
     <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://kculturecat.cc/board" />
+    <xhtml:link rel="alternate" hreflang="ko" href="https://kculturecat.cc/board" />
+  </url>
+  <url>
+    <loc>https://kculturecat.cc/about</loc>
+    <lastmod>2026-02-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://kculturecat.cc/about" />
     <xhtml:link rel="alternate" hreflang="ko" href="https://kculturecat.cc/about" />
   </url>
@@ -21,7 +53,7 @@
     <loc>https://kculturecat.cc/privacy</loc>
     <lastmod>2026-02-05</lastmod>
     <changefreq>yearly</changefreq>
-    <priority>0.5</priority>
+    <priority>0.3</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://kculturecat.cc/privacy" />
     <xhtml:link rel="alternate" hreflang="ko" href="https://kculturecat.cc/privacy" />
   </url>
@@ -29,7 +61,7 @@
     <loc>https://kculturecat.cc/terms</loc>
     <lastmod>2026-02-05</lastmod>
     <changefreq>yearly</changefreq>
-    <priority>0.5</priority>
+    <priority>0.3</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://kculturecat.cc/terms" />
     <xhtml:link rel="alternate" hreflang="ko" href="https://kculturecat.cc/terms" />
   </url>
