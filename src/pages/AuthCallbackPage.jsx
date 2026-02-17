@@ -14,7 +14,9 @@ export default function AuthCallbackPage() {
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
       if (event === 'SIGNED_IN') {
-        navigate('/', { replace: true })
+        const redirectTo = sessionStorage.getItem('authRedirect') || '/'
+        sessionStorage.removeItem('authRedirect')
+        navigate(redirectTo, { replace: true })
       }
     })
 
