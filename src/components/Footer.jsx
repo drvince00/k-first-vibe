@@ -100,32 +100,58 @@ export default function Footer() {
   const { lang } = useApp()
 
   useEffect(() => {
-    if (window.Kakao && !window.Kakao.isInitialized()) {
-      window.Kakao.init(KAKAO_JS_KEY)
+    const initKakao = () => {
+      if (window.Kakao && !window.Kakao.isInitialized()) {
+        window.Kakao.init(KAKAO_JS_KEY)
+      }
+    }
+
+    if (window.Kakao) {
+      initKakao()
+    } else {
+      // SDK not loaded yet (defer) — wait for it
+      const script = document.querySelector('script[src*="kakao_js_sdk"]')
+      if (script) {
+        script.addEventListener('load', initKakao)
+        return () => script.removeEventListener('load', initKakao)
+      }
     }
   }, [])
 
   const encodedUrl = encodeURIComponent(SITE_URL)
   const encodedText = encodeURIComponent(SHARE_TEXT[lang] || SHARE_TEXT.en)
 
+  const handleKakaoShare = () => {
+    // Try to initialize if not yet done
+    if (window.Kakao && !window.Kakao.isInitialized()) {
+      window.Kakao.init(KAKAO_JS_KEY)
+    }
+
+    if (!window.Kakao?.isInitialized()) {
+      alert(lang === 'en' ? 'KakaoTalk sharing is loading. Please try again.' : '카카오톡 공유 기능을 불러오는 중입니다. 다시 시도해주세요.')
+      return
+    }
+
+    window.Kakao.Share.sendDefault({
+      objectType: 'feed',
+      content: {
+        title: 'K-Culture Cat',
+        description: SHARE_TEXT[lang] || SHARE_TEXT.en,
+        imageUrl: 'https://kculturecat.cc/quiz/gyeongbok-palace-2929520_640.jpg',
+        link: { mobileWebUrl: SITE_URL, webUrl: SITE_URL }
+      },
+      buttons: [
+        {
+          title: lang === 'en' ? 'Try Quiz' : '퀴즈 도전하기',
+          link: { mobileWebUrl: SITE_URL, webUrl: SITE_URL }
+        }
+      ]
+    })
+  }
+
   const handleShare = (sns) => {
     if (sns.kakao) {
-      if (!window.Kakao?.isInitialized()) return
-      window.Kakao.Share.sendDefault({
-        objectType: 'feed',
-        content: {
-          title: 'K-Culture Cat',
-          description: SHARE_TEXT[lang] || SHARE_TEXT.en,
-          imageUrl: 'https://kculturecat.cc/quiz/gyeongbok-palace-2929520_640.jpg',
-          link: { mobileWebUrl: SITE_URL, webUrl: SITE_URL }
-        },
-        buttons: [
-          {
-            title: lang === 'en' ? 'Try Quiz' : '퀴즈 도전하기',
-            link: { mobileWebUrl: SITE_URL, webUrl: SITE_URL }
-          }
-        ]
-      })
+      handleKakaoShare()
       return
     }
     if (sns.copy) {
