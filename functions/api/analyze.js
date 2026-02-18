@@ -12,14 +12,47 @@ function buildTextPrompt(userInfo) {
   const month = now.toLocaleString('en', { month: 'long' });
   const year = now.getFullYear();
 
-  return `You are a professional fashion stylist and personal image consultant. Based on the person's info and location/season, provide a detailed style analysis. Respond in English only.
+  return `You are an expert fashion stylist and personal image consultant with deep knowledge in facial morphology, optical skin harmony theory, and personal color analysis. Analyze the provided photo and person's info to deliver a scientifically grounded style consultation. Respond in English only.
 
-Person: ${genderText}, ${userInfo.height}cm, ${userInfo.weight}kg, ${bodyDesc}
-Country: ${userInfo.country} (current month: ${month} ${year})
+## Person Info
+- Gender: ${genderText}, ${userInfo.height}cm, ${userInfo.weight}kg, ${bodyDesc}
+- Country: ${userInfo.country} (current month: ${month} ${year})
 
-Determine the climate from the country and month. Respond in valid JSON only, no markdown:
+## Analysis Instructions
 
-{"climate":"brief climate description for this country and month","bodyAnalysis":{"summary":"2-3 sentence overview of this person's body proportions and how to dress to flatter them (e.g. slim build benefits from layering to add visual volume, taller frame can pull off oversized fits, etc.)","skinTone":"1-2 sentence recommendation on colors that complement typical skin tones for their region/ethnicity","silhouette":"1-2 sentences on ideal silhouette and fit style for their body type","avoid":"1 sentence on what styles or fits to avoid"},"commonTips":["5 universal styling tips personalized to this person's body type and proportions, each tip is 1-2 sentences"],"casual":{"title":"5-7 word title","description":"3-4 sentence outfit description with top, bottom, shoes, accessories","tip":"one styling tip"},"rainy":{"title":"5-7 word title","description":"3-4 sentence outfit description for rainy weather","tip":"one styling tip"}}`;
+### 1. Face Shape Analysis (from photo)
+Analyze the person's facial proportions using the Facial Index (FI) framework:
+- FI = (Morphological Facial Height / Bizygomatic Width) × 100
+- Classify into: Oval, Round, Square, Oblong, Heart, or Diamond
+- Note key geometric features (forehead-to-jaw width ratio, jawline angles)
+
+### 2. Skin Undertone & Personal Color (from photo)
+Analyze the skin's optical properties:
+- Determine undertone: Warm (golden/yellow/peach base from carotene/pheomelanin) or Cool (pink/blue base from hemoglobin)
+- Classify into seasonal type: Spring (Warm+Bright), Summer (Cool+Soft), Autumn (Warm+Muted), Winter (Cool+Vivid)
+- Recommend a specific color palette based on the seasonal type
+
+### 3. Hairstyle Correction Principles
+Based on face shape, determine:
+- Where to add/reduce volume (top, sides) to approach the ideal oval proportion
+- Recommended parting ratio and bang style
+- Styles to avoid for this face shape
+
+### 4. Neckline Optimization
+Apply the "opposing element principle":
+- Round face → V-neck/square neck (add vertical lines)
+- Square face → U-neck/round neck/scoop neck (add curves to soften angles)
+- Oblong face → boat neck/high neck (add horizontal lines)
+- Heart face → round neck/off-shoulder (balance narrow chin)
+
+### 5. Fabric Texture Recommendations
+Consider surface roughness (Ra) and optical reflectance:
+- Spring/Winter (vivid types) → smooth fabrics (silk, satin) that maintain color clarity
+- Summer/Autumn (muted types) → textured fabrics (wool, linen, tweed) that diffuse light softly
+
+Respond in valid JSON only, no markdown:
+
+{"climate":"brief climate description","faceAnalysis":{"shape":"one of: Oval, Round, Square, Oblong, Heart, Diamond","description":"2-3 sentences explaining the geometric features observed - forehead width, cheekbone prominence, jawline shape, and face length-to-width ratio","correctionGoal":"1-2 sentences on what visual correction is needed to approach oval balance"},"personalColor":{"undertone":"Warm or Cool","season":"Spring, Summer, Autumn, or Winter","description":"2-3 sentences explaining the skin's optical characteristics observed and why this season type was determined","palette":["6 specific recommended colors, e.g. Coral, Dusty Rose, Olive Green"],"avoidColors":["3 colors to avoid"]},"bodyAnalysis":{"summary":"2-3 sentence overview of body proportions and how to dress to flatter them","silhouette":"1-2 sentences on ideal silhouette and fit style","neckline":"recommended neckline type and why it suits this face shape","fabricTexture":"1-2 sentences on ideal fabric textures based on personal color season","avoid":"1 sentence on styles or fits to avoid"},"commonTips":["5 styling tips that integrate face shape correction, personal color, neckline, and body type - each 1-2 sentences"],"casual":{"title":"5-7 word title","description":"3-4 sentence outfit description specifying neckline, fabric texture, colors from personal palette, top, bottom, shoes, accessories","tip":"one styling tip"},"rainy":{"title":"5-7 word title","description":"3-4 sentence outfit description for rainy weather with appropriate fabrics and colors","tip":"one styling tip"}}`;
 }
 
 function buildImagePrompt(gender, bodyType, description) {
@@ -28,9 +61,12 @@ function buildImagePrompt(gender, bodyType, description) {
   return `Generate a full-body fashion photo of the person in the reference image wearing this outfit: ${description}. Keep the person's face, skin tone, hair, and features exactly the same as the reference photo. ${gender}, ${body} build. Full body shot from head to toe, ensure the entire body including head and feet is fully visible within the frame. Clean studio background, professional fashion photography. No text or watermarks.`;
 }
 
-function buildHairstylePrompt(gender) {
+function buildHairstylePrompt(gender, faceShape, correctionGoal) {
   const genderText = gender === 'male' ? 'male' : 'female';
-  return `Create a 3x3 grid showing 9 trendy Korean ${genderText} hairstyles on the person from the reference photo. Keep face and features identical in all 9 cells. Each cell must be framed as a HEAD AND SHOULDERS portrait shot - show from MID-CHEST up to well ABOVE the top of the hair. The camera should be zoomed OUT so that the face is small (about 25% of cell height) and the HAIR is the main focus. There must be large empty space above the hair in every cell - no hair should touch or be cropped by the top edge. Similarly, show down to the shoulders/chest - no chin should be cropped at the bottom. Think of it as a zoomed-out salon catalog photo. Variety: short, medium, long, bangs, no bangs, layered, permed, straight, textured. Clean white background. No text or watermarks.`;
+  const faceGuide = faceShape && correctionGoal
+    ? ` This person has a ${faceShape} face shape. Styling goal: ${correctionGoal} Prioritize hairstyles that achieve this correction - for example, adding top volume for round/square faces, adding side volume for oblong faces, or chin-length waves for heart-shaped faces.`
+    : '';
+  return `Create a 3x3 grid showing 9 trendy Korean ${genderText} hairstyles on the person from the reference photo.${faceGuide} Keep face and features identical in all 9 cells. Each cell must be framed as a HEAD AND SHOULDERS portrait shot - show from MID-CHEST up to well ABOVE the top of the hair. The camera should be zoomed OUT so that the face is small (about 25% of cell height) and the HAIR is the main focus. There must be large empty space above the hair in every cell - no hair should touch or be cropped by the top edge. Similarly, show down to the shoulders/chest - no chin should be cropped at the bottom. Think of it as a zoomed-out salon catalog photo. Variety: short, medium, long, bangs, no bangs, layered, permed, straight, textured. Clean white background. No text or watermarks.`;
 }
 
 function isQuotaError(status) {
@@ -90,7 +126,16 @@ async function notifyOperator(resendKey, errorDetail) {
   }
 }
 
-async function callOpenAIText(prompt, apiKey) {
+async function callOpenAIText(prompt, apiKey, photoBase64, photoMimeType) {
+  const content = [];
+  if (photoBase64 && photoMimeType) {
+    content.push({
+      type: 'image_url',
+      image_url: { url: `data:${photoMimeType};base64,${photoBase64}`, detail: 'low' },
+    });
+  }
+  content.push({ type: 'text', text: prompt });
+
   const res = await fetchWithRetry('https://gateway.ai.cloudflare.com/v1/1b9d390db4dbabd680f186ddd291afcb/openai-proxy/openai/chat/completions', {
     method: 'POST',
     headers: {
@@ -99,7 +144,7 @@ async function callOpenAIText(prompt, apiKey) {
     },
     body: JSON.stringify({
       model: 'gpt-4.1-mini',
-      messages: [{ role: 'user', content: prompt }],
+      messages: [{ role: 'user', content }],
       temperature: 0.7,
     }),
   });
@@ -251,24 +296,28 @@ export async function onRequestPost(context) {
     const mime = photoMimeType || 'image/jpeg';
     const bt = bodyType || 'average';
 
-    // Step 1: Get text recommendations
+    // Step 1: Get text recommendations (with photo for face/skin analysis)
     const prompt = buildTextPrompt(userInfo);
-    const report = await callOpenAIText(prompt, apiKey);
+    const report = await callOpenAIText(prompt, apiKey, photo, mime);
 
     // Step 2: Generate images in parallel (casual outfit, rainy outfit, hairstyle grid)
     const casualDesc = report.casual?.description || '';
     const rainyDesc = report.rainy?.description || '';
+    const faceShape = report.faceAnalysis?.shape || '';
+    const correctionGoal = report.faceAnalysis?.correctionGoal || '';
 
     const [casualImage, rainyImage, hairstyleImage] = await Promise.all([
       callOpenAIImage(buildImagePrompt(gender, bt, casualDesc), photo, mime, apiKey, '1024x1536'),
       callOpenAIImage(buildImagePrompt(gender, bt, rainyDesc), photo, mime, apiKey, '1024x1536'),
-      callOpenAIImage(buildHairstylePrompt(gender), photo, mime, apiKey, '1024x1024'),
+      callOpenAIImage(buildHairstylePrompt(gender, faceShape, correctionGoal), photo, mime, apiKey, '1024x1024'),
     ]);
 
     return new Response(JSON.stringify({
       customerEmail,
       location: { country, climate: report.climate || '' },
       report: {
+        faceAnalysis: report.faceAnalysis,
+        personalColor: report.personalColor,
         bodyAnalysis: report.bodyAnalysis,
         commonTips: report.commonTips,
         casual: report.casual,

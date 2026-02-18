@@ -605,6 +605,62 @@ export default function StylePage() {
                 </div>
               )}
 
+              {/* Face & Personal Color Analysis */}
+              {(result.report?.faceAnalysis || result.report?.personalColor) && (
+                <div className="style-body-analysis">
+                  <h2 className="style-section-title">
+                    {t('Face & Color Analysis', '얼굴형 & 퍼스널컬러 분석')}
+                  </h2>
+                  <div className="style-analysis-cards">
+                    {result.report.faceAnalysis && (
+                      <>
+                        <div className="style-analysis-item">
+                          <span className="style-analysis-icon">🔷</span>
+                          <div>
+                            <strong>{t('Face Shape', '얼굴형')}: {result.report.faceAnalysis.shape}</strong>
+                            <p>{result.report.faceAnalysis.description}</p>
+                          </div>
+                        </div>
+                        <div className="style-analysis-item">
+                          <span className="style-analysis-icon">🎯</span>
+                          <div>
+                            <strong>{t('Styling Goal', '보정 방향')}</strong>
+                            <p>{result.report.faceAnalysis.correctionGoal}</p>
+                          </div>
+                        </div>
+                      </>
+                    )}
+                    {result.report.personalColor && (
+                      <>
+                        <div className="style-analysis-item">
+                          <span className="style-analysis-icon">🌡️</span>
+                          <div>
+                            <strong>{t('Undertone', '언더톤')}: {result.report.personalColor.undertone} · {result.report.personalColor.season}</strong>
+                            <p>{result.report.personalColor.description}</p>
+                          </div>
+                        </div>
+                        <div className="style-analysis-item">
+                          <span className="style-analysis-icon">🎨</span>
+                          <div>
+                            <strong>{t('Recommended Colors', '추천 컬러')}</strong>
+                            <p>{result.report.personalColor.palette?.join(', ')}</p>
+                          </div>
+                        </div>
+                        {result.report.personalColor.avoidColors?.length > 0 && (
+                          <div className="style-analysis-item style-analysis-avoid">
+                            <span className="style-analysis-icon">🚫</span>
+                            <div>
+                              <strong>{t('Colors to Avoid', '피해야 할 컬러')}</strong>
+                              <p>{result.report.personalColor.avoidColors.join(', ')}</p>
+                            </div>
+                          </div>
+                        )}
+                      </>
+                    )}
+                  </div>
+                </div>
+              )}
+
               {/* Body Analysis Section */}
               {result.report?.bodyAnalysis && (
                 <div className="style-body-analysis">
@@ -620,17 +676,24 @@ export default function StylePage() {
                       </div>
                     </div>
                     <div className="style-analysis-item">
-                      <span className="style-analysis-icon">🎨</span>
-                      <div>
-                        <strong>{t('Color Palette', '컬러 팔레트')}</strong>
-                        <p>{result.report.bodyAnalysis.skinTone}</p>
-                      </div>
-                    </div>
-                    <div className="style-analysis-item">
                       <span className="style-analysis-icon">✂️</span>
                       <div>
                         <strong>{t('Ideal Silhouette', '이상적인 실루엣')}</strong>
                         <p>{result.report.bodyAnalysis.silhouette}</p>
+                      </div>
+                    </div>
+                    <div className="style-analysis-item">
+                      <span className="style-analysis-icon">👔</span>
+                      <div>
+                        <strong>{t('Recommended Neckline', '추천 네크라인')}</strong>
+                        <p>{result.report.bodyAnalysis.neckline}</p>
+                      </div>
+                    </div>
+                    <div className="style-analysis-item">
+                      <span className="style-analysis-icon">🧶</span>
+                      <div>
+                        <strong>{t('Fabric & Texture', '소재 & 질감')}</strong>
+                        <p>{result.report.bodyAnalysis.fabricTexture}</p>
                       </div>
                     </div>
                     <div className="style-analysis-item style-analysis-avoid">
