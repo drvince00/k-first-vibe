@@ -16,8 +16,8 @@ export default function AuthCallbackPage() {
       return
     }
 
-    const redirectTo = sessionStorage.getItem('authRedirect') || '/'
-    sessionStorage.removeItem('authRedirect')
+    const redirectTo = localStorage.getItem('authRedirect') || '/'
+    localStorage.removeItem('authRedirect')
 
     const doRedirect = () => navigate(redirectTo, { replace: true })
 
