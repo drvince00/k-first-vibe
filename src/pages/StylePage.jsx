@@ -292,13 +292,21 @@ export default function StylePage() {
       }
       checkout.addEventListener('success', (e) => {
         e.preventDefault()
-        // Trigger immediately on success — handles mobile where close may not fire
+        // Desktop: success event fires reliably
         startAnalysis()
       })
-      checkout.addEventListener('close', () => {
-        // Fallback for desktop: in case close fires after success
+      checkout.addEventListener('close', async () => {
         if (analysisStarted) return
-        // If analysisStarted is false here, user closed without paying — do nothing
+        // Mobile: success event may never fire — verify status directly on close
+        try {
+          const res = await fetch(`/api/checkout-status?id=${checkoutId}`)
+          const { status } = await res.json()
+          if (status === 'succeeded' || status === 'confirmed') {
+            startAnalysis()
+          }
+        } catch {
+          // Network error — do nothing, user can retry
+        }
       })
     } catch (err) {
       setError(err.message)
