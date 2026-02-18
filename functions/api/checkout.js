@@ -14,7 +14,7 @@ export async function onRequestPost(context) {
     const checkoutBody = {
       product_id: 'c6117b99-5581-463f-a64f-a5cce0582c49',
       embed_origin: origin,
-      success_url: `${origin}/style?checkout_id={CHECKOUT_ID}`,
+      success_url: `${origin}/style?payment=success`,
     };
     if (body.email) checkoutBody.customer_email = body.email;
     if (body.country) checkoutBody.customer_billing_address = { country: body.country };

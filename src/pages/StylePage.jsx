@@ -169,17 +169,19 @@ export default function StylePage() {
   const resultRef = useRef(null)
   const pendingCheckoutRef = useRef(null)
 
-  // On mount: detect Polar redirect back with ?checkout_id=
+  // On mount: detect Polar redirect back with ?payment=success
   useEffect(() => {
     const params = new URLSearchParams(window.location.search)
-    const checkoutId = params.get('checkout_id')
-    if (!checkoutId) return
+    if (params.get('payment') !== 'success') return
     window.history.replaceState({}, '', '/style')
     try {
       const savedStr = sessionStorage.getItem('polar_pending')
       if (!savedStr) return
       sessionStorage.removeItem('polar_pending')
-      pendingCheckoutRef.current = { checkoutId, formData: JSON.parse(savedStr) }
+      const saved = JSON.parse(savedStr)
+      const { checkoutId, ...formData } = saved
+      if (!checkoutId) return
+      pendingCheckoutRef.current = { checkoutId, formData }
     } catch {}
   }, []) // mount only
 
@@ -338,11 +340,27 @@ export default function StylePage() {
       }
 
       const { url, checkoutId } = await res.json()
+
+      // Update sessionStorage to include checkoutId (needed after redirect back)
+      try {
+        const savedStr = sessionStorage.getItem('polar_pending')
+        if (savedStr) {
+          const saved = JSON.parse(savedStr)
+          saved.checkoutId = checkoutId
+          sessionStorage.setItem('polar_pending', JSON.stringify(saved))
+        }
+      } catch {}
+
       setCheckoutLoading(false)
 
-      // Open embed checkout — Polar redirects to /style?checkout_id=xxx on success
-      // The mount effect + auth effect handle the rest after redirect
-      await PolarEmbedCheckout.create(url, { theme: 'dark' })
+      // Mobile browsers block iframe overlays created after async work (iOS Safari restriction).
+      // Use direct page navigation instead — Polar redirects back via success_url.
+      const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent)
+      if (isMobile) {
+        window.location.href = url
+      } else {
+        await PolarEmbedCheckout.create(url, { theme: 'dark' })
+      }
     } catch (err) {
       setError(err.message)
       setCheckoutLoading(false)
