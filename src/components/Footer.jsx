@@ -22,7 +22,13 @@ const SNS_LIST = [
     name: 'Messenger',
     bg: 'linear-gradient(135deg, #00B2FF, #006AFF)',
     color: '#fff',
-    url: (u) => `https://www.facebook.com/dialog/send?link=${u}&app_id=${FB_APP_ID}&redirect_uri=${u}`,
+    messenger: true,
+    url: (u) => {
+      const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent)
+      return isMobile
+        ? `fb-messenger://share/?link=${u}`
+        : `https://www.facebook.com/dialog/send?link=${u}&app_id=${FB_APP_ID}&redirect_uri=${u}`
+    },
     icon: <path d="M12 0C5.373 0 0 4.975 0 11.111c0 3.497 1.745 6.616 4.472 8.652V24l4.086-2.242c1.09.301 2.246.464 3.442.464 6.627 0 12-4.974 12-11.111C24 4.975 18.627 0 12 0zm1.193 14.963l-3.056-3.259-5.963 3.259L10.733 8.3l3.13 3.259L19.752 8.3l-6.559 6.663z"/>
   },
   {
@@ -132,21 +138,26 @@ export default function Footer() {
       return
     }
 
-    window.Kakao.Share.sendDefault({
-      objectType: 'feed',
-      content: {
-        title: 'K-Culture Cat',
-        description: SHARE_TEXT[lang] || SHARE_TEXT.en,
-        imageUrl: 'https://kculturecat.cc/quiz/gyeongbok-palace-2929520_640.jpg',
-        link: { mobileWebUrl: SITE_URL, webUrl: SITE_URL }
-      },
-      buttons: [
-        {
-          title: lang === 'en' ? 'Try Quiz' : '퀴즈 도전하기',
+    try {
+      window.Kakao.Share.sendDefault({
+        objectType: 'feed',
+        content: {
+          title: 'K-Culture Cat',
+          description: SHARE_TEXT[lang] || SHARE_TEXT.en,
+          imageUrl: 'https://kculturecat.cc/quiz/gyeongbok-palace-2929520_640.jpg',
           link: { mobileWebUrl: SITE_URL, webUrl: SITE_URL }
-        }
-      ]
-    })
+        },
+        buttons: [
+          {
+            title: lang === 'en' ? 'Try Quiz' : '퀴즈 도전하기',
+            link: { mobileWebUrl: SITE_URL, webUrl: SITE_URL }
+          }
+        ]
+      })
+    } catch (err) {
+      console.error('Kakao Share error:', err)
+      alert(lang === 'en' ? `KakaoTalk share failed: ${err.message}` : `카카오톡 공유 실패: ${err.message}`)
+    }
   }
 
   const handleShare = (sns) => {
