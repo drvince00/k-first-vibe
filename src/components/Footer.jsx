@@ -239,23 +239,6 @@ export default function Footer() {
               </svg>
             </button>
           ))}
-          <button
-            className="footer-share-btn"
-            style={{ background: '#7c6dcd', color: '#fff' }}
-            onClick={() => {
-              navigator.clipboard?.writeText(SITE_URL)
-              alert(lang === 'en' ? 'Link copied!' : '링크가 복사되었습니다!')
-            }}
-            aria-label="Copy link"
-            title={lang === 'en' ? 'Copy link' : '링크 복사'}
-          >
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M4 12v4a4 4 0 0 0 4 4h1" />
-              <path d="M15 8h1a4 4 0 0 1 4 4v4" />
-              <polyline points="7 7 4 4 7 1" />
-              <polyline points="17 17 20 20 17 23" />
-            </svg>
-          </button>
         </div>
       </div>
 
