@@ -168,8 +168,16 @@ export default function StylePage() {
   const [emailError, setEmailError] = useState(null)
   const formRef = useRef(null)
   const resultRef = useRef(null)
+  const errorRef = useRef(null)
   // Use state (not ref) so auth effect re-runs after mount effect sets it
   const [pendingCheckout, setPendingCheckout] = useState(null)
+
+  // Scroll error into view on mobile so user doesn't miss it
+  useEffect(() => {
+    if (error && errorRef.current) {
+      errorRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' })
+    }
+  }, [error])
 
   // On mount: detect Polar redirect back with ?payment=success
   useEffect(() => {
@@ -600,8 +608,6 @@ export default function StylePage() {
               </select>
             </div>
 
-            {error && <p className="style-error">{error}</p>}
-
             {/* Sample Preview Toggle */}
             <button
               type="button"
@@ -673,6 +679,8 @@ export default function StylePage() {
                 <div className="style-sample-overlay" />
               </div>
             </div>
+
+            {error && <p ref={errorRef} className="style-error">{error}</p>}
 
             <button
               type="submit"
