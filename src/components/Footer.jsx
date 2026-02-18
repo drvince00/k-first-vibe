@@ -1,7 +1,10 @@
+import { useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { useApp } from '../context/AppContext'
 
 const SITE_URL = 'https://kculturecat.cc'
+const KAKAO_JS_KEY = '8d6ffec29a91bbac2f13c5a0ac90e397'
+const FB_APP_ID = '932738662609154'
 const SHARE_TEXT = {
   en: 'Test your Korean culture knowledge! Fun quizzes about K-Food, TOPIK & more 🇰🇷',
   ko: '한국 문화 퀴즈에 도전하세요! K-Food, TOPIK 등 재미있는 퀴즈 🇰🇷'
@@ -14,6 +17,13 @@ const SNS_LIST = [
     color: '#fff',
     url: (u) => `https://www.facebook.com/sharer/sharer.php?u=${u}`,
     icon: <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+  },
+  {
+    name: 'Messenger',
+    bg: 'linear-gradient(135deg, #00B2FF, #006AFF)',
+    color: '#fff',
+    url: (u) => `https://www.facebook.com/dialog/send?link=${u}&app_id=${FB_APP_ID}&redirect_uri=${u}`,
+    icon: <path d="M12 0C5.373 0 0 4.975 0 11.111c0 3.497 1.745 6.616 4.472 8.652V24l4.086-2.242c1.09.301 2.246.464 3.442.464 6.627 0 12-4.974 12-11.111C24 4.975 18.627 0 12 0zm1.193 14.963l-3.056-3.259-5.963 3.259L10.733 8.3l3.13 3.259L19.752 8.3l-6.559 6.663z"/>
   },
   {
     name: 'Instagram',
@@ -45,7 +55,8 @@ const SNS_LIST = [
     name: 'KakaoTalk',
     bg: '#FEE500',
     color: '#3C1E1E',
-    url: (u) => `https://story.kakao.com/share?url=${u}`,
+    kakao: true,
+    url: () => '',
     icon: <path d="M12 3c-5.523 0-10 3.582-10 8 0 2.858 1.898 5.37 4.752 6.788l-1.22 4.492a.5.5 0 0 0 .764.534l5.252-3.494c.15.006.3.012.452.012 5.523 0 10-3.582 10-8s-4.477-8-10-8z"/>
   },
   {
@@ -88,10 +99,35 @@ const SNS_LIST = [
 export default function Footer() {
   const { lang } = useApp()
 
+  useEffect(() => {
+    if (window.Kakao && !window.Kakao.isInitialized()) {
+      window.Kakao.init(KAKAO_JS_KEY)
+    }
+  }, [])
+
   const encodedUrl = encodeURIComponent(SITE_URL)
   const encodedText = encodeURIComponent(SHARE_TEXT[lang] || SHARE_TEXT.en)
 
   const handleShare = (sns) => {
+    if (sns.kakao) {
+      if (!window.Kakao?.isInitialized()) return
+      window.Kakao.Share.sendDefault({
+        objectType: 'feed',
+        content: {
+          title: 'K-Culture Cat',
+          description: SHARE_TEXT[lang] || SHARE_TEXT.en,
+          imageUrl: 'https://kculturecat.cc/quiz/gyeongbok-palace-2929520_640.jpg',
+          link: { mobileWebUrl: SITE_URL, webUrl: SITE_URL }
+        },
+        buttons: [
+          {
+            title: lang === 'en' ? 'Try Quiz' : '퀴즈 도전하기',
+            link: { mobileWebUrl: SITE_URL, webUrl: SITE_URL }
+          }
+        ]
+      })
+      return
+    }
     if (sns.copy) {
       navigator.clipboard?.writeText(SITE_URL)
       window.open(sns.url(encodedUrl, encodedText), '_blank', 'noopener,noreferrer')
