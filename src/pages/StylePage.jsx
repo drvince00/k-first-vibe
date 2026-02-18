@@ -387,6 +387,10 @@ export default function StylePage() {
         }))
       } catch {}
 
+      // 15s timeout — fetch has no built-in timeout, would spin forever otherwise
+      const controller = new AbortController()
+      const timeoutId = setTimeout(() => controller.abort(), 15000)
+
       const res = await fetch(CHECKOUT_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -394,7 +398,9 @@ export default function StylePage() {
           email: user?.email || '',
           country: form.country,
         }),
+        signal: controller.signal,
       })
+      clearTimeout(timeoutId)
 
       if (!res.ok) {
         const err = await res.json().catch(() => ({}))
@@ -424,7 +430,10 @@ export default function StylePage() {
         await PolarEmbedCheckout.create(url, { theme: 'dark' })
       }
     } catch (err) {
-      setError(err.message)
+      const msg = err.name === 'AbortError'
+        ? t('Connection timed out. Please check your internet and try again.', '연결 시간이 초과되었습니다. 인터넷 연결을 확인하고 다시 시도해주세요.')
+        : err.message
+      setError(msg)
       setCheckoutLoading(false)
     }
   }
