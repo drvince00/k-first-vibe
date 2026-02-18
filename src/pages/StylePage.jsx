@@ -268,17 +268,22 @@ export default function StylePage() {
       setCheckoutLoading(false)
 
       const checkout = await PolarEmbedCheckout.create(url, { theme: 'dark' })
-      let paid = false
-      checkout.addEventListener('success', (e) => {
-        e.preventDefault()
-        paid = true
-      })
-      checkout.addEventListener('close', (e) => {
-        if (paid) {
-          e.preventDefault()
-          checkout.close()
+      let analysisStarted = false
+      const startAnalysis = () => {
+        if (!analysisStarted) {
+          analysisStarted = true
           runAnalysis(checkoutId)
         }
+      }
+      checkout.addEventListener('success', (e) => {
+        e.preventDefault()
+        // Trigger immediately on success — handles mobile where close may not fire
+        startAnalysis()
+      })
+      checkout.addEventListener('close', () => {
+        // Fallback for desktop: in case close fires after success
+        if (analysisStarted) return
+        // If analysisStarted is false here, user closed without paying — do nothing
       })
     } catch (err) {
       setError(err.message)
