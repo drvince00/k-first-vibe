@@ -126,6 +126,46 @@ function fileToBase64(file) {
   })
 }
 
+// IndexedDB helpers for large photo storage (avoids sessionStorage 5MB quota)
+const IDB_NAME = 'style_idb'
+const IDB_STORE = 'pending'
+
+function idbOpen() {
+  return new Promise((resolve, reject) => {
+    const req = indexedDB.open(IDB_NAME, 1)
+    req.onupgradeneeded = (e) => e.target.result.createObjectStore(IDB_STORE)
+    req.onsuccess = (e) => resolve(e.target.result)
+    req.onerror = () => reject(req.error)
+  })
+}
+
+async function idbPut(key, value) {
+  const db = await idbOpen()
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(IDB_STORE, 'readwrite')
+    tx.objectStore(IDB_STORE).put(value, key)
+    tx.oncomplete = () => resolve()
+    tx.onerror = () => reject(tx.error)
+  })
+}
+
+async function idbGet(key) {
+  const db = await idbOpen()
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(IDB_STORE, 'readonly')
+    const req = tx.objectStore(IDB_STORE).get(key)
+    req.onsuccess = () => resolve(req.result)
+    req.onerror = () => reject(req.error)
+  })
+}
+
+async function idbDelete(key) {
+  const db = await idbOpen().catch(() => null)
+  if (!db) return
+  const tx = db.transaction(IDB_STORE, 'readwrite')
+  tx.objectStore(IDB_STORE).delete(key)
+}
+
 export default function StylePage() {
   const { lang } = useApp()
   const { user, loading: authLoading } = useAuth()
@@ -174,15 +214,21 @@ export default function StylePage() {
     const params = new URLSearchParams(window.location.search)
     if (params.get('payment') !== 'success') return
     window.history.replaceState({}, '', '/style')
-    try {
-      const savedStr = sessionStorage.getItem('polar_pending')
-      if (!savedStr) return
-      sessionStorage.removeItem('polar_pending')
-      const saved = JSON.parse(savedStr)
-      const { checkoutId, ...formData } = saved
-      if (!checkoutId) return
-      pendingCheckoutRef.current = { checkoutId, formData }
-    } catch {}
+    ;(async () => {
+      try {
+        const savedStr = sessionStorage.getItem('polar_pending')
+        if (!savedStr) return
+        sessionStorage.removeItem('polar_pending')
+        const saved = JSON.parse(savedStr)
+        const { checkoutId, ...formData } = saved
+        if (!checkoutId) return
+        // Retrieve photo Blob from IndexedDB (stored before redirect)
+        const photoFile = await idbGet('photo').catch(() => null)
+        idbDelete('photo').catch(() => {})
+        if (photoFile) formData.photoFile = photoFile
+        pendingCheckoutRef.current = { checkoutId, formData }
+      } catch {}
+    })()
   }, []) // mount only
 
   // When auth finishes loading and there's a pending checkout, run analysis
@@ -201,14 +247,24 @@ export default function StylePage() {
     try {
       let photoB64, photoMimeType, height, weight, gender, country, bodyType
       if (preloaded) {
-        photoB64 = preloaded.photo
-        photoMimeType = preloaded.photoMimeType
+        // Photo was stored as a Blob in IndexedDB, convert to base64 now
+        if (preloaded.photoFile) {
+          const converted = await fileToBase64(preloaded.photoFile)
+          photoB64 = converted.data
+          photoMimeType = converted.mimeType
+        }
         height = Number(preloaded.height)
         weight = Number(preloaded.weight)
         gender = preloaded.gender
         const selectedCountry = COUNTRIES.find(c => c.code === preloaded.country)
         country = selectedCountry?.en || preloaded.country
         bodyType = preloaded.bodyType
+        if (!photoB64) {
+          throw new Error(t(
+            'Could not restore your photo after payment. Please try again.',
+            '결제 후 사진을 복원하지 못했습니다. 다시 시도해주세요.'
+          ))
+        }
       } else {
         const converted = await fileToBase64(form.photo)
         photoB64 = converted.data
@@ -310,20 +366,19 @@ export default function StylePage() {
     setCheckoutLoading(true)
 
     try {
-      // Save form data to sessionStorage before checkout opens
-      // — needed to restore after Polar redirects back to /style?checkout_id=
-      const converted = await fileToBase64(form.photo)
+      // Store photo Blob in IndexedDB (no size limit, no base64 overhead)
+      await idbPut('photo', form.photo).catch(() => {})
+
+      // Store small metadata in sessionStorage (well under 1KB)
       try {
         sessionStorage.setItem('polar_pending', JSON.stringify({
-          photo: converted.data,
-          photoMimeType: converted.mimeType,
           height: form.height,
           weight: form.weight,
           gender: form.gender,
           country: form.country,
           bodyType: form.bodyType,
         }))
-      } catch {} // sessionStorage full — redirect fallback unavailable but embed events still work
+      } catch {}
 
       const res = await fetch(CHECKOUT_URL, {
         method: 'POST',
