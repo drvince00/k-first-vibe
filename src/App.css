@@ -2398,6 +2398,14 @@
   color: #777;
 }
 
+.style-email-input:-webkit-autofill,
+.style-email-input:-webkit-autofill:hover,
+.style-email-input:-webkit-autofill:focus {
+  -webkit-text-fill-color: #e0e0e0;
+  -webkit-box-shadow: 0 0 0px 1000px #1a1a2e inset;
+  box-shadow: 0 0 0px 1000px #1a1a2e inset;
+}
+
 .style-email-input:focus {
   outline: none;
   border-color: #e8c07a;
