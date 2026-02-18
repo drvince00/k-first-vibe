@@ -289,6 +289,13 @@ export default function StylePage() {
       const processed = file.size > MAX_BYTES || file.type === 'image/png'
         ? await compressImage(file)
         : file
+      if (processed.size > MAX_BYTES) {
+        setError(t(
+          'Photo is too large (max 3 MB). Please use a smaller photo.',
+          '사진 크기가 너무 큽니다 (최대 3MB). 더 작은 사진을 사용해주세요.'
+        ))
+        return
+      }
       setForm(prev => ({ ...prev, photo: processed }))
       setPhotoPreview(URL.createObjectURL(processed))
     } catch {
