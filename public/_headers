@@ -28,9 +28,9 @@
 /ads.txt
   Cache-Control: public, max-age=86400
 
-# HTML - short cache with revalidation
+# HTML - always revalidate (prevents blank screen after deployment)
 /
-  Cache-Control: public, max-age=3600, stale-while-revalidate=86400
+  Cache-Control: no-cache, no-store, must-revalidate
 
 /*
-  Cache-Control: public, max-age=3600, stale-while-revalidate=86400
+  Cache-Control: no-cache, no-store, must-revalidate

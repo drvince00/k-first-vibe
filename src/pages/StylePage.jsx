@@ -167,26 +167,69 @@ export default function StylePage() {
   const [emailError, setEmailError] = useState(null)
   const formRef = useRef(null)
   const resultRef = useRef(null)
+  const pendingCheckoutRef = useRef(null)
 
-  const runAnalysis = async (checkoutId) => {
+  // On mount: detect Polar redirect back with ?checkout_id=
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search)
+    const checkoutId = params.get('checkout_id')
+    if (!checkoutId) return
+    window.history.replaceState({}, '', '/style')
+    try {
+      const savedStr = sessionStorage.getItem('polar_pending')
+      if (!savedStr) return
+      sessionStorage.removeItem('polar_pending')
+      pendingCheckoutRef.current = { checkoutId, formData: JSON.parse(savedStr) }
+    } catch {}
+  }, []) // mount only
+
+  // When auth finishes loading and there's a pending checkout, run analysis
+  useEffect(() => {
+    if (authLoading || !user) return
+    const pending = pendingCheckoutRef.current
+    if (!pending) return
+    pendingCheckoutRef.current = null
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    runAnalysis(pending.checkoutId, pending.formData)
+  }, [authLoading, user]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  const runAnalysis = async (checkoutId, preloaded = null) => {
     setLoading(true)
     setResult(null)
     try {
-      const converted = await fileToBase64(form.photo)
-      const selectedCountry = COUNTRIES.find(c => c.code === form.country)
-      const countryName = selectedCountry?.en || form.country
+      let photoB64, photoMimeType, height, weight, gender, country, bodyType
+      if (preloaded) {
+        photoB64 = preloaded.photo
+        photoMimeType = preloaded.photoMimeType
+        height = Number(preloaded.height)
+        weight = Number(preloaded.weight)
+        gender = preloaded.gender
+        const selectedCountry = COUNTRIES.find(c => c.code === preloaded.country)
+        country = selectedCountry?.en || preloaded.country
+        bodyType = preloaded.bodyType
+      } else {
+        const converted = await fileToBase64(form.photo)
+        photoB64 = converted.data
+        photoMimeType = converted.mimeType
+        const selectedCountry = COUNTRIES.find(c => c.code === form.country)
+        country = selectedCountry?.en || form.country
+        height = Number(form.height)
+        weight = Number(form.weight)
+        gender = form.gender
+        bodyType = form.bodyType
+      }
 
       const res = await fetch(API_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          photo: converted.data,
-          photoMimeType: converted.mimeType,
-          height: Number(form.height),
-          weight: Number(form.weight),
-          gender: form.gender,
-          country: countryName,
-          bodyType: form.bodyType,
+          photo: photoB64,
+          photoMimeType,
+          height,
+          weight,
+          gender,
+          country,
+          bodyType,
           checkoutId,
         }),
       })
@@ -265,6 +308,21 @@ export default function StylePage() {
     setCheckoutLoading(true)
 
     try {
+      // Save form data to sessionStorage before checkout opens
+      // — needed to restore after Polar redirects back to /style?checkout_id=
+      const converted = await fileToBase64(form.photo)
+      try {
+        sessionStorage.setItem('polar_pending', JSON.stringify({
+          photo: converted.data,
+          photoMimeType: converted.mimeType,
+          height: form.height,
+          weight: form.weight,
+          gender: form.gender,
+          country: form.country,
+          bodyType: form.bodyType,
+        }))
+      } catch {} // sessionStorage full — redirect fallback unavailable but embed events still work
+
       const res = await fetch(CHECKOUT_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -282,32 +340,9 @@ export default function StylePage() {
       const { url, checkoutId } = await res.json()
       setCheckoutLoading(false)
 
-      const checkout = await PolarEmbedCheckout.create(url, { theme: 'dark' })
-      let analysisStarted = false
-      const startAnalysis = () => {
-        if (!analysisStarted) {
-          analysisStarted = true
-          runAnalysis(checkoutId)
-        }
-      }
-      checkout.addEventListener('success', (e) => {
-        e.preventDefault()
-        // Desktop: success event fires reliably
-        startAnalysis()
-      })
-      checkout.addEventListener('close', async () => {
-        if (analysisStarted) return
-        // Mobile: success event may never fire — verify status directly on close
-        try {
-          const res = await fetch(`/api/checkout-status?id=${checkoutId}`)
-          const { status } = await res.json()
-          if (status === 'succeeded' || status === 'confirmed') {
-            startAnalysis()
-          }
-        } catch {
-          // Network error — do nothing, user can retry
-        }
-      })
+      // Open embed checkout — Polar redirects to /style?checkout_id=xxx on success
+      // The mount effect + auth effect handle the rest after redirect
+      await PolarEmbedCheckout.create(url, { theme: 'dark' })
     } catch (err) {
       setError(err.message)
       setCheckoutLoading(false)
