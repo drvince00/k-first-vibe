@@ -223,8 +223,11 @@ export default function StylePage() {
         const saved = JSON.parse(savedStr)
         const { checkoutId, ...formData } = saved
         if (!checkoutId) return
-        // Retrieve photo Blob from IndexedDB (stored before redirect)
-        const photoFile = await idbGet('photo').catch(() => null)
+        // Retrieve photo Blob from IndexedDB with 3s timeout
+        const photoFile = await Promise.race([
+          idbGet('photo').catch(() => null),
+          new Promise(resolve => setTimeout(() => resolve(null), 3000)),
+        ])
         idbDelete('photo').catch(() => {})
         if (photoFile) formData.photoFile = photoFile
         // setState triggers re-render → auth effect will re-run with new value
@@ -368,8 +371,10 @@ export default function StylePage() {
     setCheckoutLoading(true)
 
     try {
-      // Store photo Blob in IndexedDB (no size limit, no base64 overhead)
-      await idbPut('photo', form.photo).catch(() => {})
+      // Fire-and-forget: don't await — avoids infinite hang if IndexedDB is
+      // blocked (e.g. iOS Safari with certain privacy settings). The Polar API
+      // call below takes ~500ms+, giving IndexedDB time to finish in parallel.
+      idbPut('photo', form.photo).catch(() => {})
 
       // Store small metadata in sessionStorage (well under 1KB)
       try {
