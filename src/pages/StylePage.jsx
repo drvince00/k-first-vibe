@@ -207,7 +207,8 @@ export default function StylePage() {
   const [emailError, setEmailError] = useState(null)
   const formRef = useRef(null)
   const resultRef = useRef(null)
-  const pendingCheckoutRef = useRef(null)
+  // Use state (not ref) so auth effect re-runs when async IndexedDB read completes
+  const [pendingCheckout, setPendingCheckout] = useState(null)
 
   // On mount: detect Polar redirect back with ?payment=success
   useEffect(() => {
@@ -226,20 +227,21 @@ export default function StylePage() {
         const photoFile = await idbGet('photo').catch(() => null)
         idbDelete('photo').catch(() => {})
         if (photoFile) formData.photoFile = photoFile
-        pendingCheckoutRef.current = { checkoutId, formData }
+        // setState triggers re-render → auth effect will re-run with new value
+        setPendingCheckout({ checkoutId, formData })
       } catch {}
     })()
   }, []) // mount only
 
-  // When auth finishes loading and there's a pending checkout, run analysis
+  // When auth finishes loading AND pending checkout is ready, run analysis
+  // Using state (not ref) ensures this effect re-runs after IndexedDB async read
   useEffect(() => {
-    if (authLoading || !user) return
-    const pending = pendingCheckoutRef.current
-    if (!pending) return
-    pendingCheckoutRef.current = null
+    if (authLoading || !user || !pendingCheckout) return
+    const pending = pendingCheckout
+    setPendingCheckout(null)
     // eslint-disable-next-line react-hooks/exhaustive-deps
     runAnalysis(pending.checkoutId, pending.formData)
-  }, [authLoading, user]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [authLoading, user, pendingCheckout]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const runAnalysis = async (checkoutId, preloaded = null) => {
     setLoading(true)
