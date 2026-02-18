@@ -74,7 +74,7 @@ const STYLE_LABELS = {
 }
 
 const MAX_SIZE = 2048
-const MAX_BYTES = 4 * 1024 * 1024
+const MAX_BYTES = 3 * 1024 * 1024 // 3MB → base64 = 4MB, fits in 5MB sessionStorage
 
 function compressImage(file) {
   return new Promise((resolve, reject) => {
@@ -126,45 +126,6 @@ function fileToBase64(file) {
   })
 }
 
-// IndexedDB helpers for large photo storage (avoids sessionStorage 5MB quota)
-const IDB_NAME = 'style_idb'
-const IDB_STORE = 'pending'
-
-function idbOpen() {
-  return new Promise((resolve, reject) => {
-    const req = indexedDB.open(IDB_NAME, 1)
-    req.onupgradeneeded = (e) => e.target.result.createObjectStore(IDB_STORE)
-    req.onsuccess = (e) => resolve(e.target.result)
-    req.onerror = () => reject(req.error)
-  })
-}
-
-async function idbPut(key, value) {
-  const db = await idbOpen()
-  return new Promise((resolve, reject) => {
-    const tx = db.transaction(IDB_STORE, 'readwrite')
-    tx.objectStore(IDB_STORE).put(value, key)
-    tx.oncomplete = () => resolve()
-    tx.onerror = () => reject(tx.error)
-  })
-}
-
-async function idbGet(key) {
-  const db = await idbOpen()
-  return new Promise((resolve, reject) => {
-    const tx = db.transaction(IDB_STORE, 'readonly')
-    const req = tx.objectStore(IDB_STORE).get(key)
-    req.onsuccess = () => resolve(req.result)
-    req.onerror = () => reject(req.error)
-  })
-}
-
-async function idbDelete(key) {
-  const db = await idbOpen().catch(() => null)
-  if (!db) return
-  const tx = db.transaction(IDB_STORE, 'readwrite')
-  tx.objectStore(IDB_STORE).delete(key)
-}
 
 export default function StylePage() {
   const { lang } = useApp()
@@ -207,7 +168,7 @@ export default function StylePage() {
   const [emailError, setEmailError] = useState(null)
   const formRef = useRef(null)
   const resultRef = useRef(null)
-  // Use state (not ref) so auth effect re-runs when async IndexedDB read completes
+  // Use state (not ref) so auth effect re-runs after mount effect sets it
   const [pendingCheckout, setPendingCheckout] = useState(null)
 
   // On mount: detect Polar redirect back with ?payment=success
@@ -215,29 +176,18 @@ export default function StylePage() {
     const params = new URLSearchParams(window.location.search)
     if (params.get('payment') !== 'success') return
     window.history.replaceState({}, '', '/style')
-    ;(async () => {
-      try {
-        const savedStr = sessionStorage.getItem('polar_pending')
-        if (!savedStr) return
-        sessionStorage.removeItem('polar_pending')
-        const saved = JSON.parse(savedStr)
-        const { checkoutId, ...formData } = saved
-        if (!checkoutId) return
-        // Retrieve photo Blob from IndexedDB with 3s timeout
-        const photoFile = await Promise.race([
-          idbGet('photo').catch(() => null),
-          new Promise(resolve => setTimeout(() => resolve(null), 3000)),
-        ])
-        idbDelete('photo').catch(() => {})
-        if (photoFile) formData.photoFile = photoFile
-        // setState triggers re-render → auth effect will re-run with new value
-        setPendingCheckout({ checkoutId, formData })
-      } catch {}
-    })()
+    try {
+      const savedStr = sessionStorage.getItem('polar_pending')
+      if (!savedStr) return
+      sessionStorage.removeItem('polar_pending')
+      const saved = JSON.parse(savedStr)
+      const { checkoutId, ...formData } = saved
+      if (!checkoutId || !formData.photo) return
+      setPendingCheckout({ checkoutId, formData })
+    } catch {}
   }, []) // mount only
 
   // When auth finishes loading AND pending checkout is ready, run analysis
-  // Using state (not ref) ensures this effect re-runs after IndexedDB async read
   useEffect(() => {
     if (authLoading || !user || !pendingCheckout) return
     const pending = pendingCheckout
@@ -252,24 +202,15 @@ export default function StylePage() {
     try {
       let photoB64, photoMimeType, height, weight, gender, country, bodyType
       if (preloaded) {
-        // Photo was stored as a Blob in IndexedDB, convert to base64 now
-        if (preloaded.photoFile) {
-          const converted = await fileToBase64(preloaded.photoFile)
-          photoB64 = converted.data
-          photoMimeType = converted.mimeType
-        }
+        // Photo was stored as base64 in sessionStorage before checkout redirect
+        photoB64 = preloaded.photo
+        photoMimeType = preloaded.photoMimeType
         height = Number(preloaded.height)
         weight = Number(preloaded.weight)
         gender = preloaded.gender
         const selectedCountry = COUNTRIES.find(c => c.code === preloaded.country)
         country = selectedCountry?.en || preloaded.country
         bodyType = preloaded.bodyType
-        if (!photoB64) {
-          throw new Error(t(
-            'Could not restore your photo after payment. Please try again.',
-            '결제 후 사진을 복원하지 못했습니다. 다시 시도해주세요.'
-          ))
-        }
       } else {
         const converted = await fileToBase64(form.photo)
         photoB64 = converted.data
@@ -371,21 +312,25 @@ export default function StylePage() {
     setCheckoutLoading(true)
 
     try {
-      // Fire-and-forget: don't await — avoids infinite hang if IndexedDB is
-      // blocked (e.g. iOS Safari with certain privacy settings). The Polar API
-      // call below takes ~500ms+, giving IndexedDB time to finish in parallel.
-      idbPut('photo', form.photo).catch(() => {})
-
-      // Store small metadata in sessionStorage (well under 1KB)
+      // Convert photo to base64 and save to sessionStorage before redirect.
+      // MAX_BYTES=3MB → base64=4MB, safely within sessionStorage 5MB limit.
+      const converted = await fileToBase64(form.photo)
       try {
         sessionStorage.setItem('polar_pending', JSON.stringify({
+          photo: converted.data,
+          photoMimeType: converted.mimeType,
           height: form.height,
           weight: form.weight,
           gender: form.gender,
           country: form.country,
           bodyType: form.bodyType,
         }))
-      } catch {}
+      } catch {
+        throw new Error(t(
+          'Your photo is too large to process. Please use a smaller photo.',
+          '사진 파일이 너무 큽니다. 더 작은 사진을 사용해주세요.'
+        ))
+      }
 
       // 15s timeout — fetch has no built-in timeout, would spin forever otherwise
       const controller = new AbortController()
