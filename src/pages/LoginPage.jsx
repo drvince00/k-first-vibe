@@ -51,6 +51,8 @@ export default function LoginPage() {
     setSubmitting(true)
     try {
       if (mode === 'signup') {
+        // 인증 메일 클릭 후 /auth/callback에서 올바르게 리다이렉트되도록 저장
+        if (from && from !== '/') localStorage.setItem('authRedirect', from)
         const { error: err } = await signUpWithEmail(email, password)
         if (err) throw err
         setSuccess(lang === 'ko' ? '인증 이메일을 보냈습니다. 이메일을 확인하세요.' : 'Verification email sent. Please check your inbox.')

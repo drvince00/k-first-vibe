@@ -17,6 +17,7 @@ const T = {
   saved:      { en: 'Result saved!',    ko: '기록이 저장됐어요!' },
   share:      { en: 'Share Result',     ko: '결과 공유' },
   sharing:    { en: 'Generating...',    ko: '생성 중...' },
+  downloaded: { en: 'Image saved! Share it anywhere 📁', ko: '이미지 저장됨! 원하는 곳에 공유하세요 📁' },
 }
 
 const CAT_COLORS = { TOPIK: '#6c63ff', FOOD: '#f97316', CULTURE: '#10b981' }
@@ -27,6 +28,7 @@ export default function ResultPage() {
   const savedRef = useRef(false)
   const shareCardRef = useRef(null)
   const [sharing, setSharing] = useState(false)
+  const [shareMsg, setShareMsg] = useState('')
 
   const percentage = quiz.length > 0 ? Math.round((score / quiz.length) * 100) : 0
   const passed = percentage >= 70
@@ -68,13 +70,15 @@ export default function ResultPage() {
           files: [file],
         })
       } else {
-        // Fallback: download
+        // Fallback: download + 안내 메시지
         const url = URL.createObjectURL(blob)
         const a = document.createElement('a')
         a.href = url
         a.download = 'k-culture-quiz-result.png'
         a.click()
         URL.revokeObjectURL(url)
+        setShareMsg(T.downloaded[lang] ?? T.downloaded.en)
+        setTimeout(() => setShareMsg(''), 4000)
       }
     } catch (err) {
       if (err.name !== 'AbortError') console.error('Share failed:', err)
@@ -106,6 +110,7 @@ export default function ResultPage() {
         {passed && <p className="score-message pass">{t('excellent')}</p>}
         {!passed && <p className="score-message">{t('keepTrying')}</p>}
         {user && <p className="result-saved-msg">{t('saved')}</p>}
+        {shareMsg && <p className="result-saved-msg">{shareMsg}</p>}
 
         <div className="result-actions">
           <button className="result-btn primary" onClick={handleRetry}>
