@@ -29,6 +29,7 @@ export default function ResultPage() {
   const shareCardRef = useRef(null)
   const [sharing, setSharing] = useState(false)
   const [shareMsg, setShareMsg] = useState('')
+  const canShare = typeof navigator !== 'undefined' && !!navigator.share
 
   const percentage = quiz.length > 0 ? Math.round((score / quiz.length) * 100) : 0
   const passed = percentage >= 70
@@ -39,6 +40,8 @@ export default function ResultPage() {
   useEffect(() => {
     if (!user || quiz.length === 0 || savedRef.current) return
     savedRef.current = true
+
+    // Save quiz result
     supabase.from('quiz_results').insert({
       user_id: user.id,
       score,
@@ -48,6 +51,35 @@ export default function ResultPage() {
     }).then(({ error }) => {
       if (error) console.error('Failed to save quiz result:', error)
     })
+
+    // Update streak
+    const today = new Date().toISOString().slice(0, 10) // YYYY-MM-DD
+    supabase.from('user_streaks').select('*').eq('user_id', user.id).single()
+      .then(({ data }) => {
+        if (!data) {
+          // First quiz ever
+          return supabase.from('user_streaks').insert({
+            user_id: user.id,
+            current_streak: 1,
+            longest_streak: 1,
+            last_quiz_date: today,
+          })
+        }
+        const last = data.last_quiz_date
+        if (last === today) return // Already played today, no change
+        const yesterday = new Date(Date.now() - 86400000).toISOString().slice(0, 10)
+        const newCurrent = last === yesterday ? data.current_streak + 1 : 1
+        const newLongest = Math.max(newCurrent, data.longest_streak)
+        return supabase.from('user_streaks').update({
+          current_streak: newCurrent,
+          longest_streak: newLongest,
+          last_quiz_date: today,
+          updated_at: new Date().toISOString(),
+        }).eq('user_id', user.id)
+      })
+      .then(res => {
+        if (res?.error) console.error('Failed to update streak:', res.error)
+      })
   }, [user, quiz.length, score, percentage, selectedCategories])
 
   const handleShare = useCallback(async () => {
@@ -116,7 +148,7 @@ export default function ResultPage() {
           <button className="result-btn primary" onClick={handleRetry}>
             {t('retry')}
           </button>
-          <button
+          {canShare && <button
             className="result-btn share-btn"
             onClick={handleShare}
             disabled={sharing}
@@ -130,7 +162,7 @@ export default function ResultPage() {
                 {t('share')}
               </>
             )}
-          </button>
+          </button>}
           <Link to="/" className="result-btn secondary">
             {t('home')}
           </Link>
