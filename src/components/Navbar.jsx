@@ -70,6 +70,12 @@ export default function Navbar({ variant } = {}) {
                   </button>
                   <button
                     className="user-dropdown-item"
+                    onClick={() => { navigate('/leaderboard'); setMenuOpen(false); closeMenu() }}
+                  >
+                    Leaderboard
+                  </button>
+                  <button
+                    className="user-dropdown-item"
                     onClick={() => { signOut(); setMenuOpen(false); closeMenu() }}
                   >
                     Sign Out

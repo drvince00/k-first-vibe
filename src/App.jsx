@@ -17,6 +17,7 @@ const LoginPage = lazy(() => import('./pages/LoginPage'))
 const ResetPasswordPage = lazy(() => import('./pages/ResetPasswordPage'))
 const MyPage = lazy(() => import('./pages/MyPage'))
 const AuthCallbackPage = lazy(() => import('./pages/AuthCallbackPage'))
+const LeaderboardPage = lazy(() => import('./pages/LeaderboardPage'))
 const BoardPage = lazy(() => import('./pages/BoardPage'))
 const PostDetailPage = lazy(() => import('./pages/PostDetailPage'))
 const PostWritePage = lazy(() => import('./pages/PostWritePage'))
@@ -46,6 +47,7 @@ function AppRoutes() {
         <Route path="/login" element={<LoginPage />} />
         <Route path="/reset-password" element={<ResetPasswordPage />} />
         <Route path="/mypage" element={<MyPage />} />
+        <Route path="/leaderboard" element={<LeaderboardPage />} />
         <Route path="/board" element={<BoardPage />} />
         <Route path="/board/write" element={<PostWritePage />} />
         <Route path="/board/write/:id" element={<PostWritePage />} />
