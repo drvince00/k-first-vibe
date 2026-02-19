@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { useApp } from '../context/AppContext'
 import { supabase } from '../lib/supabase'
@@ -108,6 +108,7 @@ export default function MyPage() {
   // Quiz history
   const [history, setHistory] = useState([])
   const [historyLoading, setHistoryLoading] = useState(true)
+  const [streak, setStreak] = useState(null)
 
   const isEmailUser = user?.app_metadata?.provider === 'email'
 
@@ -126,13 +127,21 @@ export default function MyPage() {
   const fetchHistory = useCallback(async () => {
     if (!user) return
     setHistoryLoading(true)
-    const { data, error } = await supabase
-      .from('quiz_results')
-      .select('*')
-      .eq('user_id', user.id)
-      .order('created_at', { ascending: false })
-      .limit(HISTORY_LIMIT)
+    const [{ data, error }, { data: streakData }] = await Promise.all([
+      supabase
+        .from('quiz_results')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false })
+        .limit(HISTORY_LIMIT),
+      supabase
+        .from('user_streaks')
+        .select('current_streak, longest_streak')
+        .eq('user_id', user.id)
+        .single(),
+    ])
     if (!error) setHistory(data || [])
+    if (streakData) setStreak(streakData)
     setHistoryLoading(false)
   }, [user])
 
@@ -231,6 +240,27 @@ export default function MyPage() {
       <main className="mypage">
         <h1 className="mypage-title">{t.title}</h1>
 
+        {/* Streak & Leaderboard */}
+        {streak && (
+          <section className="mypage-section mypage-streak-section">
+            <div className="mypage-streak-row">
+              <div className="mypage-streak-card">
+                <span className="mypage-streak-icon">{streak.current_streak >= 7 ? '🏆' : '🔥'}</span>
+                <span className="mypage-streak-num">{streak.current_streak}</span>
+                <span className="mypage-streak-label">{lang === 'ko' ? '연속 출석' : 'Day Streak'}</span>
+              </div>
+              <div className="mypage-streak-card">
+                <span className="mypage-streak-icon">⭐</span>
+                <span className="mypage-streak-num">{streak.longest_streak}</span>
+                <span className="mypage-streak-label">{lang === 'ko' ? '최장 연속' : 'Best Streak'}</span>
+              </div>
+              <Link to="/leaderboard" className="mypage-lb-btn">
+                🏆 {lang === 'ko' ? '리더보드' : 'Leaderboard'}
+              </Link>
+            </div>
+          </section>
+        )}
+
         {/* Quiz History Section */}
         <section className="mypage-section">
           <h2 className="mypage-section-title">{t.historySection}</h2>
@@ -270,7 +300,7 @@ export default function MyPage() {
                     </div>
                     <div className="history-item-mid">
                       <div className="history-categories">
-                        {r.categories.map(c => <CategoryBadge key={c} cat={c} />)}
+                        {(r.categories || []).map(c => <CategoryBadge key={c} cat={c} />)}
                       </div>
                       <span className="history-pct">{r.percentage}%</span>
                     </div>
