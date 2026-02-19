@@ -4663,3 +4663,113 @@
   color: #10b981;
   margin: 0.3rem 0 0.8rem;
 }
+
+/* Share button */
+.result-btn.share-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: linear-gradient(135deg, #6c63ff, #a78bfa);
+  color: #fff;
+  border: none;
+  cursor: pointer;
+}
+.result-btn.share-btn:hover {
+  opacity: 0.9;
+}
+.result-btn.share-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Share Card (html2canvas target) */
+.share-card {
+  width: 360px;
+  background: linear-gradient(145deg, #1e1145, #3b2667);
+  border-radius: 24px;
+  padding: 2rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  font-family: 'Outfit', sans-serif;
+}
+
+.share-card-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.share-card-logo {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid rgba(255,255,255,0.3);
+}
+
+.share-card-brand {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: 0.5px;
+}
+
+.share-card-circle {
+  width: 130px;
+  height: 130px;
+  border-radius: 50%;
+  border: 6px solid rgba(255,255,255,0.2);
+  background: rgba(255,255,255,0.08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0.5rem 0;
+}
+
+.share-card-circle.pass {
+  border-color: #ffd700;
+  box-shadow: 0 0 24px rgba(255,215,0,0.35);
+}
+
+.share-card-pct {
+  font-size: 2.4rem;
+  font-weight: 800;
+  color: #fff;
+}
+
+.share-card-score {
+  font-size: 1rem;
+  color: rgba(255,255,255,0.75);
+  margin: 0;
+}
+
+.share-card-msg {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #ffd700;
+  margin: 0;
+}
+
+.share-card-cats {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.share-card-badge {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #fff;
+  padding: 3px 10px;
+  border-radius: 99px;
+}
+
+.share-card-url {
+  font-size: 0.78rem;
+  color: rgba(255,255,255,0.4);
+  margin: 0.25rem 0 0;
+  letter-spacing: 1px;
+}
