@@ -40,6 +40,10 @@ export default defineConfig({
         ],
       },
       workbox: {
+        // 파일 확장자가 있는 URL은 서비스워커 navigation fallback 제외
+        // (sitemap.xml, robots.txt, ads.txt 등 정적 파일을 실제 서버에서 서빙)
+        navigateFallback: 'index.html',
+        navigateFallbackDenylist: [/\.[a-z0-9]+$/i, /^\/api\//],
         // Cache strategies
         runtimeCaching: [
           {
