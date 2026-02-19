@@ -241,25 +241,27 @@ export default function MyPage() {
         <h1 className="mypage-title">{t.title}</h1>
 
         {/* Streak & Leaderboard */}
-        {streak && (
-          <section className="mypage-section mypage-streak-section">
-            <div className="mypage-streak-row">
-              <div className="mypage-streak-card">
-                <span className="mypage-streak-icon">{streak.current_streak >= 7 ? '🏆' : '🔥'}</span>
-                <span className="mypage-streak-num">{streak.current_streak}</span>
-                <span className="mypage-streak-label">{lang === 'ko' ? '연속 출석' : 'Day Streak'}</span>
-              </div>
-              <div className="mypage-streak-card">
-                <span className="mypage-streak-icon">⭐</span>
-                <span className="mypage-streak-num">{streak.longest_streak}</span>
-                <span className="mypage-streak-label">{lang === 'ko' ? '최장 연속' : 'Best Streak'}</span>
-              </div>
-              <Link to="/leaderboard" className="mypage-lb-btn">
-                🏆 {lang === 'ko' ? '리더보드' : 'Leaderboard'}
-              </Link>
-            </div>
-          </section>
-        )}
+        <section className="mypage-section mypage-streak-section">
+          <div className="mypage-streak-row">
+            {streak && (
+              <>
+                <div className="mypage-streak-card">
+                  <span className="mypage-streak-icon">{streak.current_streak >= 7 ? '🏆' : '🔥'}</span>
+                  <span className="mypage-streak-num">{streak.current_streak}</span>
+                  <span className="mypage-streak-label">{lang === 'ko' ? '연속 출석' : 'Day Streak'}</span>
+                </div>
+                <div className="mypage-streak-card">
+                  <span className="mypage-streak-icon">⭐</span>
+                  <span className="mypage-streak-num">{streak.longest_streak}</span>
+                  <span className="mypage-streak-label">{lang === 'ko' ? '최장 연속' : 'Best Streak'}</span>
+                </div>
+              </>
+            )}
+            <Link to="/leaderboard" className="mypage-lb-btn">
+              🏆 {lang === 'ko' ? '리더보드' : 'Leaderboard'}
+            </Link>
+          </div>
+        </section>
 
         {/* Quiz History Section */}
         <section className="mypage-section">
