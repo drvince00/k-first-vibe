@@ -1,14 +1,98 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { useApp } from '../context/AppContext'
+import { supabase } from '../lib/supabase'
 import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
+
+const HISTORY_LIMIT = 20
+
+const tx = {
+  en: {
+    title: 'My Page',
+    profileSection: 'Profile',
+    nicknameLabel: 'Nickname',
+    emailLabel: 'Email',
+    saveBtn: 'Save',
+    passwordSection: 'Change Password',
+    newPassword: 'New Password',
+    confirmPassword: 'Confirm Password',
+    changeBtn: 'Change Password',
+    deleteSection: 'Delete Account',
+    deleteWarning: 'This action cannot be undone. All your data will be permanently deleted.',
+    deleteBtn: 'Delete Account',
+    deleteConfirm: 'Are you sure you want to delete your account?',
+    cancel: 'Cancel',
+    confirm: 'Delete',
+    historySection: 'Quiz History',
+    historyEmpty: 'No quiz records yet. Take a quiz!',
+    totalPlayed: 'Total',
+    avgScore: 'Average',
+    bestScore: 'Best',
+    times: 'times',
+    clearHistory: 'Clear History',
+    clearConfirm: 'Delete all quiz records?',
+    clearDone: 'History cleared.',
+    noHistory: 'No records yet.',
+  },
+  ko: {
+    title: '마이페이지',
+    profileSection: '프로필',
+    nicknameLabel: '닉네임',
+    emailLabel: '이메일',
+    saveBtn: '저장',
+    passwordSection: '비밀번호 변경',
+    newPassword: '새 비밀번호',
+    confirmPassword: '비밀번호 확인',
+    changeBtn: '비밀번호 변경',
+    deleteSection: '계정 삭제',
+    deleteWarning: '이 작업은 되돌릴 수 없습니다. 모든 데이터가 영구 삭제됩니다.',
+    deleteBtn: '계정 삭제',
+    deleteConfirm: '정말 계정을 삭제하시겠습니까?',
+    cancel: '취소',
+    confirm: '삭제',
+    historySection: '퀴즈 기록',
+    historyEmpty: '아직 퀴즈 기록이 없어요. 퀴즈를 풀어보세요!',
+    totalPlayed: '총 횟수',
+    avgScore: '평균 점수',
+    bestScore: '최고 점수',
+    times: '회',
+    clearHistory: '기록 초기화',
+    clearConfirm: '퀴즈 기록을 모두 삭제할까요?',
+    clearDone: '기록이 초기화됐어요.',
+    noHistory: '기록이 없어요.',
+  },
+}
+
+function formatDate(dateStr, lang) {
+  const d = new Date(dateStr)
+  if (lang === 'ko') {
+    return `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, '0')}.${String(d.getDate()).padStart(2, '0')}`
+  }
+  return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+}
+
+function CategoryBadge({ cat }) {
+  const colors = { TOPIK: '#6c63ff', FOOD: '#f97316', CULTURE: '#10b981' }
+  return (
+    <span style={{
+      background: colors[cat] || '#888',
+      color: '#fff',
+      fontSize: '0.7rem',
+      fontWeight: 700,
+      padding: '2px 7px',
+      borderRadius: 99,
+      marginRight: 4,
+    }}>{cat}</span>
+  )
+}
 
 export default function MyPage() {
   const { user, profile, loading, updatePassword, updateProfile, deleteAccount } = useAuth()
   const { lang } = useApp()
   const navigate = useNavigate()
+  const t = tx[lang] || tx.en
 
   const [nickname, setNickname] = useState('')
   const [newPassword, setNewPassword] = useState('')
@@ -16,8 +100,14 @@ export default function MyPage() {
   const [profileMsg, setProfileMsg] = useState({ type: '', text: '' })
   const [passwordMsg, setPasswordMsg] = useState({ type: '', text: '' })
   const [showDeleteModal, setShowDeleteModal] = useState(false)
+  const [showClearModal, setShowClearModal] = useState(false)
   const [deleting, setDeleting] = useState(false)
+  const [clearing, setClearing] = useState(false)
   const [saving, setSaving] = useState(false)
+
+  // Quiz history
+  const [history, setHistory] = useState([])
+  const [historyLoading, setHistoryLoading] = useState(true)
 
   const isEmailUser = user?.app_metadata?.provider === 'email'
 
@@ -32,6 +122,23 @@ export default function MyPage() {
       setNickname(profile.nickname || user?.user_metadata?.full_name || '')
     }
   }, [profile, user])
+
+  const fetchHistory = useCallback(async () => {
+    if (!user) return
+    setHistoryLoading(true)
+    const { data, error } = await supabase
+      .from('quiz_results')
+      .select('*')
+      .eq('user_id', user.id)
+      .order('created_at', { ascending: false })
+      .limit(HISTORY_LIMIT)
+    if (!error) setHistory(data || [])
+    setHistoryLoading(false)
+  }, [user])
+
+  useEffect(() => {
+    fetchHistory()
+  }, [fetchHistory])
 
   const handleProfileSave = async () => {
     setProfileMsg({ type: '', text: '' })
@@ -83,6 +190,19 @@ export default function MyPage() {
     }
   }
 
+  const handleClearHistory = async () => {
+    setClearing(true)
+    const { error } = await supabase
+      .from('quiz_results')
+      .delete()
+      .eq('user_id', user.id)
+    if (!error) {
+      setHistory([])
+    }
+    setClearing(false)
+    setShowClearModal(false)
+  }
+
   if (loading || !user) {
     return (
       <div className="home-page">
@@ -93,56 +213,90 @@ export default function MyPage() {
     )
   }
 
-  const t = {
-    en: {
-      title: 'My Page',
-      profileSection: 'Profile',
-      nicknameLabel: 'Nickname',
-      emailLabel: 'Email',
-      saveBtn: 'Save',
-      passwordSection: 'Change Password',
-      newPassword: 'New Password',
-      confirmPassword: 'Confirm Password',
-      changeBtn: 'Change Password',
-      deleteSection: 'Delete Account',
-      deleteWarning: 'This action cannot be undone. All your data will be permanently deleted.',
-      deleteBtn: 'Delete Account',
-      deleteConfirm: 'Are you sure you want to delete your account?',
-      cancel: 'Cancel',
-      confirm: 'Delete',
-    },
-    ko: {
-      title: '마이페이지',
-      profileSection: '프로필',
-      nicknameLabel: '닉네임',
-      emailLabel: '이메일',
-      saveBtn: '저장',
-      passwordSection: '비밀번호 변경',
-      newPassword: '새 비밀번호',
-      confirmPassword: '비밀번호 확인',
-      changeBtn: '비밀번호 변경',
-      deleteSection: '계정 삭제',
-      deleteWarning: '이 작업은 되돌릴 수 없습니다. 모든 데이터가 영구 삭제됩니다.',
-      deleteBtn: '계정 삭제',
-      deleteConfirm: '정말 계정을 삭제하시겠습니까?',
-      cancel: '취소',
-      confirm: '삭제',
-    },
-  }
-  const tx = t[lang] || t.en
-
   const avatarUrl = profile?.avatar_url || user.user_metadata?.avatar_url
   const displayName = nickname || profile?.nickname || user.user_metadata?.full_name || user.email?.split('@')[0] || 'User'
+
+  // Stats
+  const totalPlayed = history.length
+  const avgScore = totalPlayed > 0
+    ? Math.round(history.reduce((sum, r) => sum + r.percentage, 0) / totalPlayed)
+    : 0
+  const bestScore = totalPlayed > 0
+    ? Math.max(...history.map(r => r.percentage))
+    : 0
 
   return (
     <div className="home-page">
       <Navbar />
       <main className="mypage">
-        <h1 className="mypage-title">{tx.title}</h1>
+        <h1 className="mypage-title">{t.title}</h1>
+
+        {/* Quiz History Section */}
+        <section className="mypage-section">
+          <h2 className="mypage-section-title">{t.historySection}</h2>
+
+          {historyLoading ? (
+            <div style={{ textAlign: 'center', padding: '2rem 0' }}><div className="loader" /></div>
+          ) : totalPlayed === 0 ? (
+            <p style={{ color: '#888', textAlign: 'center', padding: '1.5rem 0' }}>{t.historyEmpty}</p>
+          ) : (
+            <>
+              {/* Stats Cards */}
+              <div className="history-stats">
+                <div className="history-stat-card">
+                  <span className="history-stat-icon">📊</span>
+                  <span className="history-stat-value">{totalPlayed}{lang === 'ko' ? t.times : ''}</span>
+                  <span className="history-stat-label">{t.totalPlayed}{lang === 'en' ? ' ' + t.times : ''}</span>
+                </div>
+                <div className="history-stat-card">
+                  <span className="history-stat-icon">⭐</span>
+                  <span className="history-stat-value">{avgScore}%</span>
+                  <span className="history-stat-label">{t.avgScore}</span>
+                </div>
+                <div className="history-stat-card">
+                  <span className="history-stat-icon">🏆</span>
+                  <span className="history-stat-value">{bestScore}%</span>
+                  <span className="history-stat-label">{t.bestScore}</span>
+                </div>
+              </div>
+
+              {/* History List */}
+              <ul className="history-list">
+                {history.map((r) => (
+                  <li key={r.id} className="history-item">
+                    <div className="history-item-top">
+                      <span className="history-date">{formatDate(r.created_at, lang)}</span>
+                      <span className="history-score-text">{r.score} / {r.total}</span>
+                    </div>
+                    <div className="history-item-mid">
+                      <div className="history-categories">
+                        {r.categories.map(c => <CategoryBadge key={c} cat={c} />)}
+                      </div>
+                      <span className="history-pct">{r.percentage}%</span>
+                    </div>
+                    <div className="history-bar-track">
+                      <div
+                        className={`history-bar-fill ${r.percentage >= 70 ? 'pass' : ''}`}
+                        style={{ width: `${r.percentage}%` }}
+                      />
+                    </div>
+                  </li>
+                ))}
+              </ul>
+
+              {/* Clear History */}
+              <div style={{ textAlign: 'center', marginTop: '1rem' }}>
+                <button className="history-clear-btn" onClick={() => setShowClearModal(true)}>
+                  {t.clearHistory}
+                </button>
+              </div>
+            </>
+          )}
+        </section>
 
         {/* Profile Section */}
         <section className="mypage-section">
-          <h2 className="mypage-section-title">{tx.profileSection}</h2>
+          <h2 className="mypage-section-title">{t.profileSection}</h2>
           <div className="mypage-profile-header">
             {avatarUrl ? (
               <img src={avatarUrl} alt="" className="mypage-avatar" referrerPolicy="no-referrer" />
@@ -151,7 +305,7 @@ export default function MyPage() {
             )}
             <div className="mypage-profile-info">
               <div className="mypage-field">
-                <label className="mypage-label">{tx.nicknameLabel}</label>
+                <label className="mypage-label">{t.nicknameLabel}</label>
                 <input
                   type="text"
                   className="login-input"
@@ -160,7 +314,7 @@ export default function MyPage() {
                 />
               </div>
               <div className="mypage-field">
-                <label className="mypage-label">{tx.emailLabel}</label>
+                <label className="mypage-label">{t.emailLabel}</label>
                 <input type="email" className="login-input" value={user.email || ''} disabled />
               </div>
               {profileMsg.text && (
@@ -169,16 +323,16 @@ export default function MyPage() {
                 </div>
               )}
               <button className="login-submit-btn" onClick={handleProfileSave} disabled={saving}>
-                {saving ? <span className="loader-small" /> : tx.saveBtn}
+                {saving ? <span className="loader-small" /> : t.saveBtn}
               </button>
             </div>
           </div>
         </section>
 
-        {/* Password Section - email users only */}
+        {/* Password Section */}
         {isEmailUser && (
           <section className="mypage-section">
-            <h2 className="mypage-section-title">{tx.passwordSection}</h2>
+            <h2 className="mypage-section-title">{t.passwordSection}</h2>
             <form className="login-form" onSubmit={handlePasswordChange}>
               {passwordMsg.text && (
                 <div className={`login-message ${passwordMsg.type === 'error' ? 'login-error' : 'login-success'}`}>
@@ -188,7 +342,7 @@ export default function MyPage() {
               <input
                 type="password"
                 className="login-input"
-                placeholder={tx.newPassword}
+                placeholder={t.newPassword}
                 value={newPassword}
                 onChange={(e) => setNewPassword(e.target.value)}
                 autoComplete="new-password"
@@ -196,36 +350,53 @@ export default function MyPage() {
               <input
                 type="password"
                 className="login-input"
-                placeholder={tx.confirmPassword}
+                placeholder={t.confirmPassword}
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 autoComplete="new-password"
               />
-              <button type="submit" className="login-submit-btn">{tx.changeBtn}</button>
+              <button type="submit" className="login-submit-btn">{t.changeBtn}</button>
             </form>
           </section>
         )}
 
         {/* Delete Account Section */}
         <section className="mypage-section mypage-danger">
-          <h2 className="mypage-section-title">{tx.deleteSection}</h2>
-          <p className="mypage-warning">{tx.deleteWarning}</p>
+          <h2 className="mypage-section-title">{t.deleteSection}</h2>
+          <p className="mypage-warning">{t.deleteWarning}</p>
           <button className="mypage-delete-btn" onClick={() => setShowDeleteModal(true)}>
-            {tx.deleteBtn}
+            {t.deleteBtn}
           </button>
         </section>
 
-        {/* Delete Confirmation Modal */}
+        {/* Clear History Modal */}
+        {showClearModal && (
+          <div className="modal-overlay" onClick={() => setShowClearModal(false)}>
+            <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+              <p className="modal-text">{t.clearConfirm}</p>
+              <div className="modal-actions">
+                <button className="modal-cancel-btn" onClick={() => setShowClearModal(false)}>
+                  {t.cancel}
+                </button>
+                <button className="modal-confirm-btn" onClick={handleClearHistory} disabled={clearing}>
+                  {clearing ? <span className="loader-small" /> : t.confirm}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Delete Account Modal */}
         {showDeleteModal && (
           <div className="modal-overlay" onClick={() => setShowDeleteModal(false)}>
             <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-              <p className="modal-text">{tx.deleteConfirm}</p>
+              <p className="modal-text">{t.deleteConfirm}</p>
               <div className="modal-actions">
                 <button className="modal-cancel-btn" onClick={() => setShowDeleteModal(false)}>
-                  {tx.cancel}
+                  {t.cancel}
                 </button>
                 <button className="modal-confirm-btn" onClick={handleDelete} disabled={deleting}>
-                  {deleting ? <span className="loader-small" /> : tx.confirm}
+                  {deleting ? <span className="loader-small" /> : t.confirm}
                 </button>
               </div>
             </div>

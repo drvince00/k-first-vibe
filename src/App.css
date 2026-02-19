@@ -4535,3 +4535,131 @@
     height: 50px;
   }
 }
+
+/* ── Quiz History ─────────────────────────────── */
+.history-stats {
+  display: flex;
+  gap: 0.75rem;
+  margin-bottom: 1.25rem;
+}
+
+.history-stat-card {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.2rem;
+  background: #f4f6fb;
+  border-radius: 12px;
+  padding: 0.85rem 0.5rem;
+}
+
+.history-stat-icon {
+  font-size: 1.3rem;
+}
+
+.history-stat-value {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: #3b2667;
+}
+
+.history-stat-label {
+  font-size: 0.7rem;
+  color: #888;
+  text-align: center;
+}
+
+.history-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.history-item {
+  background: #f9fafc;
+  border: 1px solid #e8eaf0;
+  border-radius: 12px;
+  padding: 0.8rem 1rem;
+}
+
+.history-item-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.35rem;
+}
+
+.history-date {
+  font-size: 0.78rem;
+  color: #999;
+}
+
+.history-score-text {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #3b2667;
+}
+
+.history-item-mid {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.4rem;
+}
+
+.history-categories {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px;
+}
+
+.history-pct {
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: #555;
+}
+
+.history-bar-track {
+  height: 6px;
+  background: #e0e0e0;
+  border-radius: 99px;
+  overflow: hidden;
+}
+
+.history-bar-fill {
+  height: 100%;
+  background: #a78bfa;
+  border-radius: 99px;
+  transition: width 0.4s ease;
+}
+
+.history-bar-fill.pass {
+  background: linear-gradient(90deg, #6c63ff, #10b981);
+}
+
+.history-clear-btn {
+  background: none;
+  border: 1.5px solid #e0e0e0;
+  color: #aaa;
+  font-size: 0.82rem;
+  padding: 0.45rem 1.2rem;
+  border-radius: 99px;
+  cursor: pointer;
+  transition: border-color 0.2s, color 0.2s;
+}
+
+.history-clear-btn:hover {
+  border-color: #f87171;
+  color: #f87171;
+}
+
+/* ResultPage saved message */
+.result-saved-msg {
+  font-size: 0.82rem;
+  color: #10b981;
+  margin: 0.3rem 0 0.8rem;
+}
