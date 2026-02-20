@@ -80,7 +80,22 @@ export function AppProvider({ children }) {
       })
       const results = await Promise.all(promises)
       const all = shuffle(results.flat()).slice(0, questionCount)
-      setQuiz(all)
+
+      // Shuffle options for each question and recalculate answer index
+      const withShuffledOptions = all.map(q => {
+        const idxs = [0, 1, 2, 3]
+        for (let i = idxs.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [idxs[i], idxs[j]] = [idxs[j], idxs[i]]
+        }
+        return {
+          ...q,
+          options: idxs.map(i => q.options[i]),
+          answer: idxs.indexOf(q.answer)
+        }
+      })
+
+      setQuiz(withShuffledOptions)
       return all
     } catch (err) {
       console.error('Failed to load quizzes:', err)
