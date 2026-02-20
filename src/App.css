@@ -3136,7 +3136,6 @@
   padding: 1.5rem;
   margin-bottom: 1.25rem;
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
-  overflow: hidden;
 }
 
 .mypage-section-title {
@@ -4793,7 +4792,7 @@
    ======================================== */
 
 .mypage-streak-section {
-  padding: 0;
+  padding: 0.5rem;
 }
 
 .mypage-streak-row {
@@ -4809,7 +4808,7 @@
   align-items: center;
   background: linear-gradient(135deg, #f0eeff, #e8e3ff);
   border-radius: 12px;
-  padding: 0.5rem 0.5rem;
+  padding: 0.3rem 0.5rem;
   gap: 1px;
 }
 
