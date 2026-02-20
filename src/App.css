@@ -4792,7 +4792,7 @@
    ======================================== */
 
 .mypage-streak-section {
-  padding: 0.75rem 0 0;
+  padding: 0.25rem 0 0;
 }
 
 .mypage-streak-row {
@@ -4807,9 +4807,9 @@
   flex-direction: column;
   align-items: center;
   background: linear-gradient(135deg, #f0eeff, #e8e3ff);
-  border-radius: 14px;
-  padding: 0.75rem 0.5rem;
-  gap: 2px;
+  border-radius: 12px;
+  padding: 0.5rem 0.5rem;
+  gap: 1px;
 }
 
 .mypage-streak-icon {
