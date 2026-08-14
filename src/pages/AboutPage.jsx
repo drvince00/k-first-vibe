@@ -13,7 +13,7 @@ export default function AboutPage() {
 
       <main className="page-content">
         <h1 className="page-title">
-          {lang === 'en' ? 'about K-Culture Cat' : 'K-Culture Cat 소개'}
+          {lang === 'en' ? 'About K-Culture Cat' : 'K-Culture Cat 소개'}
         </h1>
 
         {lang === 'en' ? (
