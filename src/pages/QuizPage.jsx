@@ -1,7 +1,6 @@
 import { useRef, useEffect } from 'react'
-import { Link, useNavigate as useRouterNavigate } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import { useApp } from '../context/AppContext'
-import { useAuth } from '../context/AuthContext'
 import { playSound } from '../utils/sound'
 import { CATEGORY_IMAGES, CATEGORY_DESC } from '../utils/constants'
 import Navbar from '../components/Navbar'
@@ -15,14 +14,6 @@ export default function QuizPage() {
     categories, selectedCategories, toggleCategory,
     questionCount, setQuestionCount, startQuiz, ready, quizLoading, resetQuizSetup
   } = useApp()
-  const { user, loading: authLoading } = useAuth()
-  const routerNavigate = useRouterNavigate()
-
-  useEffect(() => {
-    if (!authLoading && !user) {
-      routerNavigate('/login', { state: { from: '/quiz' }, replace: true })
-    }
-  }, [user, authLoading, routerNavigate])
 
   // Reset quiz setup every time user navigates to this page
   useEffect(() => {
